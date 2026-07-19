@@ -35,7 +35,7 @@ jobs:
         run: npm install
 
       - name: Publish to npm
-        run: npm publish --access public --provenance --registry https://registry.npmjs.org/
+        run: npm publish --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -62,6 +62,7 @@ jobs:
         run: npm install
 
       - name: Publish to GitHub Packages
-        run: npm publish --access public --registry https://npm.pkg.github.com/
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          npm_config_registry: https://npm.pkg.github.com/

@@ -21,6 +21,7 @@
     "url": "git+https://github.com/AudaciousInquiry/prompt-url.git"
   },
   "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
     "access": "public"
   },
   "dependencies": {
