@@ -67,6 +67,18 @@
       cross-references, and audit records.  It is NOT a globally unique identifier in
       the strict sense; see <xref target="ambiguity-multiple-uris"/> and
       <xref target="ambiguity-one-uri"/> for a full treatment of ambiguity.</t>
+      <t>The scheme has been implemented and deployed as an open-source Model Context
+      Protocol (MCP) server <xref target="PROMPT-URL-MCP"/> that resolves, generates,
+      and searches <tt>prompt</tt> URIs against local agent session logs.  This
+      implementation validates the design under real-world agent workloads involving
+      both Claude Code and GitHub Copilot sessions.</t>
+      <t>Several proposals currently under active consideration in IETF AI-focused
+      forums address broader questions of AI agent accountability, transparency,
+      auditability, and interoperability.  The <tt>prompt</tt> URI scheme is intended
+      as a composable, low-level building block for those frameworks: any mechanism
+      that tracks, attests to, or makes claims about AI-generated artifacts needs a
+      stable, lightweight way to reference the specific agent interaction that produced
+      them.  This document defines that reference.</t>
     </section>
 
     <section anchor="terminology" numbered="true" toc="default">
@@ -672,6 +684,17 @@ prompt://claude-code/5674b542.../2026-07-07T16:45:23.856Z#promptId=abc123
           ~/.copilot/session-state/{session-id}/events.jsonl.
           Timestamp format: ISO 8601 UTC with milliseconds.
           Prompt correlation field: interactionId.</refcontent>
+        </reference>
+        <reference anchor="PROMPT-URL-MCP">
+          <front>
+            <title>prompt-url-mcp: MCP Server for prompt:// URI Resolution and Generation</title>
+            <author fullname="Keith W. Boone" initials="K." surname="Boone">
+              <organization>Audacious Inquiry</organization>
+            </author>
+            <date year="2026"/>
+          </front>
+          <refcontent>Available at: https://github.com/AudaciousInquiry/prompt-url
+          and https://www.npmjs.com/package/@audaciousinquiry/prompt-url-mcp</refcontent>
         </reference>
       </references>
     </references>

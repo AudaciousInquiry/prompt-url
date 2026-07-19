@@ -3,7 +3,7 @@
 **Document:** draft-boone-prompt-uri-scheme-01  
 **Category:** Informational  
 **Author:** Keith W. Boone  
-**Date:** 2026-07-07
+**Date:** 2026-07-19
 
 ---
 
@@ -87,6 +87,20 @@ identifier, and the approximate call time.
 The resulting URI is suitable for embedding in file provenance metadata, log
 cross-references, and audit records.  It is NOT a globally unique identifier in
 the strict sense; see Sections 7 and 8 for a full treatment of ambiguity.
+
+The scheme has been implemented and deployed as an open-source Model Context
+Protocol (MCP) server [PROMPT-URL-MCP] that resolves, generates, and searches
+`prompt` URIs against local agent session logs.  This implementation validates
+the design under real-world agent workloads involving both Claude Code and
+GitHub Copilot sessions.
+
+Several proposals currently under active consideration in IETF AI-focused
+forums address broader questions of AI agent accountability, transparency,
+auditability, and interoperability.  The `prompt` URI scheme is intended as a
+composable, low-level building block for those frameworks: any mechanism that
+tracks, attests to, or makes claims about AI-generated artifacts needs a
+stable, lightweight way to reference the specific agent interaction that
+produced them.  This document defines that reference.
 
 ---
 
@@ -673,6 +687,11 @@ IDentifiers (UUIDs)", RFC 9562, May 2024.
 
 **[MCP]** Anthropic, "Model Context Protocol Specification", 2024.
 Available at: https://modelcontextprotocol.io/
+
+**[PROMPT-URL-MCP]** Boone, K., "prompt-url-mcp: MCP Server for prompt:// URI
+Resolution and Generation", 2026.
+Available at: https://github.com/AudaciousInquiry/prompt-url and
+https://www.npmjs.com/package/@audaciousinquiry/prompt-url-mcp
 
 **[CLAUDE-SESSIONS]** Anthropic, "Claude Code Session Log Format".
 Internal format; session logs stored at
