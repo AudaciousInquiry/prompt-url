@@ -42,14 +42,33 @@ after the previous commit, sorted **oldest first** (`result[0]` is the earliest)
 
 ### Step 3 — Identify the root-cause prompt
 
-The root-cause prompt is `result[0]` — the oldest prompt in the result set, which
-is the user message that originally initiated the work now being committed.
+Do not blindly take `result[0]`. The oldest prompt is only a starting point.
+The agent must reason about which prompt in the list actually caused the code
+changes being committed.
 
-- If the result count is less than the `limit` (default 10): take `result[0]`.
-- If the result count equals the `limit`: paginate forward using the `timestamp`
-  of the last result as the next `since` value, repeating until the final page
-  has fewer results than the limit. Take `result[0]` from the first page — it
-  is the oldest item overall.
+**Read the staged diff:**
+```bash
+git diff --cached --stat
+git diff --cached
+```
+
+**Then examine each prompt's `user_message`** and ask: does this message plausibly
+explain the files changed and the nature of the changes? Consider:
+
+- A prompt asking to "update PiP" or "log the session" does NOT explain code changes.
+- A prompt asking to "fix the authentication bug" DOES explain changes to `auth.js`.
+- A prompt asking to "add tests" explains new test files but not production code changes.
+- If multiple prompts each explain part of the diff, pick the one that best explains
+  the primary intent of the commit (what you put in the commit message subject line).
+
+**When the match is clear:** use that prompt's `prompt_url`.
+
+**When it is ambiguous** (e.g., two prompts both plausibly explain the diff): pick
+the earlier one — it is more likely to be the initiating request, with the later
+one being a follow-up refinement.
+
+**When no prompt explains the diff** (e.g., purely manual edits): omit the
+`Prompt-URL:` trailer entirely.
 
 Use the `prompt_url` field from that item as the trailer value.
 
