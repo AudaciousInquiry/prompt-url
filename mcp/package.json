@@ -16,6 +16,10 @@
     "src/",
     "README.md"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AudaciousInquiry/prompt-url.git"
+  },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"

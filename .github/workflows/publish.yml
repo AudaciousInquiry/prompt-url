@@ -26,15 +26,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-          registry-url: 'https://registry.npmjs.org/'
+          # No registry-url: publishConfig in package.json routes to npmjs.com;
+          # omitting registry-url prevents setup-node from writing an .npmrc auth
+          # token line that would block npm's OIDC Trusted Publishing flow.
 
       - name: Install dependencies
         run: npm install
 
       - name: Publish to npm
         run: npm publish --access public --provenance
-        env:
-          NODE_AUTH_TOKEN: ''   # clear setup-node's injected token; OIDC handles auth
 
   publish-github:
     needs: test
