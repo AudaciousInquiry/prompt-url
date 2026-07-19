@@ -5,9 +5,20 @@ description: >-
   Rules for generating, embedding, and resolving prompt: URLs in AI agent
   workflows — git commit trailers, file provenance metadata, MCP tool stamps,
   and cross-agent references.
-license: MIT
+license: Apache-2.0
 compatibility: Requires prompt-url-mcp for resolution.
 updated:
+  - date: '2026-07-19T20:03:05.750Z'
+    user: boonek
+    agent:
+      name: github-copilot
+      version: '1.0'
+    llm:
+      name: claude-sonnet-4.6
+      version: '4.6'
+    prompt_uri: >-
+      prompt://github-copilot/95602ecf-b509-42b5-b5c4-cefb007525df/2026-07-19T20:03:05.751Z
+    summary: Correct SKILL.md license from MIT to Apache-2.0
   - date: '2026-07-19T14:05:42.886Z'
     user: boonek
     agent:

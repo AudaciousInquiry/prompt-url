@@ -111,7 +111,7 @@ function registerTools(mcpServer) {
 
   mcpServer.tool(
     'list_sessions',
-    'List AI agent session logs available on this machine, sorted by last-modified time ' +
+      'List AI agent session logs for the current user available on this machine, sorted by last-modified time ' +
     'descending. Use since/until with limit to paginate: set until to the mtime of the ' +
     'last session from the previous page to retrieve the next page.',
     {

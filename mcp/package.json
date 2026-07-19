@@ -1,7 +1,8 @@
 {
   "name": "@audaciousinquiry/prompt-url-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "MCP server for resolving and generating prompt:// URLs for AI agent session provenance",
+  "license": "Apache-2.0",
   "main": "src/index.js",
   "bin": {
     "prompt-url-mcp": "src/index.js"
