@@ -38,31 +38,3 @@ jobs:
         run: npm publish --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  publish-github:
-    needs: test
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: mcp
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          registry-url: 'https://npm.pkg.github.com'
-          scope: '@audaciousinquiry'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Publish to GitHub Packages
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          npm_config_registry: https://npm.pkg.github.com/
