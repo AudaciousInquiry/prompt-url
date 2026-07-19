@@ -1,0 +1,2238 @@
+<!DOCTYPE html>
+<html lang="en" class="Internet-Draft">
+<head>
+<meta charset="utf-8">
+<meta content="Common,Latin" name="scripts">
+<meta content="initial-scale=1.0" name="viewport">
+<title>The 'prompt' URI Scheme for AI Agent Sessions and Prompts</title>
+<meta content="Keith W. Boone" name="author">
+<meta content="
+       This document defines the  prompt  Uniform Resource Identifier (URI) scheme for
+      identifying prompts within AI agent sessions.  A prompt URI encodes the agent
+      identity, session identifier, and a timestamp sufficient to locate the originating
+      prompt within an agent session log.  The scheme is intended for use in provenance
+      records, audit trails, and cross-agent references where a human-readable, stable
+      locator for a prompt interaction is required. 
+       This document also addresses the conditions under which multiple URIs  MAY  resolve
+      to the same prompt and the conditions under which a single URI  MAY  be ambiguous
+      with respect to the prompt it identifies. 
+    " name="description">
+<meta content="xml2rfc 3.34.0" name="generator">
+<meta content="URI" name="keyword">
+<meta content="AI" name="keyword">
+<meta content="agent" name="keyword">
+<meta content="prompt" name="keyword">
+<meta content="provenance" name="keyword">
+<meta content="draft-boone-prompt-uri-scheme-00" name="ietf.draft">
+<!-- Generator version information:
+  xml2rfc 3.34.0
+    Python 3.13.11
+    ConfigArgParse 1.7.5
+    google-i18n-address 3.1.1
+    intervaltree 3.2.1
+    Jinja2 3.1.6
+    lxml 6.1.1
+    natsort 8.4.0
+    platformdirs 4.10.0
+    pycountry 26.2.16
+    pypdf 6.12.1
+    PyYAML 6.0.3
+    requests 2.34.2
+    wcwidth 0.8.2
+-->
+<link href="draft-boone-prompt-uri-scheme-00.xml" rel="alternate" type="application/rfc+xml">
+<link href="#copyright" rel="license">
+<style type="text/css">/*
+
+  NOTE: Changes at the bottom of this file overrides some earlier settings.
+
+  Once the style has stabilized and has been adopted as an official RFC style,
+  this can be consolidated so that style settings occur only in one place, but
+  for now the contents of this file consists first of the initial CSS work as
+  provided to the RFC Formatter (xml2rfc) work, followed by itemized and
+  commented changes found necessary during the development of the v3
+  formatters.
+
+*/
+
+/* fonts */
+@import url('https://static.ietf.org/fonts/noto-sans/import.css'); /* Sans-serif */
+@import url('https://static.ietf.org/fonts/noto-serif/import.css'); /* Serif (print) */
+@import url('https://static.ietf.org/fonts/roboto-mono/import.css'); /* Monospace */
+
+:root {
+  --font-sans: 'Noto Sans', Arial, Helvetica, sans-serif;
+  --font-serif: 'Noto Serif', 'Times', 'Times New Roman', serif;
+  --font-mono: 'Roboto Mono', Courier, 'Courier New', monospace;
+}
+
+@viewport {
+  zoom: 1.0;
+}
+@-ms-viewport {
+  width: extend-to-zoom;
+  zoom: 1.0;
+}
+/* general and mobile first */
+html {
+}
+body {
+  max-width: 90%;
+  margin: 1.5em auto;
+  color: #222;
+  background-color: #fff;
+  font-size: 14px;
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  scroll-behavior: smooth;
+  overflow-wrap: break-word;
+}
+.ears {
+  display: none;
+}
+
+/* headings */
+#title, h1, h2, h3, h4, h5, h6 {
+  margin: 1em 0 0.5em;
+  font-weight: bold;
+  line-height: 1.3;
+}
+#title {
+  clear: both;
+  border-bottom: 1px solid #ddd;
+  margin: 0 0 0.5em 0;
+  padding: 1em 0 0.5em;
+}
+.author {
+  padding-bottom: 4px;
+}
+h1 {
+  font-size: 26px;
+  margin: 1em 0;
+}
+h2 {
+  font-size: 22px;
+  margin-top: -20px;  /* provide offset for in-page anchors */
+  padding-top: 33px;
+}
+h3 {
+  font-size: 18px;
+  margin-top: -36px;  /* provide offset for in-page anchors */
+  padding-top: 42px;
+}
+h4 {
+  font-size: 16px;
+  margin-top: -36px;  /* provide offset for in-page anchors */
+  padding-top: 42px;
+}
+h5, h6 {
+  font-size: 14px;
+}
+#n-copyright-notice {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 1em;
+  margin-bottom: 1em;
+}
+/* general structure */
+p {
+  padding: 0;
+  margin: 0 0 1em 0;
+  text-align: left;
+}
+div, span {
+  position: relative;
+}
+div {
+  margin: 0;
+}
+.alignRight.art-text {
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 3px;
+  padding: 1em 1em 0;
+  margin-bottom: 1.5em;
+}
+.alignRight.art-text pre {
+  padding: 0;
+}
+.alignRight {
+  margin: 1em 0;
+}
+.alignRight > *:first-child {
+  border: none;
+  margin: 0;
+  float: right;
+  clear: both;
+}
+.alignRight > *:nth-child(2) {
+  clear: both;
+  display: block;
+  border: none;
+}
+svg {
+  display: block;
+}
+@media print {
+  svg {
+    max-height: 850px;
+    max-width: 660px;
+  }
+}
+svg[font-family~="serif" i], svg [font-family~="serif" i] {
+  font-family: var(--font-serif);
+}
+svg[font-family~="sans-serif" i], svg [font-family~="sans-serif" i] {
+  font-family: var(--font-sans);
+}
+svg[font-family~="monospace" i], svg [font-family~="monospace" i] {
+  font-family: var(--font-mono);
+}
+.alignCenter.art-text {
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 3px;
+  padding: 1em 1em 0;
+  margin-bottom: 1.5em;
+}
+.alignCenter.art-text pre {
+  padding: 0;
+}
+.alignCenter {
+  margin: 1em 0;
+}
+.alignCenter > *:first-child {
+  display: table;
+  border: none;
+  margin: 0 auto;
+}
+
+/* lists */
+ol, ul {
+  padding: 0;
+  margin: 0 0 1em 2em;
+}
+ol ol, ul ul, ol ul, ul ol {
+  margin-left: 1em;
+}
+li {
+  margin: 0 0 0.25em 0;
+}
+.ulCompact li {
+  margin: 0;
+}
+ul.empty, .ulEmpty {
+  list-style-type: none;
+}
+ul.empty li, .ulEmpty li {
+  margin-top: 0.5em;
+}
+ul.ulBare, li.ulBare {
+  margin-left: 0em !important;
+}
+ul.compact, .ulCompact,
+ol.compact, .olCompact {
+  line-height: 100%;
+  margin: 0 0 0 2em;
+}
+
+/* definition lists */
+dl {
+}
+dl > dt {
+  float: left;
+  margin-right: 1em;
+}
+/* 
+dl.nohang > dt {
+  float: none;
+}
+*/
+dl > dd {
+  margin-bottom: .8em;
+  min-height: 1.3em;
+}
+dl.compact > dd, .dlCompact > dd {
+  margin-bottom: 0em;
+}
+dl > dd > dl {
+  margin-top: 0.5em;
+  margin-bottom: 0em;
+}
+
+/* links */
+a {
+  text-decoration: none;
+}
+a[href] {
+  color: #22e; /* Arlen: WCAG 2019 */
+}
+a[href]:hover {
+  background-color: #f2f2f2;
+}
+figcaption a[href],
+a[href].selfRef {
+  color: #222;
+}
+/* XXX probably not this:
+a.selfRef:hover {
+  background-color: transparent;
+  cursor: default;
+} */
+
+/* Figures */
+tt, code, pre {
+  background-color: #f9f9f9;
+  font-family: var(--font-mono);
+}
+pre {
+  border: 1px solid #eee;
+  margin: 0;
+  padding: 1em;
+}
+img {
+  max-width: 100%;
+}
+figure {
+  margin: 0;
+}
+figure blockquote {
+  margin: 0.8em 0.4em 0.4em;
+}
+figcaption {
+  font-style: italic;
+  margin: 0 0 1em 0;
+}
+@media screen {
+  pre {
+    overflow-x: auto;
+    max-width: 100%;
+    max-width: calc(100% - 22px);
+  }
+}
+
+/* aside, blockquote */
+aside, blockquote {
+  margin-left: 0;
+  padding: 1.2em 2em;
+}
+blockquote {
+  background-color: #f9f9f9;
+  color: #111; /* Arlen: WCAG 2019 */
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  margin: 1em 0;
+}
+blockquote > *:last-child {
+  margin-bottom: 0;
+}
+cite {
+  display: block;
+  text-align: right;
+  font-style: italic;
+}
+.xref {
+  overflow-wrap: normal;
+}
+
+/* tables */
+table {
+  width: 100%;
+  margin: 0 0 1em;
+  border-collapse: collapse;
+  border: 1px solid #eee;
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.5em 0.75em;
+}
+th {
+  text-align: left;
+  background-color: #e9e9e9;
+}
+tr:nth-child(2n+1) > td {
+  background-color: #f5f5f5;
+}
+table caption {
+  font-style: italic;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+table p {
+  /* XXX to avoid bottom margin on table row signifiers. If paragraphs should
+     be allowed within tables more generally, it would be far better to select on a class. */
+  margin: 0;
+}
+
+/* pilcrow */
+a.pilcrow {
+  color: #666; /* Arlen: AHDJ 2019 */
+  text-decoration: none;
+  visibility: hidden;
+  user-select: none;
+  -ms-user-select: none;
+  -o-user-select:none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+@media screen {
+  aside:hover > a.pilcrow,
+  p:hover > a.pilcrow,
+  blockquote:hover > a.pilcrow,
+  div:hover > a.pilcrow,
+  li:hover > a.pilcrow,
+  pre:hover > a.pilcrow {
+    visibility: visible;
+  }
+  a.pilcrow:hover {
+    background-color: transparent;
+  }
+}
+
+/* misc */
+hr {
+  border: 0;
+  border-top: 1px solid #eee;
+}
+.bcp14 {
+  font-variant: small-caps;
+}
+
+.role {
+  font-variant: all-small-caps;
+}
+
+/* info block */
+#identifiers {
+  margin: 0;
+  font-size: 0.9em;
+}
+#identifiers dt {
+  width: 3em;
+  clear: left;
+}
+#identifiers dd {
+  float: left;
+  margin-bottom: 0;
+}
+/* Fix PDF info block run off issue */
+@media print {
+  #identifiers dd {
+    max-width: 100%;
+  }
+}
+#identifiers .authors .author {
+  display: inline-block;
+  margin-right: 1.5em;
+}
+#identifiers .authors .org {
+  font-style: italic;
+}
+
+/* The prepared/rendered info at the very bottom of the page */
+.docInfo {
+  color: #666; /* Arlen: WCAG 2019 */
+  font-size: 0.9em;
+  font-style: italic;
+  margin-top: 2em;
+}
+.docInfo .prepared {
+  float: left;
+}
+.docInfo .prepared {
+  float: right;
+}
+
+/* table of contents */
+#toc  {
+  padding: 0.75em 0 2em 0;
+  margin-bottom: 1em;
+}
+nav.toc ul {
+  margin: 0 0.5em 0 0;
+  padding: 0;
+  list-style: none;
+}
+nav.toc li {
+  line-height: 1.3em;
+  margin: 0.75em 0;
+  padding-left: 1.2em;
+  text-indent: -1.2em;
+}
+/* references */
+.references dt {
+  text-align: right;
+  font-weight: bold;
+  min-width: 7em;
+}
+.references dd {
+  margin-left: 8em;
+  overflow: auto;
+}
+
+.refInstance {
+  margin-bottom: 1.25em;
+}
+
+.refSubseries {
+  margin-bottom: 1.25em;
+}
+
+.references .ascii {
+  margin-bottom: 0.25em;
+}
+
+/* index */
+.index ul {
+  margin: 0 0 0 1em;
+  padding: 0;
+  list-style: none;
+}
+.index ul ul {
+  margin: 0;
+}
+.index li {
+  margin: 0;
+  text-indent: -2em;
+  padding-left: 2em;
+  padding-bottom: 5px;
+}
+.indexIndex {
+  margin: 0.5em 0 1em;
+}
+.index a {
+  font-weight: 700;
+}
+/* make the index two-column on all but the smallest screens */
+@media (min-width: 600px) {
+  .index ul {
+    -moz-column-count: 2;
+    -moz-column-gap: 20px;
+  }
+  .index ul ul {
+    -moz-column-count: 1;
+    -moz-column-gap: 0;
+  }
+}
+
+/* authors */
+address.vcard {
+  font-style: normal;
+  margin: 1em 0;
+}
+
+address.vcard .nameRole {
+  font-weight: 700;
+  margin-left: 0;
+}
+address.vcard .label {
+  font-family: var(--font-sans);
+  margin: 0.5em 0;
+}
+address.vcard .type {
+  display: none;
+}
+.alternative-contact {
+  margin: 1.5em 0 1em;
+}
+hr.addr {
+  border-top: 1px dashed;
+  margin: 0;
+  color: #ddd;
+  max-width: calc(100% - 16px);
+}
+
+/* temporary notes */
+.rfcEditorRemove::before {
+  position: absolute;
+  top: 0.2em;
+  right: 0.2em;
+  padding: 0.2em;
+  content: "The RFC Editor will remove this note";
+  color: #9e2a00; /* Arlen: WCAG 2019 */
+  background-color: #ffd; /* Arlen: WCAG 2019 */
+}
+.rfcEditorRemove {
+  position: relative;
+  padding-top: 1.8em;
+  background-color: #ffd; /* Arlen: WCAG 2019 */
+  border-radius: 3px;
+}
+.cref {
+  background-color: #ffd; /* Arlen: WCAG 2019 */
+  padding: 2px 4px;
+}
+.crefSource {
+  font-style: italic;
+}
+/* alternative layout for smaller screens */
+@media screen and (max-width: 1023px) {
+  body {
+    padding-top: 2em;
+  }
+  #title {
+    padding: 1em 0;
+  }
+  h1 {
+    font-size: 24px;
+  }
+  h2 {
+    font-size: 20px;
+    margin-top: -18px;  /* provide offset for in-page anchors */
+    padding-top: 38px;
+  }
+  #identifiers dd {
+    max-width: 60%;
+  }
+  #toc {
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    padding: 0;
+    margin: 0;
+    background-color: inherit;
+    border-bottom: 1px solid #ccc;
+  }
+  #toc h2 {
+    margin: -1px 0 0 0;
+    padding: 4px 0 4px 6px;
+    padding-right: 1em;
+    min-width: 190px;
+    font-size: 1.1em;
+    text-align: right;
+    background-color: #444;
+    color: white;
+    cursor: pointer;
+  }
+  #toc h2::before { /* css hamburger */
+    float: right;
+    position: relative;
+    width: 1em;
+    height: 1px;
+    left: -164px;
+    margin: 6px 0 0 0;
+    background: white none repeat scroll 0 0;
+    box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
+    content: "";
+  }
+  #toc nav {
+    display: none;
+    padding: 0.5em 1em 1em;
+    overflow: auto;
+    height: calc(100vh - 48px);
+    border-left: 1px solid #ddd;
+  }
+}
+
+/* alternative layout for wide screens */
+@media screen and (min-width: 1024px) {
+  body {
+    max-width: 724px;
+    margin: 42px auto;
+    padding-left: 1.5em;
+    padding-right: 29em;
+  }
+  #toc {
+    position: fixed;
+    top: 42px;
+    right: 42px;
+    width: 25%;
+    margin: 0;
+    padding: 0 1em;
+    z-index: 1;
+  }
+  #toc h2 {
+    border-top: none;
+    border-bottom: 1px solid #ddd;
+    font-size: 1em;
+    font-weight: normal;
+    margin: 0;
+    padding: 0.25em 1em 1em 0;
+  }
+  #toc nav {
+    display: block;
+    height: calc(90vh - 84px);
+    bottom: 0;
+    padding: 0.5em 0 0;
+    overflow: auto;
+  }
+  img { /* future proofing */
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* pagination */
+@media print {
+  body {
+    width: 100%;
+  }
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+  #n-copyright-notice {
+    border-bottom: none;
+  }
+  #toc, #n-introduction {
+    page-break-before: always;
+  }
+  #toc {
+    border-top: none;
+    padding-top: 0;
+  }
+  figure, pre {
+    page-break-inside: avoid;
+  }
+  figure {
+    overflow: scroll;
+  }
+  .breakable pre {
+    break-inside: auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  h2+*, h3+*, h4+*, h5+*, h6+* {
+    page-break-before: avoid;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 10pt;
+  }
+  table {
+    border: 1px solid #ddd;
+  }
+  td {
+    border-top: 1px solid #ddd;
+  }
+}
+
+/* This is commented out here, as the string-set: doesn't
+   pass W3C validation currently */
+/*
+.ears thead .left {
+  string-set: ears-top-left content();
+}
+
+.ears thead .center {
+  string-set: ears-top-center content();
+}
+
+.ears thead .right {
+  string-set: ears-top-right content();
+}
+
+.ears tfoot .left {
+  string-set: ears-bottom-left content();
+}
+
+.ears tfoot .center {
+  string-set: ears-bottom-center content();
+}
+
+.ears tfoot .right {
+  string-set: ears-bottom-right content();
+}
+*/
+
+@page :first {
+  padding-top: 0;
+  @top-left {
+    content: normal;
+    border: none;
+  }
+  @top-center {
+    content: normal;
+    border: none;
+  }
+  @top-right {
+    content: normal;
+    border: none;
+  }
+}
+
+@page {
+  size: A4;
+  margin-bottom: 45mm;
+  padding-top: 20px;
+  /* The following is commented out here, but set appropriately by in code, as
+     the content depends on the document */
+  /*
+  @top-left {
+    content: 'Internet-Draft';
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @top-left {
+    content: string(ears-top-left);
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @top-center {
+    content: string(ears-top-center);
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @top-right {
+    content: string(ears-top-right);
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @bottom-left {
+    content: string(ears-bottom-left);
+    vertical-align: top;
+    border-top: solid 1px #ccc;
+  }
+  @bottom-center {
+    content: string(ears-bottom-center);
+    vertical-align: top;
+    border-top: solid 1px #ccc;
+  }
+  @bottom-right {
+      content: '[Page ' counter(page) ']';
+      vertical-align: top;
+      border-top: solid 1px #ccc;
+  }
+  */
+
+}
+
+/* Changes introduced to fix issues found during implementation */
+/* Make sure links are clickable even if overlapped by following H* */
+a {
+  z-index: 2;
+}
+/* Separate body from document info even without intervening H1 */
+section {
+  clear: both;
+}
+
+
+/* Top align author divs, to avoid names without organization dropping level with org names */
+.author {
+  vertical-align: top;
+}
+
+/* Leave room in document info to show Internet-Draft on one line */
+#identifiers dt {
+  width: 8em;
+}
+
+/* Don't waste quite as much whitespace between label and value in doc info */
+#identifiers dd {
+  margin-left: 1em;
+}
+
+/* Give floating toc a background color (needed when it's a div inside section */
+#toc {
+  background-color: white;
+}
+
+/* Make the collapsed ToC header render white on gray also when it's a link */
+@media screen and (max-width: 1023px) {
+  #toc h2 a,
+  #toc h2 a:link,
+  #toc h2 a:focus,
+  #toc h2 a:hover,
+  #toc a.toplink,
+  #toc a.toplink:hover {
+    color: white;
+    background-color: #444;
+    text-decoration: none;
+  }
+}
+
+/* Give the bottom of the ToC some whitespace */
+@media screen and (min-width: 1024px) {
+  #toc {
+    padding: 0 0 1em 1em;
+  }
+}
+
+/* Style section numbers with more space between number and title */
+.section-number {
+  padding-right: 0.5em;
+}
+
+/* prevent monospace from becoming overly large */
+tt, code, pre {
+  font-size: 95%;
+}
+
+/* Fix the height/width aspect for ascii art*/
+.sourcecode pre,
+.art-text pre {
+  line-height: 1.12;
+}
+
+
+/* Add styling for a link in the ToC that points to the top of the document */
+a.toplink {
+  float: right;
+  margin-right: 0.5em;
+}
+
+/* Fix the dl styling to match the RFC 7992 attributes */
+dl > dt,
+dl.dlParallel > dt {
+  float: left;
+  margin-right: 1em;
+}
+dl.dlNewline > dt {
+  float: none;
+}
+
+/* Provide styling for table cell text alignment */
+table td.text-left,
+table th.text-left {
+  text-align: left;
+}
+table td.text-center,
+table th.text-center {
+  text-align: center;
+}
+table td.text-right,
+table th.text-right {
+  text-align: right;
+}
+
+/* Make the alternative author contact information look less like just another
+   author, and group it closer with the primary author contact information */
+.alternative-contact {
+  margin: 0.5em 0 0.25em 0;
+}
+address .non-ascii {
+  margin: 0 0 0 2em;
+}
+
+/* With it being possible to set tables with alignment
+  left, center, and right, { width: 100%; } does not make sense */
+table {
+  width: auto;
+}
+
+/* Avoid reference text that sits in a block with very wide left margin,
+   because of a long floating dt label.*/
+.references dd {
+  overflow: visible;
+}
+
+/* Control caption placement */
+caption {
+  caption-side: bottom;
+}
+
+/* Limit the width of the author address vcard, so names in right-to-left
+   script don't end up on the other side of the page. */
+
+address.vcard {
+  max-width: 30em;
+  margin-right: auto;
+}
+
+/* For address alignment dependent on LTR or RTL scripts */
+address div.left {
+  text-align: left;
+}
+address div.right {
+  text-align: right;
+}
+
+/* Provide table alignment support.  We can't use the alignX classes above
+   since they do unwanted things with caption and other styling. */
+table.right {
+ margin-left: auto;
+ margin-right: 0;
+}
+table.center {
+ margin-left: auto;
+ margin-right: auto;
+}
+table.left {
+ margin-left: 0;
+ margin-right: auto;
+}
+
+/* Give the table caption label the same styling as the figcaption */
+caption a[href] {
+  color: #222;
+}
+
+@media print {
+  .toplink {
+    display: none;
+  }
+
+  /* avoid overwriting the top border line with the ToC header */
+  #toc {
+    padding-top: 1px;
+  }
+
+  /* Avoid page breaks inside dl and author address entries */
+  .vcard {
+    page-break-inside: avoid;
+  }
+
+}
+/* Tweak the bcp14 keyword presentation */
+.bcp14 {
+  font-variant: small-caps;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+/* Tweak the invisible space above H* in order not to overlay links in text above */
+ h2 {
+  margin-top: -18px;  /* provide offset for in-page anchors */
+  padding-top: 31px;
+ }
+ h3 {
+  margin-top: -18px;  /* provide offset for in-page anchors */
+  padding-top: 24px;
+ }
+ h4 {
+  margin-top: -18px;  /* provide offset for in-page anchors */
+  padding-top: 24px;
+ }
+/* Float artwork pilcrow to the right */
+@media screen {
+  .artwork a.pilcrow {
+    display: block;
+    line-height: 0.7;
+    margin-top: 0.15em;
+  }
+}
+/* Make pilcrows on dd visible */
+@media screen {
+  dd:hover > a.pilcrow {
+    visibility: visible;
+  }
+}
+/* Make the placement of figcaption match that of a table's caption
+   by removing the figure's added bottom margin */
+.alignLeft.art-text,
+.alignCenter.art-text,
+.alignRight.art-text {
+   margin-bottom: 0;
+}
+.alignLeft,
+.alignCenter,
+.alignRight {
+  margin: 1em 0 0 0;
+}
+/* In print, the pilcrow won't show on hover, so prevent it from taking up space,
+   possibly even requiring a new line */
+@media print {
+  a.pilcrow {
+    display: none;
+  }
+}
+/* Styling for the external metadata */
+div#external-metadata {
+  background-color: #eee;
+  padding: 0.5em;
+  margin-bottom: 0.5em;
+  display: none;
+}
+div#internal-metadata {
+  padding: 0.5em;                       /* to match the external-metadata padding */
+}
+/* Styling for title RFC Number */
+h1#rfcnum {
+  clear: both;
+  margin: 0 0 -1em;
+  padding: 1em 0 0 0;
+}
+/* Make .olPercent look the same as <ol><li> */
+dl.olPercent > dd {
+  margin-bottom: 0.25em;
+  min-height: initial;
+}
+/* Give aside some styling to set it apart */
+aside {
+  border-left: 1px solid #ddd;
+  margin: 1em 0 1em 2em;
+  padding: 0.2em 2em;
+}
+aside > dl,
+aside > ol,
+aside > ul,
+aside > table,
+aside > p {
+  margin-bottom: 0.5em;
+}
+/* Additional page break settings */
+@media print {
+  figcaption, table caption {
+    page-break-before: avoid;
+  }
+}
+/* Font size adjustments for print */
+@media print {
+  body  { font-size: 10pt;      line-height: normal; max-width: 96%; }
+  h1    { font-size: 1.72em;    padding-top: 1.5em; } /* 1*1.2*1.2*1.2 */
+  h2    { font-size: 1.44em;    padding-top: 1.5em; } /* 1*1.2*1.2 */
+  h3    { font-size: 1.2em;     padding-top: 1.5em; } /* 1*1.2 */
+  h4    { font-size: 1em;       padding-top: 1.5em; }
+  h5, h6 { font-size: 1em;      margin: initial; padding: 0.5em 0 0.3em; }
+}
+/* Sourcecode margin in print, when there's no pilcrow */
+@media print {
+  .artwork,
+  .artwork > pre,
+  .sourcecode {
+    margin-bottom: 1em;
+  }
+}
+/* Avoid narrow tables forcing too narrow table captions, which may render badly */
+table {
+  min-width: 20em;
+}
+/* ol type a */
+ol.type-a { list-style-type: lower-alpha; }
+ol.type-A { list-style-type: upper-alpha; }
+ol.type-i { list-style-type: lower-roman; }
+ol.type-I { list-style-type: upper-roman; }
+/* Apply the print table and row borders in general, on request from the RPC,
+and increase the contrast between border and odd row background slightly */
+table {
+  border: 1px solid #ddd;
+}
+td {
+  border-top: 1px solid #ddd;
+}
+tr {
+  break-inside: avoid;
+}
+tr:nth-child(2n+1) > td {
+  background-color: #f8f8f8;
+}
+/* Use style rules to govern display of the TOC. */
+@media screen and (max-width: 1023px) {
+  #toc nav { display: none; }
+  #toc.active nav { display: block; }
+}
+/* Add support for keepWithNext */
+.keepWithNext {
+  break-after: avoid-page;
+  break-after: avoid-page;
+}
+/* Add support for keepWithPrevious */
+.keepWithPrevious {
+  break-before: avoid-page;
+}
+/* Change the approach to avoiding breaks inside artwork etc. */
+figure, pre, table, .artwork, .sourcecode  {
+  break-before: auto;
+  break-after: auto;
+}
+/* Avoid breaks between <dt> and <dd> */
+dl {
+  break-before: auto;
+  break-inside: auto;
+}
+dt {
+  break-before: auto;
+  break-after: avoid-page;
+}
+dd {
+  break-before: avoid-page;
+  break-after: auto;
+  orphans: 3;
+  widows: 3
+}
+span.break, dd.break {
+  margin-bottom: 0;
+  min-height: 0;
+  break-before: auto;
+  break-inside: auto;
+  break-after: auto;
+}
+/* Undo break-before ToC */
+@media print {
+  #toc {
+    break-before: auto;
+  }
+}
+/* Text in compact lists should not get extra bottom margin space,
+   since that would makes the list not compact */
+ul.compact p, .ulCompact p,
+ol.compact p, .olCompact p {
+ margin: 0;
+}
+/* But the list as a whole needs the extra space at the end */
+section ul.compact,
+section .ulCompact,
+section ol.compact,
+section .olCompact {
+  margin-bottom: 1em;                    /* same as p not within ul.compact etc. */
+}
+/* The tt and code background above interferes with for instance table cell
+   backgrounds.  Changed to something a bit more selective. */
+tt, code {
+  background-color: transparent;
+}
+p tt, p code, li tt, li code, dt tt, dt code {
+  background-color: #f8f8f8;
+}
+/* Tweak the pre margin -- 0px doesn't come out well */
+pre {
+   margin-top: 0.5px;
+}
+/* Tweak the compact list text */
+ul.compact, .ulCompact,
+ol.compact, .olCompact,
+dl.compact, .dlCompact {
+  line-height: normal;
+}
+/* Don't add top margin for nested lists */
+li > ul, li > ol, li > dl,
+dd > ul, dd > ol, dd > dl,
+dl > dd > dl {
+  margin-top: initial;
+}
+/* Elements that should not be rendered on the same line as a <dt> */
+/* This should match the element list in writer.text.TextWriter.render_dl() */
+dd > div.artwork:first-child,
+dd > aside:first-child,
+dd > blockquote:first-child,
+dd > figure:first-child,
+dd > ol:first-child,
+dd > div.sourcecode:first-child,
+dd > table:first-child,
+dd > ul:first-child {
+  clear: left;
+}
+/* fix for weird browser behaviour when <dd/> is empty */
+dt+dd:empty::before{
+  content: "\00a0";
+}
+/* Make paragraph spacing inside <li> smaller than in body text, to fit better within the list */
+li > p {
+  margin-bottom: 0.5em
+}
+/* Don't let p margin spill out from inside list items */
+li > p:last-of-type:only-child {
+  margin-bottom: 0;
+}
+</style>
+<link href="rfc-local.css" rel="stylesheet" type="text/css">
+<script type="application/javascript">async function addMetadata(){try{const e=document.styleSheets[0].cssRules;for(let t=0;t<e.length;t++)if(/#identifiers/.exec(e[t].selectorText)){const a=e[t].cssText.replace("#identifiers","#external-updates");document.styleSheets[0].insertRule(a,document.styleSheets[0].cssRules.length)}}catch(e){console.log(e)}const e=document.getElementById("external-metadata");if(e)try{var t,a="",o=function(e){const t=document.getElementsByTagName("meta");for(let a=0;a<t.length;a++)if(t[a].getAttribute("name")===e)return t[a].getAttribute("content");return""}("rfc.number");if(o){t="https://www.rfc-editor.org/rfc/rfc"+o+".json";try{const e=await fetch(t);a=await e.json()}catch(e){t=document.URL.indexOf("html")>=0?document.URL.replace(/html$/,"json"):document.URL+".json";const o=await fetch(t);a=await o.json()}}if(!a)return;e.style.display="block";const s="",d="https://datatracker.ietf.org/doc",n="https://datatracker.ietf.org/ipr/search",c="https://www.rfc-editor.org/info",l=a.doc_id.toLowerCase(),i=a.doc_id.slice(0,3).toLowerCase(),f=a.doc_id.slice(3).replace(/^0+/,""),u={status:"Status",obsoletes:"Obsoletes",obsoleted_by:"Obsoleted By",updates:"Updates",updated_by:"Updated By",see_also:"See Also",errata_url:"Errata"};let h="<dl style='overflow:hidden' id='external-updates'>";["status","obsoletes","obsoleted_by","updates","updated_by","see_also","errata_url"].forEach(e=>{if("status"==e){a[e]=a[e].toLowerCase();var t=a[e].split(" "),o=t.length,w="",p=1;for(let e=0;e<o;e++)p<o?w=w+r(t[e])+" ":w+=r(t[e]),p++;a[e]=w}else if("obsoletes"==e||"obsoleted_by"==e||"updates"==e||"updated_by"==e){var g,m="",b=1;g=a[e].length;for(let t=0;t<g;t++)a[e][t]&&(a[e][t]=String(a[e][t]).toLowerCase(),m=b<g?m+"<a href='"+s+"/rfc/".concat(a[e][t])+"'>"+a[e][t].slice(3)+"</a>, ":m+"<a href='"+s+"/rfc/".concat(a[e][t])+"'>"+a[e][t].slice(3)+"</a>",b++);a[e]=m}else if("see_also"==e){var y,L="",C=1;y=a[e].length;for(let t=0;t<y;t++)if(a[e][t]){a[e][t]=String(a[e][t]);var _=a[e][t].slice(0,3),v=a[e][t].slice(3).replace(/^0+/,"");L=C<y?"RFC"!=_?L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+_+" "+v+"</a>, ":L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+v+"</a>, ":"RFC"!=_?L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+_+" "+v+"</a>":L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+v+"</a>",C++}a[e]=L}else if("errata_url"==e){var R="";R=a[e]?R+"<a href='"+a[e]+"'>Errata exist</a> | <a href='"+d+"/"+l+"'>Datatracker</a>| <a href='"+n+"/?"+i+"="+f+"&submit="+i+"'>IPR</a> | <a href='"+c+"/"+l+"'>Info page</a>":"<a href='"+d+"/"+l+"'>Datatracker</a> | <a href='"+n+"/?"+i+"="+f+"&submit="+i+"'>IPR</a> | <a href='"+c+"/"+l+"'>Info page</a>",a[e]=R}""!=a[e]?"Errata"==u[e]?h+=`<dt>More info:</dt><dd>${a[e]}</dd>`:h+=`<dt>${u[e]}:</dt><dd>${a[e]}</dd>`:"Errata"==u[e]&&(h+=`<dt>More info:</dt><dd>${a[e]}</dd>`)}),h+="</dl>",e.innerHTML=h}catch(e){console.log(e)}else console.log("Could not locate metadata <div> element");function r(e){return e.charAt(0).toUpperCase()+e.slice(1)}}window.removeEventListener("load",addMetadata),window.addEventListener("load",addMetadata);</script>
+</head>
+<body class="xml2rfc">
+<table class="ears">
+<thead><tr>
+<td class="left">Internet-Draft</td>
+<td class="center">prompt URI Scheme</td>
+<td class="right">July 2026</td>
+</tr></thead>
+<tfoot><tr>
+<td class="left">Boone</td>
+<td class="center">Expires 20 January 2027</td>
+<td class="right">[Page]</td>
+</tr></tfoot>
+</table>
+<div id="external-metadata" class="document-information"></div>
+<div id="internal-metadata" class="document-information">
+<dl id="identifiers">
+<dt class="label-workgroup">Workgroup:</dt>
+<dd class="workgroup">agentproto</dd>
+<dt class="label-internet-draft">Internet-Draft:</dt>
+<dd class="internet-draft">draft-boone-prompt-uri-scheme-00</dd>
+<dt class="label-published">Published:</dt>
+<dd class="published">
+<time datetime="2026-07-19" class="published">19 July 2026</time>
+    </dd>
+<dt class="label-intended-status">Intended Status:</dt>
+<dd class="intended-status">Informational</dd>
+<dt class="label-expires">Expires:</dt>
+<dd class="expires"><time datetime="2027-01-20">20 January 2027</time></dd>
+<dt class="label-authors">Author:</dt>
+<dd class="authors">
+<div class="author">
+      <div class="author-name">K. Boone</div>
+<div class="org">Audacious Inquiry</div>
+</div>
+</dd>
+</dl>
+</div>
+<h1 id="title">The 'prompt' URI Scheme for AI Agent Sessions and Prompts</h1>
+<section id="section-abstract">
+      <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
+<p id="section-abstract-1">This document defines the <code>prompt</code> Uniform Resource Identifier (URI) scheme for
+      identifying prompts within AI agent sessions.  A prompt URI encodes the agent
+      identity, session identifier, and a timestamp sufficient to locate the originating
+      prompt within an agent session log.  The scheme is intended for use in provenance
+      records, audit trails, and cross-agent references where a human-readable, stable
+      locator for a prompt interaction is required.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-2">This document also addresses the conditions under which multiple URIs <span class="bcp14">MAY</span> resolve
+      to the same prompt and the conditions under which a single URI <span class="bcp14">MAY</span> be ambiguous
+      with respect to the prompt it identifies.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
+</section>
+<div id="status-of-memo">
+<section id="section-boilerplate.1">
+        <h2 id="name-status-of-this-memo">
+<a href="#name-status-of-this-memo" class="section-name selfRef">Status of This Memo</a>
+        </h2>
+<p id="section-boilerplate.1-1">
+        This Internet-Draft is submitted in full conformance with the
+        provisions of BCP 78 and BCP 79.<a href="#section-boilerplate.1-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-2">
+        Internet-Drafts are working documents of the Internet Engineering Task
+        Force (IETF). Note that other groups may also distribute working
+        documents as Internet-Drafts. The list of current Internet-Drafts is
+        at <span><a href="https://datatracker.ietf.org/drafts/current/">https://datatracker.ietf.org/drafts/current/</a></span>.<a href="#section-boilerplate.1-2" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-3">
+        Internet-Drafts are draft documents valid for a maximum of six months
+        and may be updated, replaced, or obsoleted by other documents at any
+        time. It is inappropriate to use Internet-Drafts as reference
+        material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-4">
+        This Internet-Draft will expire on 20 January 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="copyright">
+<section id="section-boilerplate.2">
+        <h2 id="name-copyright-notice">
+<a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
+        </h2>
+<p id="section-boilerplate.2-1">
+            Copyright (c) 2026 IETF Trust and the persons identified as the
+            document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<span><a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a></span>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document.<a href="#section-boilerplate.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="toc">
+<section id="section-toc.1">
+        <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents">
+<a href="#name-table-of-contents" class="section-name selfRef">Table of Contents</a>
+        </h2>
+<nav class="toc"><ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
+            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-terminology" class="internal xref">Terminology</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-uri-syntax" class="internal xref">URI Syntax</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
+                <p id="section-toc.1-1.3.2.1.1" class="keepWithNext"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-scheme-name" class="internal xref">Scheme Name</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
+                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-authority-component" class="internal xref">Authority Component</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3">
+                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-path-component" class="internal xref">Path Component</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.4">
+                <p id="section-toc.1-1.3.2.4.1"><a href="#section-3.4" class="auto internal xref">3.4</a>.  <a href="#name-query-and-fragment-componen" class="internal xref">Query and Fragment Components</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.5">
+                <p id="section-toc.1-1.3.2.5.1"><a href="#section-3.5" class="auto internal xref">3.5</a>.  <a href="#name-complete-abnf" class="internal xref">Complete ABNF</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-uri-components-and-semantic" class="internal xref">URI Components and Semantics</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-agent-name" class="internal xref">Agent Name</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
+                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-session-identifier" class="internal xref">Session Identifier</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3">
+                <p id="section-toc.1-1.4.2.3.1"><a href="#section-4.3" class="auto internal xref">4.3</a>.  <a href="#name-timestamp" class="internal xref">Timestamp</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4">
+                <p id="section-toc.1-1.4.2.4.1"><a href="#section-4.4" class="auto internal xref">4.4</a>.  <a href="#name-session-aliases" class="internal xref">Session Aliases</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.5">
+                <p id="section-toc.1-1.4.2.5.1"><a href="#section-4.5" class="auto internal xref">4.5</a>.  <a href="#name-canonical-prompt-uri" class="internal xref">Canonical Prompt URI</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-normalization-and-compariso" class="internal xref">Normalization and Comparison</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-resolution" class="internal xref">Resolution</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
+                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-resolution-algorithm" class="internal xref">Resolution Algorithm</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
+                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-alias-resolution" class="internal xref">Alias Resolution</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.3">
+                <p id="section-toc.1-1.6.2.3.1"><a href="#section-6.3" class="auto internal xref">6.3</a>.  <a href="#name-unresolvable-uris" class="internal xref">Unresolvable URIs</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-ambiguity-multiple-uris-for" class="internal xref">Ambiguity: Multiple URIs for One Prompt</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-ambiguity-one-uri-for-multi" class="internal xref">Ambiguity: One URI for Multiple Prompts</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.1">
+                <p id="section-toc.1-1.8.2.1.1"><a href="#section-8.1" class="auto internal xref">8.1</a>.  <a href="#name-mitigation" class="internal xref">Mitigation</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.2">
+                <p id="section-toc.1-1.8.2.2.1"><a href="#section-8.2" class="auto internal xref">8.2</a>.  <a href="#name-disclosure-requirement" class="internal xref">Disclosure Requirement</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
+            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
+            <p id="section-toc.1-1.11.1"><a href="#section-11" class="auto internal xref">11</a>. <a href="#name-references" class="internal xref">References</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.1">
+                <p id="section-toc.1-1.11.2.1.1"><a href="#section-11.1" class="auto internal xref">11.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.2">
+                <p id="section-toc.1-1.11.2.2.1"><a href="#section-11.2" class="auto internal xref">11.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
+            <p id="section-toc.1-1.12.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
+</li>
+        </ul>
+</nav>
+</section>
+</div>
+<div id="intro">
+<section id="section-1">
+      <h2 id="name-introduction">
+<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
+      </h2>
+<p id="section-1-1">AI agent systems produce interactions — prompts from users, tool calls by agents,
+      responses, and observations — that generate artifacts (files, analyses, transformed
+      documents) whose provenance is difficult to trace after the fact.  Existing identifier
+      schemes are insufficient for this use case:<a href="#section-1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1-2.1">A session identifier alone does not distinguish which prompt within a session
+        produced a given artifact.<a href="#section-1-2.1" class="pilcrow">¶</a>
+</li>
+        <li class="normal" id="section-1-2.2">A wall-clock timestamp alone does not identify the agent or session.<a href="#section-1-2.2" class="pilcrow">¶</a>
+</li>
+        <li class="normal" id="section-1-2.3">An agent-internal correlation identifier (such as a <code>promptId</code> or <code>interactionId</code>)
+        is not exposed to callers of agent tools at call time.<a href="#section-1-2.3" class="pilcrow">¶</a>
+</li>
+      </ul>
+<p id="section-1-3">The <code>prompt</code> URI scheme addresses this gap by providing a stable, human-readable
+      identifier that encodes the three pieces of information consistently available to
+      any tool executing within an agent session: the agent identity, the session
+      identifier, and the approximate call time.<a href="#section-1-3" class="pilcrow">¶</a></p>
+<p id="section-1-4">The resulting URI is suitable for embedding in file provenance metadata, log
+      cross-references, and audit records.  It is NOT a globally unique identifier in
+      the strict sense; see <a href="#ambiguity-multiple-uris" class="auto internal xref">Section 7</a> and
+      <a href="#ambiguity-one-uri" class="auto internal xref">Section 8</a> for a full treatment of ambiguity.<a href="#section-1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="terminology">
+<section id="section-2">
+      <h2 id="name-terminology">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-terminology" class="section-name selfRef">Terminology</a>
+      </h2>
+<p id="section-2-1">The key words "<span class="bcp14">MUST</span>", "<span class="bcp14">MUST NOT</span>", "<span class="bcp14">REQUIRED</span>",
+      "<span class="bcp14">SHALL</span>", "<span class="bcp14">SHALL NOT</span>", "<span class="bcp14">SHOULD</span>",
+      "<span class="bcp14">SHOULD NOT</span>", "<span class="bcp14">RECOMMENDED</span>", "<span class="bcp14">NOT RECOMMENDED</span>",
+      "<span class="bcp14">MAY</span>", and "<span class="bcp14">OPTIONAL</span>" in this document are to be interpreted as
+      described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when,
+      they appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶</a></p>
+<p id="section-2-2">The following terms are used throughout this document:<a href="#section-2-2" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlNewline" id="section-2-3">
+        <dt id="section-2-3.1">Agent:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-3.2">A software system that processes user prompts, invokes tools, and
+        produces responses.  Examples include Claude Code, GitHub Copilot, and similar
+        AI-assisted development tools.<a href="#section-2-3.2" class="pilcrow">¶</a>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-2-3.3">Session:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-3.4">A bounded interaction context shared between a user and an agent,
+        identified by a session identifier assigned at session initiation.<a href="#section-2-3.4" class="pilcrow">¶</a>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-2-3.5">Prompt:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-3.6">A single user message that initiates one or more agent actions within
+        a session.<a href="#section-2-3.6" class="pilcrow">¶</a>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-2-3.7">Session log:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-3.8">A persistent record maintained by the agent of all interactions
+        within a session, including prompts, tool calls, and responses, together with
+        timestamps and internal correlation identifiers.<a href="#section-2-3.8" class="pilcrow">¶</a>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-2-3.9">Tool call:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-3.10">An invocation of an external capability (such as a file write
+        operation) by the agent in response to a prompt.  The Model Context Protocol
+        <span>[<a href="#MCP" class="cite xref">MCP</a>]</span> is one standardized mechanism by which agents invoke such
+        capabilities.<a href="#section-2-3.10" class="pilcrow">¶</a>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-2-3.11">Provenance record:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-3.12">Metadata attached to an artifact describing its origin, including the
+        agent, session, and prompt responsible for its creation.<a href="#section-2-3.12" class="pilcrow">¶</a>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-2-3.13">Prompt URI:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-3.14">A URI conforming to this specification that identifies a prompt
+        within a specific agent session.<a href="#section-2-3.14" class="pilcrow">¶</a>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-2-3.15">Session alias:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-3.16">A human-readable string registered by the user or agent as an
+        alternative identifier for a session, usable in place of the session identifier
+        in a prompt URI.  An alias is scoped to a single agent and <span class="bcp14">MUST</span> be unique
+        within that agent's alias registry.<a href="#section-2-3.16" class="pilcrow">¶</a>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-2-3.17">Alias registry:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-3.18">A local store, maintained by an implementation, that maps registered
+        session aliases to their corresponding session identifiers.<a href="#section-2-3.18" class="pilcrow">¶</a>
+</dd>
+      <dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="syntax">
+<section id="section-3">
+      <h2 id="name-uri-syntax">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-uri-syntax" class="section-name selfRef">URI Syntax</a>
+      </h2>
+<div id="scheme-name">
+<section id="section-3.1">
+        <h3 id="name-scheme-name">
+<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-scheme-name" class="section-name selfRef">Scheme Name</a>
+        </h3>
+<p id="section-3.1-1">The scheme name is <code>prompt</code>.  It <span class="bcp14">SHALL</span> be written in lowercase in all generated
+        URIs.  Implementations processing incoming URIs <span class="bcp14">SHOULD</span> treat the scheme name as
+        case-insensitive per <span>[<a href="#RFC3986" class="cite xref">RFC3986</a>]</span> Section 6.2.2.1.<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="authority">
+<section id="section-3.2">
+        <h3 id="name-authority-component">
+<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-authority-component" class="section-name selfRef">Authority Component</a>
+        </h3>
+<p id="section-3.2-1">The authority component of a prompt URI identifies the agent that generated the
+        URI.  It consists solely of the agent name; no userinfo or port subcomponents are
+        defined.  The authority <span class="bcp14">MUST</span> be present and <span class="bcp14">MUST NOT</span> be empty.<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="path">
+<section id="section-3.3">
+        <h3 id="name-path-component">
+<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-path-component" class="section-name selfRef">Path Component</a>
+        </h3>
+<p id="section-3.3-1">The path component <span class="bcp14">SHALL</span> consist of exactly two segments separated by a slash:<a href="#section-3.3-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-3.3-2">
+          <li id="section-3.3-2.1">A session reference — either a session identifier
+          (<a href="#session-id-comp" class="auto internal xref">Section 4.2</a>) or a registered session alias
+          (<a href="#session-aliases" class="auto internal xref">Section 4.4</a>).<a href="#section-3.3-2.1" class="pilcrow">¶</a>
+</li>
+          <li id="section-3.3-2.2">The prompt reference — either a timestamp or a prompt identifier
+          (<a href="#canonical-uri" class="auto internal xref">Section 4.5</a>).<a href="#section-3.3-2.2" class="pilcrow">¶</a>
+</li>
+        </ol>
+<p id="section-3.3-3">The path <span class="bcp14">MUST</span> begin with a slash.  Both segments <span class="bcp14">MUST NOT</span> be empty.<a href="#section-3.3-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="query-fragment">
+<section id="section-3.4">
+        <h3 id="name-query-and-fragment-componen">
+<a href="#section-3.4" class="section-number selfRef">3.4. </a><a href="#name-query-and-fragment-componen" class="section-name selfRef">Query and Fragment Components</a>
+        </h3>
+<p id="section-3.4-1">This specification does not define semantics for query (<code>?</code>) or fragment
+        (<code>#</code>) components.  Implementations <span class="bcp14">MAY</span> append a fragment to a prompt URI as
+        an implementation-specific disambiguation hint (see <a href="#ambiguity-one-uri" class="auto internal xref">Section 8</a>),
+        but <span class="bcp14">SHALL NOT</span> rely on fragment processing in interoperable contexts.  The query
+        component <span class="bcp14">SHOULD NOT</span> be used; its presence does not affect identity or
+        comparison.<a href="#section-3.4-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="abnf">
+<section id="section-3.5">
+        <h3 id="name-complete-abnf">
+<a href="#section-3.5" class="section-number selfRef">3.5. </a><a href="#name-complete-abnf" class="section-name selfRef">Complete ABNF</a>
+        </h3>
+<p id="section-3.5-1">The following grammar, expressed in Augmented Backus-Naur Form
+        <span>[<a href="#RFC5234" class="cite xref">RFC5234</a>]</span>, defines the syntax of a prompt URI.  Terms not defined
+        here are imported from <span>[<a href="#RFC3986" class="cite xref">RFC3986</a>]</span> (<code>unreserved</code>,
+        <code>pct-encoded</code>) and <span>[<a href="#RFC3339" class="cite xref">RFC3339</a>]</span> (<code>date-time</code>).<a href="#section-3.5-1" class="pilcrow">¶</a></p>
+<div class="lang-abnf sourcecode" id="section-3.5-2">
+<pre>
+prompt-URI    =  "prompt://" agent-name "/" session-ref "/" prompt-ref
+
+agent-name    =  1*agent-char
+agent-char    =  unreserved / pct-encoded / "+" / "."
+
+session-ref   =  session-id / session-alias
+                 ; Parsers cannot distinguish the two forms syntactically;
+                 ; the distinction is semantic (Section 4.2, Section 4.4)
+
+session-id    =  1*( unreserved / pct-encoded )
+                 ; Typically a UUID per RFC 9562
+
+session-alias =  1*( unreserved / pct-encoded )
+                 ; Special characters including SP (U+0020) MUST be
+                 ; percent-encoded per [RFC3986] -- see Section 4.4
+
+prompt-ref    =  date-time / prompt-id
+                 ; Either an RFC 3339 timestamp or a prompt identifier;
+                 ; date-time always begins with a 4-digit year, so
+                 ; the "~" prefix of prompt-id is unambiguous
+                 ; See Sections 4.3 and 4.5
+
+date-time     =  &lt;date-time as defined in RFC 3339, Section 5.6&gt;
+                 ; Colons within date-time are valid in URI path
+                 ; segments per RFC 3986 Section 3.3
+                 ; Example: 2026-07-07T16:45:23.856Z
+
+prompt-id     =  "~" 1*( unreserved / pct-encoded )
+                 ; Agent-internal prompt correlation identifier;
+                 ; "~" (U+007E, unreserved per RFC 3986) distinguishes
+                 ; prompt-id from date-time in all syntactic contexts
+                 ; Example: ~abc123, ~promptId%3Axyz
+</pre><a href="#section-3.5-2" class="pilcrow">¶</a>
+</div>
+<p id="section-3.5-3">The following prompt URIs are all syntactically valid.  The first uses a
+        session identifier with a timestamp; the second uses a session alias with a
+        timestamp; the third uses a session identifier with a prompt identifier
+        (the canonical preferred form; see <a href="#canonical-uri" class="auto internal xref">Section 4.5</a>):<a href="#section-3.5-3" class="pilcrow">¶</a></p>
+<div class="sourcecode" id="section-3.5-4">
+<pre>
+prompt://claude-code/5674b542-0b94-4d12-bc05-d271a4131354/2026-07-07T16:45:23.856Z
+prompt://claude-code/md-csv-mcp%20design/2026-07-07T16:45:23.856Z
+prompt://claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
+</pre><a href="#section-3.5-4" class="pilcrow">¶</a>
+</div>
+<p id="section-3.5-5">Breaking the alias-based example into components:<a href="#section-3.5-5" class="pilcrow">¶</a></p>
+<div class="sourcecode" id="section-3.5-6">
+<pre>
+prompt-URI = "prompt://"
+             "claude-code"               ; agent-name
+             "/"
+             "md-csv-mcp%20design"       ; session-alias (space encoded as %20)
+             "/"
+             "2026-07-07T16:45:23.856Z"  ; prompt-ref: timestamp form (RFC 3339)
+</pre><a href="#section-3.5-6" class="pilcrow">¶</a>
+</div>
+<p id="section-3.5-7">Breaking the canonical prompt-id example into components:<a href="#section-3.5-7" class="pilcrow">¶</a></p>
+<div class="sourcecode" id="section-3.5-8">
+<pre>
+prompt-URI = "prompt://"
+             "claude-code"                              ; agent-name
+             "/"
+             "5674b542-0b94-4d12-bc05-d271a4131354"    ; session-id
+             "/"
+             "~abc123"                                  ; prompt-ref: prompt-id form
+</pre><a href="#section-3.5-8" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="semantics">
+<section id="section-4">
+      <h2 id="name-uri-components-and-semantic">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-uri-components-and-semantic" class="section-name selfRef">URI Components and Semantics</a>
+      </h2>
+<div id="agent-name-comp">
+<section id="section-4.1">
+        <h3 id="name-agent-name">
+<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-agent-name" class="section-name selfRef">Agent Name</a>
+        </h3>
+<p id="section-4.1-1">The agent name identifies the software agent that generated the URI.  It is
+        NOT a globally registered identifier; implementations <span class="bcp14">SHOULD</span> use a stable,
+        recognizable short name (e.g., <code>claude-code</code>, <code>github-copilot</code>,
+        <code>cursor</code>).  Agents operated by different organizations <span class="bcp14">SHOULD</span> use distinct
+        names to avoid collision.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+<p id="section-4.1-2">The agent name <span class="bcp14">MAY</span> include a dot-separated hierarchy for namespacing
+        (e.g., <code>anthropic.claude-code</code>), but this structure carries no defined
+        semantics in this specification.<a href="#section-4.1-2" class="pilcrow">¶</a></p>
+<p id="section-4.1-3">The agent name <span class="bcp14">SHALL</span> remain constant across all sessions and versions of a
+        given agent implementation.  Including a version number in the agent name is
+        <span class="bcp14">NOT RECOMMENDED</span>, as it would render URIs from different versions incomparable
+        even when they refer to the same logical agent.<a href="#section-4.1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="session-id-comp">
+<section id="section-4.2">
+        <h3 id="name-session-identifier">
+<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-session-identifier" class="section-name selfRef">Session Identifier</a>
+        </h3>
+<p id="section-4.2-1">The session identifier <span class="bcp14">SHALL</span> be an opaque string assigned by the agent at
+        session initiation.  Implementations <span class="bcp14">SHOULD</span> use a UUID <span>[<a href="#RFC9562" class="cite xref">RFC9562</a>]</span> for
+        the session identifier to minimize collision probability across agents and
+        deployments.  UUID version 7 <span>[<a href="#RFC9562" class="cite xref">RFC9562</a>]</span> is <span class="bcp14">RECOMMENDED</span> over version 4
+        because its monotonically increasing structure supports chronological ordering
+        of sessions.<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+<p id="section-4.2-2">The session identifier <span class="bcp14">SHALL</span> be consistent throughout a session and
+        <span class="bcp14">SHALL NOT</span> change during a session's lifetime.<a href="#section-4.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="timestamp-comp">
+<section id="section-4.3">
+        <h3 id="name-timestamp">
+<a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-timestamp" class="section-name selfRef">Timestamp</a>
+        </h3>
+<p id="section-4.3-1">The timestamp <span class="bcp14">SHALL</span> be formatted as an RFC 3339 <span>[<a href="#RFC3339" class="cite xref">RFC3339</a>]</span>
+          <code>date-time</code> value and <span class="bcp14">SHALL</span> use UTC (the <code>Z</code> suffix).  The timestamp
+        records the wall-clock time at which the tool call generating the URI was
+        executed.<a href="#section-4.3-1" class="pilcrow">¶</a></p>
+<p id="section-4.3-2">Implementations <span class="bcp14">SHOULD</span> include sub-second precision (milliseconds) in the
+        timestamp to reduce the probability of within-session collisions
+        (see <a href="#ambiguity-one-uri" class="auto internal xref">Section 8</a>).  A timestamp with second-level precision is
+        <span class="bcp14">REQUIRED</span>; millisecond precision is <span class="bcp14">RECOMMENDED</span>; microsecond precision
+        <span class="bcp14">MAY</span> be used.<a href="#section-4.3-2" class="pilcrow">¶</a></p>
+<p id="section-4.3-3">The timestamp is NOT the time at which the originating prompt was submitted.
+        It is the time at which the tool call was executed.  For a given prompt, multiple
+        tool calls <span class="bcp14">MAY</span> be executed, potentially spanning multiple seconds.  Each tool
+        call produces a URI with its own timestamp; all such URIs are considered to
+        refer to the same prompt for resolution purposes (see <a href="#resolution" class="auto internal xref">Section 6</a>).<a href="#section-4.3-3" class="pilcrow">¶</a></p>
+<p id="section-4.3-4">When the agent maintains an internal prompt correlation identifier, the
+        canonical form of the URI <span class="bcp14">SHOULD</span> use that identifier in place of the timestamp
+        (see <a href="#canonical-uri" class="auto internal xref">Section 4.5</a>).<a href="#section-4.3-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="session-aliases">
+<section id="section-4.4">
+        <h3 id="name-session-aliases">
+<a href="#section-4.4" class="section-number selfRef">4.4. </a><a href="#name-session-aliases" class="section-name selfRef">Session Aliases</a>
+        </h3>
+<p id="section-4.4-1">A session alias is a human-readable string that a user or implementation
+        <span class="bcp14">MAY</span> register as an alternative to the session identifier in a prompt URI.
+        Aliases improve legibility: <code>prompt://claude-code/md-csv-mcp-design/...</code> is
+        more immediately meaningful than
+        <code>prompt://claude-code/5674b542-.../...</code>.<a href="#section-4.4-1" class="pilcrow">¶</a></p>
+<p id="section-4.4-2"><strong>Registration:</strong> Aliases <span class="bcp14">SHALL</span> be registered in a local alias registry
+        that maps each alias to the session identifier it represents.  An alias is
+        scoped to a single agent name and <span class="bcp14">MUST</span> map to exactly one session within
+        that agent's registry.  A session <span class="bcp14">MAY</span> have more than one alias registered
+        to it.<a href="#section-4.4-2" class="pilcrow">¶</a></p>
+<p id="section-4.4-3">Attempting to register an alias that is already registered to a different
+        session <span class="bcp14">SHALL</span> be rejected with a conflict error.  Attempting to register an
+        alias that is already registered to the same session is idempotent and
+        <span class="bcp14">SHALL</span> succeed without modifying the registry.<a href="#section-4.4-3" class="pilcrow">¶</a></p>
+<p id="section-4.4-4"><strong>Case insensitivity:</strong> Alias lookup <span class="bcp14">SHALL</span> be case-insensitive.  The alias
+        <code>MD-CSV-MCP-Design</code>, <code>md-csv-mcp-design</code>, and <code>Md-Csv-Mcp-Design</code>
+          <span class="bcp14">MUST</span> all resolve to the same session.  Implementations <span class="bcp14">SHOULD</span> store aliases
+        in normalized lowercase and normalize incoming aliases to lowercase before
+        lookup.<a href="#section-4.4-4" class="pilcrow">¶</a></p>
+<p id="section-4.4-5"><strong>Canonical URI form:</strong> In a prompt URI, an alias <span class="bcp14">SHALL</span> appear in its
+        canonical URI form, which is the percent-encoded representation of the alias
+        string with all characters encoded per <span>[<a href="#RFC3986" class="cite xref">RFC3986</a>]</span> as required.<a href="#section-4.4-5" class="pilcrow">¶</a></p>
+<p id="section-4.4-6"><strong>Handling of spaces and special characters:</strong> Spaces (U+0020) and any other
+        characters not permitted in a URI path segment by <span>[<a href="#RFC3986" class="cite xref">RFC3986</a>]</span> <span class="bcp14">MUST</span> be
+        percent-encoded in the canonical URI form of an alias.  The alias
+        <code>md-csv-mcp design</code> is canonically encoded as <code>md-csv-mcp%20design</code> in a
+        prompt URI.  Hyphens and spaces remain distinct: the alias
+        <code>md-csv-mcp design</code> and the alias <code>md-csv-mcp-design</code> are different aliases
+        and resolve to different sessions (if both are registered).<a href="#section-4.4-6" class="pilcrow">¶</a></p>
+<p id="section-4.4-7">Implementations that accept prompt URIs as input <span class="bcp14">MAY</span> repair aliases
+        containing unencoded special characters by applying percent-encoding before
+        lookup, in the same manner that web browsers correct malformed URIs.<a href="#section-4.4-7" class="pilcrow">¶</a></p>
+<p id="section-4.4-8">Implementations <span class="bcp14">MUST</span> preserve the original human-readable alias string
+        (as supplied at registration time, before percent-encoding) in the alias
+        registry.  This allows the original label to be displayed in user interfaces
+        without loss of information.<a href="#section-4.4-8" class="pilcrow">¶</a></p>
+<p id="section-4.4-9"><strong>Alias persistence:</strong> Alias registries are implementation-defined and may
+        not persist indefinitely.  Agents are not required to maintain alias registries
+        across restarts, updates, or deployments.  Users and systems requiring
+        long-term, portable provenance references <span class="bcp14">SHOULD</span> use the session-identifier
+        form of the prompt URI rather than the alias form, since session identifiers
+        are generated by the agent and stored in its session log independently of any
+        alias registry.  Prompt URIs using an alias remain valid provenance references
+        as long as the alias registry is intact, but are subject to becoming
+        unresolvable (<a href="#unresolvable" class="auto internal xref">Section 6.3</a>) if the registry is lost or
+        unavailable.<a href="#section-4.4-9" class="pilcrow">¶</a></p>
+<p id="section-4.4-10"><strong>Alias-to-session-id URIs:</strong> When a session has both a registered alias and
+        a session identifier, both forms of prompt URI are valid and refer to the same
+        session.  Implementations <span class="bcp14">MAY</span> use the alias form in newly generated provenance
+        records when an alias is registered, as it improves human readability.<a href="#section-4.4-10" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="canonical-uri">
+<section id="section-4.5">
+        <h3 id="name-canonical-prompt-uri">
+<a href="#section-4.5" class="section-number selfRef">4.5. </a><a href="#name-canonical-prompt-uri" class="section-name selfRef">Canonical Prompt URI</a>
+        </h3>
+<p id="section-4.5-1">A prompt URI is <em>canonical</em> if its <code>prompt-ref</code> component is the most
+        specific and stable identifier available for the prompt it represents.  The
+        canonical form determines which URI <span class="bcp14">SHOULD</span> be stored in provenance records.<a href="#section-4.5-1" class="pilcrow">¶</a></p>
+<p id="section-4.5-2"><strong>Prompt identifier form (preferred):</strong> When the agent maintains an internal
+        correlation identifier for each prompt (for example, <code>promptId</code> in Claude Code
+        session logs <span>[<a href="#CLAUDE-SESSIONS" class="cite xref">CLAUDE-SESSIONS</a>]</span> or <code>interactionId</code> in Copilot session
+        logs <span>[<a href="#COPILOT-SESSIONS" class="cite xref">COPILOT-SESSIONS</a>]</span>), the canonical URI <span class="bcp14">SHOULD</span> use the
+        <code>prompt-id</code> form (<a href="#abnf" class="auto internal xref">Section 3.5</a>) with a leading <code>~</code> character:<a href="#section-4.5-2" class="pilcrow">¶</a></p>
+<div class="sourcecode" id="section-4.5-3">
+<pre>
+prompt://claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
+</pre><a href="#section-4.5-3" class="pilcrow">¶</a>
+</div>
+<p id="section-4.5-4">A canonical prompt-id URI uniquely identifies the prompt regardless of when
+        tool calls execute within the prompt's processing.  Because all tool calls from
+        the same prompt share the same prompt identifier, two prompt-id URIs with the
+        same <code>session-ref</code> and <code>prompt-id</code> components can be detected as equivalent
+        by string comparison, without consulting the session log.<a href="#section-4.5-4" class="pilcrow">¶</a></p>
+<p id="section-4.5-5"><strong>Timestamp form (fallback):</strong> When no prompt identifier is available, the
+        canonical URI <span class="bcp14">SHOULD</span> use the timestamp at which the originating prompt was
+        submitted by the user — not the timestamp of any particular tool call within
+        the prompt's processing.  An implementation that records prompt-submission
+        timestamps <span class="bcp14">MAY</span> use that timestamp in the canonical URI even if individual
+        tool calls use their own tool-call timestamps (<a href="#timestamp-comp" class="auto internal xref">Section 4.3</a>).<a href="#section-4.5-5" class="pilcrow">¶</a></p>
+<p id="section-4.5-6">Tool-call timestamp URIs (those generated at the time a tool call executes)
+        are valid provenance references but are not canonical: multiple such URIs from
+        the same prompt are not equivalent by comparison (<a href="#normalization" class="auto internal xref">Section 5</a>), even
+        though they resolve to the same prompt (<a href="#resolution" class="auto internal xref">Section 6</a>).<a href="#section-4.5-6" class="pilcrow">¶</a></p>
+<p id="section-4.5-7"><strong>Normalizing to canonical form:</strong> Implementations <span class="bcp14">SHOULD</span> normalize all
+        prompt URI references for a given prompt to the canonical URI before writing
+        provenance records.  Normalizing to the prompt-id form, when available, enables
+        deduplication of provenance entries across the tool calls of a single prompt
+        without requiring session log access.<a href="#section-4.5-7" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="normalization">
+<section id="section-5">
+      <h2 id="name-normalization-and-compariso">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-normalization-and-compariso" class="section-name selfRef">Normalization and Comparison</a>
+      </h2>
+<p id="section-5-1">Two prompt URIs <span class="bcp14">SHOULD</span> be considered equivalent if and only if all of the
+      following hold after applying the normalization rules in <span>[<a href="#RFC3986" class="cite xref">RFC3986</a>]</span>
+      Section 6:<a href="#section-5-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-5-2">
+        <li id="section-5-2.1">Their scheme components are identical (case-insensitively).<a href="#section-5-2.1" class="pilcrow">¶</a>
+</li>
+        <li id="section-5-2.2">Their agent-name components are identical (case-insensitively).<a href="#section-5-2.2" class="pilcrow">¶</a>
+</li>
+        <li id="section-5-2.3">
+          <p id="section-5-2.3.1">Their session-ref components identify the same session, determined as
+          follows:<a href="#section-5-2.3.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5-2.3.2.1">If both are session identifiers: they are identical after
+            percent-decoding (case-sensitive).<a href="#section-5-2.3.2.1" class="pilcrow">¶</a>
+</li>
+            <li class="normal" id="section-5-2.3.2.2">If both are session aliases: they are identical after percent-decoding
+            and case-folding to lowercase.<a href="#section-5-2.3.2.2" class="pilcrow">¶</a>
+</li>
+            <li class="normal" id="section-5-2.3.2.3">If one is a session identifier and the other a session alias: they are
+            equivalent if and only if the alias resolves to the same session identifier
+            per the alias registry (<a href="#alias-resolution" class="auto internal xref">Section 6.2</a>).<a href="#section-5-2.3.2.3" class="pilcrow">¶</a>
+</li>
+          </ul>
+</li>
+        <li id="section-5-2.4">
+          <p id="section-5-2.4.1">Their <code>prompt-ref</code> components identify the same prompt reference, as
+          determined by the following rules:<a href="#section-5-2.4.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5-2.4.2.1">If both are timestamps (<code>date-time</code>): they represent the same instant
+            in time, after normalizing to UTC and applying the date-time comparison rules
+            of <span>[<a href="#RFC3339" class="cite xref">RFC3339</a>]</span>.<a href="#section-5-2.4.2.1" class="pilcrow">¶</a>
+</li>
+            <li class="normal" id="section-5-2.4.2.2">If both are prompt identifiers (<code>prompt-id</code>): they are identical after
+            percent-decoding (case-sensitive, following percent-decoding).<a href="#section-5-2.4.2.2" class="pilcrow">¶</a>
+</li>
+            <li class="normal" id="section-5-2.4.2.3">If one is a timestamp and the other is a prompt identifier: they are NOT
+            equivalent; resolution (<a href="#resolution" class="auto internal xref">Section 6</a>) is required to determine
+            whether they refer to the same prompt.<a href="#section-5-2.4.2.3" class="pilcrow">¶</a>
+</li>
+          </ul>
+</li>
+      </ol>
+<p id="section-5-3">Timestamps that differ by any amount of time, however small, are NOT equivalent
+      and <span class="bcp14">SHALL NOT</span> be treated as identifying the same prompt URI.  Equivalence and
+      resolution are distinct concepts: two non-equivalent URIs <span class="bcp14">MAY</span> nonetheless resolve
+      to the same prompt (<a href="#ambiguity-multiple-uris" class="auto internal xref">Section 7</a>), and a single URI <span class="bcp14">MAY</span> be
+      ambiguous (<a href="#ambiguity-one-uri" class="auto internal xref">Section 8</a>).  Two URIs that differ only in their
+      <code>prompt-ref</code> form (one using a timestamp, one using a prompt identifier) are
+      likewise non-equivalent by this definition, even if they identify the same
+      underlying prompt.<a href="#section-5-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="resolution">
+<section id="section-6">
+      <h2 id="name-resolution">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-resolution" class="section-name selfRef">Resolution</a>
+      </h2>
+<div id="resolution-algorithm">
+<section id="section-6.1">
+        <h3 id="name-resolution-algorithm">
+<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-resolution-algorithm" class="section-name selfRef">Resolution Algorithm</a>
+        </h3>
+<p id="section-6.1-1">Resolution is the process of mapping a prompt URI to one or more candidate
+        prompts in an agent's session log.  Resolution is <span class="bcp14">OPTIONAL</span>; a prompt URI
+        is valid and useful as a provenance reference even when the referenced session
+        log is unavailable.<a href="#section-6.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.1-2">A conformant resolver <span class="bcp14">SHALL</span> apply the following steps:<a href="#section-6.1-2" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-6.1-3">
+          <li id="section-6.1-3.1">Parse the prompt URI and extract <code>agent-name</code>, <code>session-ref</code>, and
+          <code>prompt-ref</code>.  If <code>session-ref</code> is an alias, resolve it per
+          <a href="#alias-resolution" class="auto internal xref">Section 6.2</a> to obtain the session identifier.<a href="#section-6.1-3.1" class="pilcrow">¶</a>
+</li>
+          <li id="section-6.1-3.2">Locate the session log associated with the session identifier for the
+          agent identified by <code>agent-name</code>.  If no such log is accessible, the URI
+          is unresolvable (<a href="#unresolvable" class="auto internal xref">Section 6.3</a>).<a href="#section-6.1-3.2" class="pilcrow">¶</a>
+</li>
+          <li id="section-6.1-3.3">
+            <p id="section-6.1-3.3.1">If <code>prompt-ref</code> is a <code>prompt-id</code> (begins with <code>~</code>): strip the
+          <code>~</code> prefix, percent-decode the remainder, and locate all session log entries
+          whose prompt correlation identifier matches.  If exactly one entry is found,
+          the URI resolves to that prompt.  Proceed to step 5.<a href="#section-6.1-3.3.1" class="pilcrow">¶</a></p>
+<p id="section-6.1-3.3.2">If <code>prompt-ref</code> is a <code>date-time</code>: convert the timestamp to UTC
+          milliseconds and identify all session log entries whose recorded timestamp
+          falls within a resolution window centered on the URI timestamp.  The
+          <span class="bcp14">RECOMMENDED</span> resolution window is ±1 second; resolvers <span class="bcp14">MAY</span> use a narrower
+          window when the URI timestamp has sub-second precision and the session log
+          records sub-second timestamps.<a href="#section-6.1-3.3.2" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-6.1-3.4">From the candidate entries, identify those that are prompt-type entries
+          (user messages that initiated a turn), as opposed to tool call or response
+          entries.<a href="#section-6.1-3.4" class="pilcrow">¶</a>
+</li>
+          <li id="section-6.1-3.5">If exactly one prompt-type candidate is found, the URI resolves to that
+          prompt.<a href="#section-6.1-3.5" class="pilcrow">¶</a>
+</li>
+          <li id="section-6.1-3.6">If multiple prompt-type candidates are found, the URI is ambiguous
+          (<a href="#ambiguity-one-uri" class="auto internal xref">Section 8</a>).  The resolver <span class="bcp14">SHOULD</span> report all candidates
+          and <span class="bcp14">SHOULD NOT</span> silently select one.<a href="#section-6.1-3.6" class="pilcrow">¶</a>
+</li>
+          <li id="section-6.1-3.7">If the session log records an agent-internal correlation identifier
+          (e.g., <code>promptId</code> in Claude Code session logs <span>[<a href="#CLAUDE-SESSIONS" class="cite xref">CLAUDE-SESSIONS</a>]</span>,
+          <code>interactionId</code> in Copilot session logs <span>[<a href="#COPILOT-SESSIONS" class="cite xref">COPILOT-SESSIONS</a>]</span>),
+          implementations <span class="bcp14">MAY</span> use that identifier to narrow candidate selection
+          to a single result.<a href="#section-6.1-3.7" class="pilcrow">¶</a>
+</li>
+        </ol>
+</section>
+</div>
+<div id="alias-resolution">
+<section id="section-6.2">
+        <h3 id="name-alias-resolution">
+<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-alias-resolution" class="section-name selfRef">Alias Resolution</a>
+        </h3>
+<p id="section-6.2-1">When the session-ref component of a prompt URI does not parse as a UUID and
+        is not otherwise recognizable as a session identifier, the resolver <span class="bcp14">SHALL</span>
+        treat it as a session alias and apply the following steps before proceeding
+        with <a href="#resolution-algorithm" class="auto internal xref">Section 6.1</a>:<a href="#section-6.2-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-6.2-2">
+          <li id="section-6.2-2.1">Normalize the alias: percent-decode, then fold to lowercase.<a href="#section-6.2-2.1" class="pilcrow">¶</a>
+</li>
+          <li id="section-6.2-2.2">Look up the normalized alias in the alias registry for the agent
+          identified by <code>agent-name</code>.<a href="#section-6.2-2.2" class="pilcrow">¶</a>
+</li>
+          <li id="section-6.2-2.3">If a matching entry is found, substitute the corresponding session
+          identifier into the resolution process and continue with
+          <a href="#resolution-algorithm" class="auto internal xref">Section 6.1</a> step 2.<a href="#section-6.2-2.3" class="pilcrow">¶</a>
+</li>
+          <li id="section-6.2-2.4">If no matching entry is found, the URI is unresolvable
+          (<a href="#unresolvable" class="auto internal xref">Section 6.3</a>).  Implementations <span class="bcp14">SHOULD</span> report "alias not
+          registered" as a distinct unresolvable condition, separate from "session log
+          not found."<a href="#section-6.2-2.4" class="pilcrow">¶</a>
+</li>
+        </ol>
+</section>
+</div>
+<div id="unresolvable">
+<section id="section-6.3">
+        <h3 id="name-unresolvable-uris">
+<a href="#section-6.3" class="section-number selfRef">6.3. </a><a href="#name-unresolvable-uris" class="section-name selfRef">Unresolvable URIs</a>
+        </h3>
+<p id="section-6.3-1">A prompt URI is unresolvable if any of the following conditions hold:<a href="#section-6.3-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-6.3-2.1">The <code>session-ref</code> is a session alias that is not registered in the
+          alias registry.<a href="#section-6.3-2.1" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="section-6.3-2.2">The session log for the resolved session identifier is not accessible
+          to the resolver.<a href="#section-6.3-2.2" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="section-6.3-2.3">The session log has been deleted, expired, or is otherwise
+          unavailable.<a href="#section-6.3-2.3" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="section-6.3-2.4">The <code>agent-name</code> is not recognized by the resolver.<a href="#section-6.3-2.4" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="section-6.3-2.5">No session log entries fall within the resolution window.<a href="#section-6.3-2.5" class="pilcrow">¶</a>
+</li>
+        </ul>
+<p id="section-6.3-3">An unresolvable URI is NOT invalid.  The URI remains a valid provenance
+        identifier and <span class="bcp14">SHALL</span> be preserved in provenance records even when the
+        referenced session is no longer accessible.  Resolvers <span class="bcp14">SHOULD</span> distinguish
+        between "unresolvable" and "invalid" when reporting resolution status.<a href="#section-6.3-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="ambiguity-multiple-uris">
+<section id="section-7">
+      <h2 id="name-ambiguity-multiple-uris-for">
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-ambiguity-multiple-uris-for" class="section-name selfRef">Ambiguity: Multiple URIs for One Prompt</a>
+      </h2>
+<p id="section-7-1">A single prompt <span class="bcp14">MAY</span> be the source of multiple tool calls, each of which
+      produces a prompt URI with a distinct timestamp.  This is the common case in
+      agent workflows, where a single user message triggers a sequence of file reads,
+      web fetches, and file writes, each implemented as a separate tool call.<a href="#section-7-1" class="pilcrow">¶</a></p>
+<p id="section-7-2">All prompt URIs generated within the same session from the same originating
+      prompt refer to that same prompt, even though their <code>prompt-ref</code> components
+      differ.  Implementations <span class="bcp14">SHOULD</span> treat these URIs as semantically equivalent
+      for provenance purposes, even though they are not syntactically equivalent
+      (<a href="#normalization" class="auto internal xref">Section 5</a>) and will not compare as equal.<a href="#section-7-2" class="pilcrow">¶</a></p>
+<p id="section-7-3">When the agent provides a prompt correlation identifier, implementations
+      <span class="bcp14">SHOULD</span> normalize all such URIs to the canonical prompt-id form
+      (<a href="#canonical-uri" class="auto internal xref">Section 4.5</a>) before writing provenance records.  This eliminates the
+      proliferation of distinct URIs for the same prompt and enables deduplication by
+      string comparison, without session log access.<a href="#section-7-3" class="pilcrow">¶</a></p>
+<p id="section-7-4">Additionally, the same prompt may be identifiable by URIs with different
+      timestamp precision:<a href="#section-7-4" class="pilcrow">¶</a></p>
+<div class="sourcecode" id="section-7-5">
+<pre>
+prompt://claude-code/5674b542.../2026-07-07T16:45:23Z
+prompt://claude-code/5674b542.../2026-07-07T16:45:23.856Z
+</pre><a href="#section-7-5" class="pilcrow">¶</a>
+</div>
+<p id="section-7-6">Both of the above URIs identify the same instant in time at different precision
+      levels.  Per <a href="#normalization" class="auto internal xref">Section 5</a>, these URIs are NOT equivalent.  Per
+      <a href="#resolution" class="auto internal xref">Section 6</a>, they <span class="bcp14">SHOULD</span> resolve to the same candidate when the
+      resolution window is applied.  Implementations that store provenance records
+      <span class="bcp14">SHOULD</span> use a consistent timestamp precision to minimize the proliferation of
+      distinct URIs for the same prompt.<a href="#section-7-6" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="ambiguity-one-uri">
+<section id="section-8">
+      <h2 id="name-ambiguity-one-uri-for-multi">
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-ambiguity-one-uri-for-multi" class="section-name selfRef">Ambiguity: One URI for Multiple Prompts</a>
+      </h2>
+<p id="section-8-1">A single prompt URI <span class="bcp14">MAY</span> be ambiguous when multiple distinct prompts occur
+      within the resolution window of its timestamp.  This arises in the following
+      conditions:<a href="#section-8-1" class="pilcrow">¶</a></p>
+<p id="section-8-2"><strong>Within-session collision:</strong> Two or more distinct user prompts within the
+      same session are submitted and processed within the same second (or within the
+      resolution window of a sub-second timestamp).  This is uncommon in interactive
+      agent sessions, where user prompts are typically separated by seconds to minutes,
+      but <span class="bcp14">MAY</span> occur in automated pipelines where prompts are submitted
+      programmatically without human pacing.<a href="#section-8-2" class="pilcrow">¶</a></p>
+<p id="section-8-3"><strong>Cross-session collision:</strong> Two sessions with different session identifiers
+      are not a source of ambiguity for a given URI, since the session identifier is
+      a URI component.  However, if a resolver has access to session logs from multiple
+      agents with the same <code>agent-name</code>, and two such logs share a <code>session-id</code> value
+      (which <span class="bcp14">SHOULD NOT</span> occur when UUIDs are used), a cross-log collision is
+      possible.<a href="#section-8-3" class="pilcrow">¶</a></p>
+<div id="mitigation">
+<section id="section-8.1">
+        <h3 id="name-mitigation">
+<a href="#section-8.1" class="section-number selfRef">8.1. </a><a href="#name-mitigation" class="section-name selfRef">Mitigation</a>
+        </h3>
+<p id="section-8.1-1">Implementations <span class="bcp14">SHOULD</span> use millisecond-precision timestamps (rather than
+        second-precision) to reduce the probability of within-session collisions.
+        With millisecond precision, a collision requires two distinct prompts to arrive
+        within the same millisecond, which is negligible in interactive use.<a href="#section-8.1-1" class="pilcrow">¶</a></p>
+<p id="section-8.1-2">Implementations <span class="bcp14">MAY</span> append a fragment identifier to a prompt URI to encode
+        an agent-internal correlation identifier when that identifier is known at call
+        time:<a href="#section-8.1-2" class="pilcrow">¶</a></p>
+<div class="sourcecode" id="section-8.1-3">
+<pre>
+prompt://claude-code/5674b542.../2026-07-07T16:45:23.856Z#promptId=abc123
+</pre><a href="#section-8.1-3" class="pilcrow">¶</a>
+</div>
+<p id="section-8.1-4">Fragment identifiers used for this purpose are implementation-specific and
+        are <span class="bcp14">OPTIONAL</span> and not required for interoperability.  Resolvers that do not recognize a
+        fragment identifier <span class="bcp14">SHOULD</span> ignore it and apply the standard resolution
+        algorithm.<a href="#section-8.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="disclosure">
+<section id="section-8.2">
+        <h3 id="name-disclosure-requirement">
+<a href="#section-8.2" class="section-number selfRef">8.2. </a><a href="#name-disclosure-requirement" class="section-name selfRef">Disclosure Requirement</a>
+        </h3>
+<p id="section-8.2-1">Implementations that generate prompt URIs <span class="bcp14">SHOULD</span> document the timestamp
+        precision they use and the conditions under which within-session collisions
+        are possible, so that consumers of provenance records can assess the
+        reliability of URI-based prompt identification in their deployment context.<a href="#section-8.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="security">
+<section id="section-9">
+      <h2 id="name-security-considerations">
+<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      </h2>
+<p id="section-9-1"><strong>Confidentiality:</strong> A prompt URI encodes the agent identity, session
+      identifier, and approximate timestamp of a tool call.  This information <span class="bcp14">MAY</span>
+      be sensitive in deployments where session identifiers are treated as access
+      credentials or where the existence of a particular agent interaction is
+      confidential.  Implementors <span class="bcp14">SHOULD</span> treat prompt URIs with the same access
+      controls applied to session logs.<a href="#section-9-1" class="pilcrow">¶</a></p>
+<p id="section-9-2"><strong>Spoofability:</strong> Prompt URIs are not cryptographically signed.  Any party
+      with knowledge of a valid agent name, session identifier, and approximate
+      timestamp can construct a syntactically valid URI.  Resolvers <span class="bcp14">SHALL NOT</span> treat a
+      prompt URI as proof of authenticity; they <span class="bcp14">SHOULD</span> verify that the referenced
+      session log actually contains a prompt at the indicated time.<a href="#section-9-2" class="pilcrow">¶</a></p>
+<p id="section-9-3"><strong>Log availability:</strong> Resolution depends on the availability of session logs,
+      which are typically stored on the client machine.  Logs may be deleted,
+      corrupted, or unavailable to the resolver.  Provenance systems <span class="bcp14">SHALL NOT</span> treat
+      an unresolvable URI as evidence of tampering; unresolvability is an expected
+      operational condition.<a href="#section-9-3" class="pilcrow">¶</a></p>
+<p id="section-9-4"><strong>Session identifier reuse:</strong> If an agent implementation reuses session
+      identifiers across sessions (which <span class="bcp14">SHOULD NOT</span> occur when UUIDs are used), URIs
+      from different sessions would become ambiguous.  Implementations <span class="bcp14">SHALL</span> use
+      session identifiers with negligible collision probability.<a href="#section-9-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="iana">
+<section id="section-10">
+      <h2 id="name-iana-considerations">
+<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+      </h2>
+<p id="section-10-1">This document requests registration of the <code>prompt</code> URI scheme in the IANA
+      Uniform Resource Identifier (URI) Schemes registry, established by
+      <span>[<a href="#RFC7595" class="cite xref">RFC7595</a>]</span>.<a href="#section-10-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-10-2">
+        <dt id="section-10-2.1">Scheme name:</dt>
+        <dd style="margin-left: 1.5em" id="section-10-2.2">
+          <code>prompt</code><a href="#section-10-2.2" class="pilcrow">¶</a>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-10-2.3">Status:</dt>
+        <dd style="margin-left: 1.5em" id="section-10-2.4">Provisional<a href="#section-10-2.4" class="pilcrow">¶</a>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-10-2.5">Applications/protocols that use this scheme:</dt>
+        <dd style="margin-left: 1.5em" id="section-10-2.6">AI agent provenance metadata, session log indexers, agent tool
+        frameworks.<a href="#section-10-2.6" class="pilcrow">¶</a>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-10-2.7">Contact:</dt>
+        <dd style="margin-left: 1.5em" id="section-10-2.8">Keith W. Boone<a href="#section-10-2.8" class="pilcrow">¶</a>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-10-2.9">Change controller:</dt>
+        <dd style="margin-left: 1.5em" id="section-10-2.10">Keith W. Boone<a href="#section-10-2.10" class="pilcrow">¶</a>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-10-2.11">References:</dt>
+        <dd style="margin-left: 1.5em" id="section-10-2.12">This document.<a href="#section-10-2.12" class="pilcrow">¶</a>
+</dd>
+      <dd class="break"></dd>
+</dl>
+<p id="section-10-3">Pending IANA registration, implementations <span class="bcp14">SHALL</span> treat the <code>prompt</code> scheme
+      as an unregistered provisional scheme per <span>[<a href="#RFC7595" class="cite xref">RFC7595</a>]</span> Section 3.3.<a href="#section-10-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<section id="section-11">
+      <h2 id="name-references">
+<a href="#section-11" class="section-number selfRef">11. </a><a href="#name-references" class="section-name selfRef">References</a>
+      </h2>
+<div id="normative-refs">
+<section id="section-11.1">
+        <h3 id="name-normative-references">
+<a href="#section-11.1" class="section-number selfRef">11.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+        </h3>
+<dl class="references">
+<dt id="RFC2119">[RFC2119]</dt>
+        <dd>
+<span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc2119">https://www.rfc-editor.org/info/rfc2119</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC3339">[RFC3339]</dt>
+        <dd>
+<span class="refAuthor">Klyne, G.</span> and <span class="refAuthor">C. Newman</span>, <span class="refTitle">"Date and Time on the Internet: Timestamps"</span>, <span class="seriesInfo">RFC 3339</span>, <span class="seriesInfo">DOI 10.17487/RFC3339</span>, <time datetime="2002-07" class="refDate">July 2002</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc3339">https://www.rfc-editor.org/info/rfc3339</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC3986">[RFC3986]</dt>
+        <dd>
+<span class="refAuthor">Berners-Lee, T.</span>, <span class="refAuthor">Fielding, R.</span>, and <span class="refAuthor">L. Masinter</span>, <span class="refTitle">"Uniform Resource Identifier (URI): Generic Syntax"</span>, <span class="seriesInfo">STD 66</span>, <span class="seriesInfo">RFC 3986</span>, <span class="seriesInfo">DOI 10.17487/RFC3986</span>, <time datetime="2005-01" class="refDate">January 2005</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc3986">https://www.rfc-editor.org/info/rfc3986</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC5234">[RFC5234]</dt>
+        <dd>
+<span class="refAuthor">Crocker, D., Ed.</span> and <span class="refAuthor">P. Overell</span>, <span class="refTitle">"Augmented BNF for Syntax Specifications: ABNF"</span>, <span class="seriesInfo">STD 68</span>, <span class="seriesInfo">RFC 5234</span>, <span class="seriesInfo">DOI 10.17487/RFC5234</span>, <time datetime="2008-01" class="refDate">January 2008</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc5234">https://www.rfc-editor.org/info/rfc5234</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7595">[RFC7595]</dt>
+        <dd>
+<span class="refAuthor">Thaler, D., Ed.</span>, <span class="refAuthor">Hansen, T.</span>, and <span class="refAuthor">T. Hardie</span>, <span class="refTitle">"Guidelines and Registration Procedures for URI Schemes"</span>, <span class="seriesInfo">BCP 35</span>, <span class="seriesInfo">RFC 7595</span>, <span class="seriesInfo">DOI 10.17487/RFC7595</span>, <time datetime="2015-06" class="refDate">June 2015</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc7595">https://www.rfc-editor.org/info/rfc7595</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8174">[RFC8174]</dt>
+        <dd>
+<span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc8174">https://www.rfc-editor.org/info/rfc8174</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9562">[RFC9562]</dt>
+      <dd>
+<span class="refAuthor">Davis, K.</span>, <span class="refAuthor">Peabody, B.</span>, and <span class="refAuthor">P. Leach</span>, <span class="refTitle">"Universally Unique IDentifiers (UUIDs)"</span>, <span class="seriesInfo">RFC 9562</span>, <span class="seriesInfo">DOI 10.17487/RFC9562</span>, <time datetime="2024-05" class="refDate">May 2024</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc9562">https://www.rfc-editor.org/info/rfc9562</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="informative-refs">
+<section id="section-11.2">
+        <h3 id="name-informative-references">
+<a href="#section-11.2" class="section-number selfRef">11.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+        </h3>
+<dl class="references">
+<dt id="MCP">[MCP]</dt>
+        <dd>
+<span class="refAuthor">Anthropic</span>, <span class="refTitle">"Model Context Protocol Specification"</span>, <span class="refContent">Available at: https://modelcontextprotocol.io/</span>, <time datetime="2024" class="refDate">2024</time>. </dd>
+<dd class="break"></dd>
+<dt id="CLAUDE-SESSIONS">[CLAUDE-SESSIONS]</dt>
+        <dd>
+<span class="refAuthor">Anthropic</span>, <span class="refTitle">"Claude Code Session Log Format"</span>, <span class="refContent">Internal format; session logs stored at
+          ~/.claude/projects/{project}/{session-id}.jsonl.
+          Prompt correlation field: promptId.</span>, <time datetime="2026" class="refDate">2026</time>. </dd>
+<dd class="break"></dd>
+<dt id="COPILOT-SESSIONS">[COPILOT-SESSIONS]</dt>
+      <dd>
+<span class="refAuthor">GitHub</span>, <span class="refTitle">"Copilot Session State Format"</span>, <span class="refContent">Internal format; session events stored at
+          ~/.copilot/session-state/{session-id}/events.jsonl.
+          Timestamp format: ISO 8601 UTC with milliseconds.
+          Prompt correlation field: interactionId.</span>, <time datetime="2026" class="refDate">2026</time>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+</section>
+<div id="authors-addresses">
+<section id="appendix-A">
+      <h2 id="name-authors-address">
+<a href="#name-authors-address" class="section-name selfRef">Author's Address</a>
+      </h2>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Keith W. Boone</span></div>
+<div dir="auto" class="left"><span class="org">Audacious Inquiry</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:kboone@ainq.com" class="email">kboone@ainq.com</a>
+</div>
+</address>
+</section>
+</div>
+<script>const toc = document.getElementById("toc");
+toc.querySelector("h2").addEventListener("click", e => {
+  toc.classList.toggle("active");
+});
+toc.querySelector("nav").addEventListener("click", e => {
+  toc.classList.remove("active");
+});
+</script>
+</body>
+</html>

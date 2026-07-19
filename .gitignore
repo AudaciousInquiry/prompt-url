@@ -1,0 +1,3 @@
+tracker.log
+*.pyc
+__pycache__/

@@ -1,0 +1,25 @@
+{
+  "name": "@audaciousinquiry/prompt-url-mcp",
+  "version": "0.1.0",
+  "description": "MCP server for resolving and generating prompt:// URLs for AI agent session provenance",
+  "main": "src/index.js",
+  "bin": {
+    "prompt-url-mcp": "src/index.js"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node tests/test-prompt-resolve.js && node tests/test-session-list.js"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "better-sqlite3": "^11.0.0",
+    "zod": "^4.4.3"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
