@@ -119,7 +119,7 @@ default to the server process's working directory when omitted.
 - **THEN** the tool SHALL return an error describing the git failure
 
 ### Requirement: Agent filtering
-The caller MAY restrict the search to a single agent (`claude-code` or `github-copilot`).
+The server SHALL support optional filtering by agent type. The caller MAY restrict the search to a single agent (`claude-code` or `github-copilot`).
 When `agent` is `all` or omitted, all agents SHALL be searched.
 
 #### Scenario: Agent filter applied
@@ -137,7 +137,7 @@ continuation summaries) SHALL be filtered out before results are returned.
 
 ### Requirement: Pagination via limit and timestamp cursor
 
-Callers MAY paginate through a large result set by using `limit` in combination with
+The server SHALL support cursor-based pagination. Callers MAY paginate through a large result set by using `limit` in combination with
 the `timestamp` of the last result as the next `until` value. Because results are
 returned sorted by timestamp descending, each successive call with `until` set to the
 previous page's oldest timestamp will return the next page of results.
