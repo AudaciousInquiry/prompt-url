@@ -57,8 +57,8 @@ function registerTools(mcpServer) {
   mcpServer.tool(
     'find_prompt',
     'Find the AI agent prompt(s) that originated a piece of work, by searching session logs ' +
-    'within a time range. Provide a git commit hash to automatically derive the range, or ' +
-    'supply explicit since/until timestamps.',
+    'within a time range. Results are sorted oldest first. Provide a git commit hash to ' +
+    'automatically derive the range, or supply explicit since/until timestamps.',
     {
       commit: z.string().optional().describe(
         'Git commit hash (short or full). When provided, the time range is derived from this ' +

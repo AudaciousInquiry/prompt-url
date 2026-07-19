@@ -67,12 +67,12 @@ test('each result has required fields', () => {
   }
 });
 
-test('results are sorted timestamp descending', () => {
+test('results are sorted timestamp ascending', () => {
   if (recent.length < 2) skip('need at least 2 results');
   for (let i = 1; i < recent.length; i++) {
     assert.ok(
-      recent[i - 1].timestamp >= recent[i].timestamp,
-      `out of order at index ${i}: ${recent[i-1].timestamp} < ${recent[i].timestamp}`
+      recent[i - 1].timestamp <= recent[i].timestamp,
+      `out of order at index ${i}: ${recent[i-1].timestamp} > ${recent[i].timestamp}`
     );
   }
 });
@@ -83,7 +83,7 @@ test('all results fall within the requested time range', () => {
   const untilMs = new Date(until7d).getTime();
   for (const r of recent) {
     const ts = new Date(r.timestamp).getTime();
-    assert.ok(ts >= sinceMs, `timestamp ${r.timestamp} is before since=${since7d}`);
+    assert.ok(ts > sinceMs, `timestamp ${r.timestamp} is not after since=${since7d}`);
     assert.ok(ts <= untilMs, `timestamp ${r.timestamp} is after until=${until7d}`);
   }
 });
@@ -96,19 +96,19 @@ test('limit is respected', () => {
   assert.ok(limited.length <= 3, `got ${limited.length} results with limit=3`);
 });
 
-// ── Pagination via until cursor ───────────────────────────────────────────────
+// ── Pagination via since cursor (ascending) ───────────────────────────────────
 
-test('until cursor pages correctly (no overlap)', () => {
+test('since cursor pages correctly (no overlap)', () => {
   if (recent.length < 4) skip('need at least 4 prompts to test pagination');
   const page1 = searchPrompts({ since: since7d, until: until7d, limit: 2 });
   const cursor = page1[page1.length - 1].timestamp;
-  const page2 = searchPrompts({ since: since7d, until: cursor, limit: 2 });
+  const page2 = searchPrompts({ since: cursor, until: until7d, limit: 2 });
   const urls1 = new Set(page1.map(r => r.prompt_url));
   for (const r of page2) {
     assert.ok(!urls1.has(r.prompt_url),
       `prompt_url ${r.prompt_url} appears on both pages`);
-    assert.ok(r.timestamp <= cursor,
-      `page-2 timestamp ${r.timestamp} >= cursor ${cursor}`);
+    assert.ok(r.timestamp > cursor,
+      `page-2 timestamp ${r.timestamp} <= cursor ${cursor}`);
   }
 });
 

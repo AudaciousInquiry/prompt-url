@@ -38,19 +38,18 @@ Call the `find_prompt` MCP tool (from `prompt-url-mcp`):
 ```
 
 This returns all prompts from the current user's AI agent sessions that occurred
-after the previous commit, sorted **newest first** (most recent result is `result[0]`).
+after the previous commit, sorted **oldest first** (`result[0]` is the earliest).
 
 ### Step 3 — Identify the root-cause prompt
 
-The root-cause prompt is the **oldest** prompt in the result set — the user message
-that originally initiated the work now being committed. Because results are sorted
-newest-first, this is the **last item** on the last page of results.
+The root-cause prompt is `result[0]` — the oldest prompt in the result set, which
+is the user message that originally initiated the work now being committed.
 
-- If the result count is less than the `limit` (default 20): the result set fits
-  on one page — take the **last item** in the list.
-- If the result count equals the `limit`: paginate by calling `find_prompt` again
-  with `until` set to the `timestamp` of the last result, repeating until you reach
-  a page with fewer results than the limit. Take the last item on that final page.
+- If the result count is less than the `limit` (default 10): take `result[0]`.
+- If the result count equals the `limit`: paginate forward using the `timestamp`
+  of the last result as the next `since` value, repeating until the final page
+  has fewer results than the limit. Take `result[0]` from the first page — it
+  is the oldest item overall.
 
 Use the `prompt_url` field from that item as the trailer value.
 

@@ -14,7 +14,7 @@ const HARNESS_PATTERNS = [
 ];
 
 // Search all session JSONL files for human-authored prompts in a time range.
-// Returns results sorted by timestamp descending.
+// Returns results sorted by timestamp ascending (oldest first).
 function searchPrompts({ since, until, agent = 'all', limit = 10 } = {}) {
   const sinceMs = since ? new Date(since).getTime() : 0;
   const untilMs = until ? new Date(until).getTime() : Date.now();
@@ -42,7 +42,7 @@ function searchPrompts({ since, until, agent = 'all', limit = 10 } = {}) {
         if (typeof entry.message?.content !== 'string') continue;
         if (HARNESS_PATTERNS.some(p => entry.message.content.includes(p))) continue;
         const ts = new Date(entry.timestamp).getTime();
-        if (isNaN(ts) || ts < sinceMs || ts >= untilMs) continue;
+        if (isNaN(ts) || ts <= sinceMs || ts >= untilMs) continue;
         result = {
           prompt_url: entry.promptId
             ? `prompt://claude-code/${session.session_id}/~${entry.promptId}`
@@ -57,7 +57,7 @@ function searchPrompts({ since, until, agent = 'all', limit = 10 } = {}) {
       if (session.agent === 'github-copilot') {
         if (entry.type !== 'user.message') continue;
         const ts = new Date(entry.timestamp).getTime();
-        if (isNaN(ts) || ts < sinceMs || ts >= untilMs) continue;
+        if (isNaN(ts) || ts <= sinceMs || ts >= untilMs) continue;
         result = {
           prompt_url: entry.id
             ? `prompt://github-copilot/${session.session_id}/~${entry.id}`
@@ -78,7 +78,7 @@ function searchPrompts({ since, until, agent = 'all', limit = 10 } = {}) {
     if (results.length >= limit) break;
   }
 
-  results.sort((a, b) => (a.timestamp > b.timestamp ? -1 : 1));
+  results.sort((a, b) => (a.timestamp < b.timestamp ? -1 : 1));
   return results;
 }
 
