@@ -1,3 +1,23 @@
+---
+rfcxml:
+  ipr: trust200902
+  submissionType: independent
+  title-abbrev: "prompt URI Scheme"
+  area: "Applications and Real-Time"
+  workgroup: agentproto
+  keywords:
+    - URI
+    - AI
+    - agent
+    - prompt
+    - provenance
+  author:
+    initials: K.
+    surname: Boone
+    organization: "Audacious Inquiry"
+    email: kboone@ainq.com
+---
+
 # The `prompt` URI Scheme for AI Agent Sessions and Prompts
 
 **Document:** draft-boone-prompt-uri-scheme-01  
