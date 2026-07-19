@@ -31,10 +31,6 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # Set package version from the pushed tag (strips leading "v").
-      - name: Set version from tag
-        run: npm version ${GITHUB_REF_NAME#v} --no-git-tag-version
-
       - name: Publish to npm
         run: npm publish --access public --provenance
 
@@ -59,9 +55,6 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-
-      - name: Set version from tag
-        run: npm version ${GITHUB_REF_NAME#v} --no-git-tag-version
 
       - name: Publish to GitHub Packages
         run: npm publish --access public
