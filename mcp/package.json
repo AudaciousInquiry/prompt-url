@@ -8,10 +8,15 @@
   },
   "scripts": {
     "start": "node src/index.js",
-    "test": "node tests/test-prompt-resolve.js && node tests/test-session-list.js"
+    "test": "node tests/test-generate.js && node tests/test-empty.js && node tests/test-cli.js",
+    "test:local": "node tests/local/test-local-sessions.js && node tests/local/test-local-resolve.js && node tests/local/test-local-search.js"
   },
+  "files": [
+    "src/",
+    "README.md"
+  ],
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com",
+    "registry": "https://registry.npmjs.org/",
     "access": "public"
   },
   "dependencies": {

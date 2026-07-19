@@ -1,0 +1,69 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  # Reuse the test workflow — publish only if tests pass.
+  test:
+    uses: ./.github/workflows/test.yml
+
+  publish-npm:
+    needs: test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mcp
+    permissions:
+      contents: read
+      id-token: write   # required for npm OIDC Trusted Publishing
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Install dependencies
+        run: npm install
+
+      # Set package version from the pushed tag (strips leading "v").
+      - name: Set version from tag
+        run: npm version ${GITHUB_REF_NAME#v} --no-git-tag-version
+
+      - name: Publish to npm
+        run: npm publish --access public --provenance
+
+  publish-github:
+    needs: test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mcp
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@audaciousinquiry'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Set version from tag
+        run: npm version ${GITHUB_REF_NAME#v} --no-git-tag-version
+
+      - name: Publish to GitHub Packages
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

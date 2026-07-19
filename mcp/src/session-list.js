@@ -2,7 +2,6 @@
 
 // Minimal session discovery — finds session log files for Claude Code and
 // GitHub Copilot without requiring SQLite or a full index rebuild.
-// Extracted from agent-skillz/mcp/md-csv-mcp/src/session-indexer.js.
 
 const fs   = require('node:fs');
 const path = require('node:path');
@@ -64,7 +63,9 @@ function discoverCopilotSessions() {
 
 // Returns sessions sorted by mtime descending (most recent first).
 // agent: 'all' | 'claude-code' | 'github-copilot'
-function listSessions({ agent = 'all', limit = 50 } = {}) {
+// since: ISO timestamp — only sessions with mtime at or after this value
+// until: ISO timestamp cursor — only sessions with mtime strictly before this value
+function listSessions({ agent = 'all', limit = 50, since, until } = {}) {
   let results = [];
   if (agent === 'all' || agent === 'claude-code') {
     results = results.concat(discoverClaudeCodeSessions());
@@ -73,6 +74,8 @@ function listSessions({ agent = 'all', limit = 50 } = {}) {
     results = results.concat(discoverCopilotSessions());
   }
   results.sort((a, b) => (b.mtime > a.mtime ? 1 : b.mtime < a.mtime ? -1 : 0));
+  if (since) results = results.filter(s => s.mtime >= since);
+  if (until) results = results.filter(s => s.mtime < until);
   return limit ? results.slice(0, limit) : results;
 }
 
