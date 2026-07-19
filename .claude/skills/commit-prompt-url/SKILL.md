@@ -67,8 +67,10 @@ explain the files changed and the nature of the changes? Consider:
 the earlier one — it is more likely to be the initiating request, with the later
 one being a follow-up refinement.
 
-**When no prompt explains the diff** (e.g., purely manual edits): omit the
-`Prompt-URL:` trailer entirely.
+**When no prompt clearly explains the diff** (e.g., purely mechanical follow-up
+work): use the most recent prompt that was part of the same work context, even
+if it was a refinement or follow-up rather than the original request. If truly
+uncertain, ask the user which prompt to attribute before committing.
 
 Use the `prompt_url` field from that item as the trailer value.
 
