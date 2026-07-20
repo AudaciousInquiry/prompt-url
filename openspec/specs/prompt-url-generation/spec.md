@@ -1,7 +1,7 @@
 # prompt-url-generation Specification
 
 ## Purpose
-TBD - created by archiving change prompt-url-mcp. Update Purpose after archive.
+Defines how the `prompt-url-mcp` server constructs `prompt://` URIs. A prompt URL uniquely identifies a specific user prompt within an AI agent session by encoding the agent name, session ID, and a prompt reference (either a canonical prompt ID or a UTC timestamp). This spec covers the URL construction rules and the format of the resulting URI.
 ## Requirements
 ### Requirement: URL construction
 The MCP server SHALL construct a `prompt://` URL from three inputs: agent name,

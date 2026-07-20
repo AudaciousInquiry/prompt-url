@@ -1,7 +1,7 @@
 # prompt-resolution Specification
 
 ## Purpose
-TBD - created by archiving change prompt-url-mcp. Update Purpose after archive.
+Defines how the `prompt-url-mcp` server resolves a `prompt://` URI back to the original human prompt that it identifies. Resolution involves parsing the URI into its components (agent, session ID, prompt reference), locating the corresponding session log file, and returning the matching prompt record. This enables consumers of a `Prompt-URL:` trailer (e.g., in a git commit) to retrieve the original user message that initiated the work.
 ## Requirements
 ### Requirement: URI parsing
 The MCP server SHALL parse a `prompt://` URI into its three components — agent name,

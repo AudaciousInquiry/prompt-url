@@ -1,12 +1,12 @@
 # find-prompt Specification
 
 ## Purpose
-TBD - created by archiving change prompt-url-mcp. Update Purpose after archive.
+Defines the `find_prompt` MCP tool, which searches AI agent session logs for human-authored prompts by time range. It enables callers to retrieve the set of prompts that occurred in a given window — the primary use case being identifying which prompt initiated a code change (for use in git commit `Prompt-URL:` trailers). Results are returned sorted oldest-first to support root-cause identification and forward-pagination.
 ## Requirements
 ### Requirement: Time-range prompt search
 The MCP server SHALL search all available agent session logs for human-authored prompts
 whose timestamps fall within a supplied `since`/`until` range (both RFC 3339, inclusive).
-Results SHALL be returned sorted by timestamp descending (most recent first) and limited
+Results SHALL be returned sorted by timestamp ascending (oldest first) and limited
 to a caller-specified maximum count (default 10).
 
 #### Scenario: Prompts found within range
