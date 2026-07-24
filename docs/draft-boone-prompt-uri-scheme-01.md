@@ -1,9 +1,10 @@
 ---
+schema_version: '1.0'
 rfcxml:
   ipr: trust200902
   submissionType: independent
-  title-abbrev: "prompt URI Scheme"
-  area: "Applications and Real-Time"
+  title-abbrev: prompt URI Scheme
+  area: Applications and Real-Time
   workgroup: agentproto
   keywords:
     - URI
@@ -14,10 +15,111 @@ rfcxml:
   author:
     initials: K.
     surname: Boone
-    organization: "Audacious Inquiry"
+    organization: Audacious Inquiry
     email: kboone@ainq.com
+updated:
+  - date: '2026-07-24T14:28:28.818Z'
+    user: boonek
+    agent:
+      name: GitHub Copilot CLI
+      version: 1.0.73
+    llm:
+      name: claude-sonnet-4.6
+      version: '4.6'
+    prompt_uri: >-
+      prompt:/github-copilot/fb8f0a0d-53e7-4d38-a514-7d84d4985adf/~0d3611af-7c28-48cf-a045-1fd1678b15ca
+    summary: 'Propagate XML changes: shorten fragment example identifier'
+  - date: '2026-07-24T14:28:22.247Z'
+    user: boonek
+    agent:
+      name: GitHub Copilot CLI
+      version: 1.0.73
+    llm:
+      name: claude-sonnet-4.6
+      version: '4.6'
+    prompt_uri: >-
+      prompt:/github-copilot/fb8f0a0d-53e7-4d38-a514-7d84d4985adf/~0d3611af-7c28-48cf-a045-1fd1678b15ca
+    summary: 'Propagate XML changes: unresolvable condition -- align with new algorithm'
+  - date: '2026-07-24T14:28:15.390Z'
+    user: boonek
+    agent:
+      name: GitHub Copilot CLI
+      version: 1.0.73
+    llm:
+      name: claude-sonnet-4.6
+      version: '4.6'
+    prompt_uri: >-
+      prompt:/github-copilot/fb8f0a0d-53e7-4d38-a514-7d84d4985adf/~0d3611af-7c28-48cf-a045-1fd1678b15ca
+    summary: >-
+      Propagate XML changes: resolution algorithm -- find most recent prompt on
+      or before timestamp
+  - date: '2026-07-24T14:28:04.420Z'
+    user: boonek
+    agent:
+      name: GitHub Copilot CLI
+      version: 1.0.73
+    llm:
+      name: claude-sonnet-4.6
+      version: '4.6'
+    prompt_uri: >-
+      prompt:/github-copilot/fb8f0a0d-53e7-4d38-a514-7d84d4985adf/~0d3611af-7c28-48cf-a045-1fd1678b15ca
+    summary: >-
+      Propagate XML changes: component breakdown block 3 -- reduce padding,
+      shorten comments
+  - date: '2026-07-24T14:27:56.401Z'
+    user: boonek
+    agent:
+      name: GitHub Copilot CLI
+      version: 1.0.73
+    llm:
+      name: claude-sonnet-4.6
+      version: '4.6'
+    prompt_uri: >-
+      prompt:/github-copilot/fb8f0a0d-53e7-4d38-a514-7d84d4985adf/~0d3611af-7c28-48cf-a045-1fd1678b15ca
+    summary: >-
+      Propagate XML changes: component breakdown block 2 -- reduce comment
+      padding
+  - date: '2026-07-24T14:27:40.268Z'
+    user: boonek
+    agent:
+      name: GitHub Copilot CLI
+      version: 1.0.73
+    llm:
+      name: claude-sonnet-4.6
+      version: '4.6'
+    prompt_uri: >-
+      prompt:/github-copilot/fb8f0a0d-53e7-4d38-a514-7d84d4985adf/~0d3611af-7c28-48cf-a045-1fd1678b15ca
+    summary: >-
+      Propagate XML changes: component breakdown block 1 -- reduce comment
+      padding
+  - date: '2026-07-24T14:27:32.289Z'
+    user: boonek
+    agent:
+      name: GitHub Copilot CLI
+      version: 1.0.73
+    llm:
+      name: claude-sonnet-4.6
+      version: '4.6'
+    prompt_uri: >-
+      prompt:/github-copilot/fb8f0a0d-53e7-4d38-a514-7d84d4985adf/~0d3611af-7c28-48cf-a045-1fd1678b15ca
+    summary: 'Propagate XML changes: example URI block -- RFC 8792 folding'
+  - date: '2026-07-24T14:27:18.628Z'
+    user: boonek
+    agent:
+      name: GitHub Copilot CLI
+      version: 1.0.73
+    llm:
+      name: claude-sonnet-4.6
+      version: '4.6'
+    prompt_uri: >-
+      prompt:/github-copilot/fb8f0a0d-53e7-4d38-a514-7d84d4985adf/~0d3611af-7c28-48cf-a045-1fd1678b15ca
+    summary: >-
+      Propagate XML changes: ABNF grammar block -- wrap rule, shorten/normalize
+      comments
+created:
+  date: '2026-07-24T13:12:31.000Z'
+  user: Keith W. Boone
 ---
-
 # The `prompt` URI Scheme for AI Agent Sessions and Prompts
 
 **Document:** draft-boone-prompt-uri-scheme-01  
@@ -91,8 +193,8 @@ Copyright (c) 2026 Keith W. Boone.  All rights reserved.
 
 ## 1. Introduction
 
-AI agent systems produce interactions — prompts from users, tool calls by agents,
-responses, and observations — that generate artifacts (files, analyses, transformed
+AI agent systems produce interactions  --  prompts from users, tool calls by agents,
+responses, and observations  --  that generate artifacts (files, analyses, transformed
 documents) whose provenance is difficult to trace after the fact.  Existing identifier
 schemes are insufficient for this use case:
 
@@ -185,43 +287,44 @@ the syntax of a prompt URI.  Terms not defined here are imported from [RFC3986]
 (`unreserved`, `pct-encoded`, `host`, `sub-delims`) and [RFC3339] (`date-time`).
 
 ```abnf
-prompt-URI    =  "prompt:" hier-part agent-name "/" session-ref "/" prompt-ref
+prompt-URI    =  "prompt:" hier-part
+                 agent-name "/" session-ref "/" prompt-ref
 
-hier-part     =  "//" authority "/"   ; remote — MCP server at authority host
+hier-part     =  "//" authority "/"   ; remote: authority-based
                / "/"                  ; local-only resolution
 
 authority     =  [ userinfo "@" ] host [ ":" port ]
-                 ; host: network hostname or IP-literal per RFC 3986 §3.2.3
+                 ; host: hostname or IP-literal (RFC 3986 s3.2.3)
                  ; userinfo: optional username
-                 ; port: optional port number; defaults to 7560 when absent
+                 ; port: optional; default port is 7560
 
 userinfo      =  1*( unreserved / pct-encoded / sub-delims )
                  ; Username identifying the user at the remote host;
-                 ; the "user:password" form of RFC 3986 §3.2.1 is
-                 ; NOT RECOMMENDED — use username only
+                 ; the "user:password" form of RFC 3986 s3.2.1 is
+                 ; NOT RECOMMENDED -- use username only
 
 host          =  <host as defined in RFC 3986 Section 3.2.3>
                  ; DNS hostname, IPv4 address, or IP-literal
 
 port          =  *DIGIT
-                 ; Decimal port number; absent port is equivalent to 7560
+                 ; decimal; absent port defaults to 7560
 
 agent-name    =  1*agent-char
 agent-char    =  unreserved / pct-encoded / "+" / "."
 
 session-ref   =  session-id / session-alias
-                 ; Parsers cannot distinguish the two forms syntactically;
-                 ; the distinction is semantic (Section 4.4, Section 4.6)
+                 ; parsers cannot distinguish the two forms;
+                 ; the distinction is semantic (Sections 4.4, 4.6)
 
 session-id    =  1*( unreserved / pct-encoded )
                  ; Typically a UUID per RFC 9562
 
 session-alias =  1*( unreserved / pct-encoded )
                  ; Special characters including SP (U+0020) MUST be
-                 ; percent-encoded per [RFC3986] — see Section 4.6
+                 ; percent-encoded per [RFC3986] -- see Section 4.6
 
 prompt-ref    =  date-time / prompt-id
-                 ; Either an RFC 3339 timestamp or a prompt identifier;
+                 ; RFC 3339 timestamp or a prompt identifier;
                  ; date-time always begins with a 4-digit year, so
                  ; the "~" prefix of prompt-id is unambiguous
                  ; See Sections 4.5 and 4.7
@@ -233,7 +336,7 @@ date-time     =  <date-time as defined in RFC 3339, Section 5.6>
 
 prompt-id     =  "~" 1*( unreserved / pct-encoded )
                  ; Agent-internal prompt correlation identifier;
-                 ; "~" (U+007E, unreserved per RFC 3986) distinguishes
+                 ; "~" (U+007E, unreserved, RFC 3986) distinguishes
                  ; prompt-id from date-time in all syntactic contexts
                  ; Example: ~abc123, ~promptId%3Axyz
 ```
@@ -243,56 +346,63 @@ local-only resolution (single slash, no authority); the remaining three use
 remote resolution via a named MCP host:
 
 ```
-; Local-only forms (prompt:/ — single slash, no authority)
-prompt:/claude-code/5674b542-0b94-4d12-bc05-d271a4131354/2026-07-07T16:45:23.856Z
+; NOTE: Lines ending with '\' are folded per [RFC8792].
+;       No whitespace is implied at the fold point.
+
+; Local-only forms (prompt:/ -- single slash, no authority)
+prompt:/claude-code/\
+  5674b542-0b94-4d12-bc05-d271a4131354/2026-07-07T16:45:23.856Z
 prompt:/claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
 
-; Remote forms (prompt:// — authority present)
-prompt://mcp.example.com/claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
-prompt://kboone@mcp.example.com/claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
-prompt://mcp.example.com/claude-code/md-csv-mcp%20design/2026-07-07T16:45:23.856Z
+; Remote forms (prompt:// -- authority present)
+prompt://mcp.example.com/claude-code/\
+  5674b542-0b94-4d12-bc05-d271a4131354/~abc123
+prompt://kboone@mcp.example.com/claude-code/\
+  5674b542-0b94-4d12-bc05-d271a4131354/~abc123
+prompt://mcp.example.com/claude-code/\
+  md-csv-mcp%20design/2026-07-07T16:45:23.856Z
 ```
 
 Breaking the local prompt-id form into components:
 
 ```
 prompt-URI  = "prompt:"
-              "/"                             ; hier-part: local-only (single slash)
-              "claude-code"                   ; agent-name
+              "/"  ; hier-part: local-only (single slash)
+              "claude-code"  ; agent-name
               "/"
               "5674b542-0b94-4d12-bc05-d271a4131354"  ; session-id
               "/"
-              "~abc123"                       ; prompt-ref: prompt-id form
+              "~abc123"  ; prompt-ref: prompt-id form
 ```
 
 Breaking the remote form with username into components:
 
 ```
 prompt-URI  = "prompt:"
-              "//"                            ; hier-part: remote resolution
-              "kboone"                        ; userinfo (username)
+              "//"  ; hier-part: remote resolution
+              "kboone"  ; userinfo (username)
               "@"
-              "mcp.example.com"              ; host (agent host / MCP server)
+              "mcp.example.com"  ; host (agent client machine)
               "/"
-              "claude-code"                  ; agent-name
+              "claude-code"  ; agent-name
               "/"
               "5674b542-0b94-4d12-bc05-d271a4131354"  ; session-id
               "/"
-              "~abc123"                      ; prompt-ref: prompt-id form
+              "~abc123"  ; prompt-ref: prompt-id form
 ```
 
 Breaking the remote alias form into components:
 
 ```
 prompt-URI  = "prompt:"
-              "//"                            ; hier-part: remote resolution
-              "mcp.example.com"              ; host (agent host / MCP server, no username)
+              "//"  ; hier-part: remote resolution
+              "mcp.example.com"  ; host (no username)
               "/"
-              "claude-code"                  ; agent-name
+              "claude-code"  ; agent-name
               "/"
-              "md-csv-mcp%20design"          ; session-alias (space encoded as %20)
+              "md-csv-mcp%20design"  ; session-alias (%20 = space)
               "/"
-              "2026-07-07T16:45:23.856Z"     ; prompt-ref: timestamp form (RFC 3339)
+              "2026-07-07T16:45:23.856Z"  ; prompt-ref: timestamp
 ```
 
 ### 3.3 Authority Component (Optional)
@@ -335,10 +445,10 @@ the path (Section 3.4).
 
 The path component SHALL consist of exactly three segments separated by slashes:
 
-1. The agent name (Section 4.3) — identifies the software agent that generated the URI
-2. A session reference — either a session identifier (Section 4.4) or a
+1. The agent name (Section 4.3)  --  identifies the software agent that generated the URI
+2. A session reference  --  either a session identifier (Section 4.4) or a
    registered session alias (Section 4.6)
-3. A prompt reference — either an RFC 3339 timestamp (Section 4.5) or a
+3. A prompt reference  --  either an RFC 3339 timestamp (Section 4.5) or a
    prompt identifier (Section 4.7)
 
 The path MUST begin with a slash.  All three segments MUST NOT be empty.
@@ -360,14 +470,14 @@ SHOULD NOT be used; its presence does not affect identity or comparison.
 A prompt URI selects its resolution mode by the presence or absence of the
 authority (`//host`) prefix:
 
-- **Remote (`prompt://[user@]host/...`)** — The double-slash signals that an
+- **Remote (`prompt://[user@]host/...`)**  --  The double-slash signals that an
   authority is present.  The URI is intended to be resolved by contacting the
   `prompt`-scheme MCP server running at `host` over the network.  This form is
   appropriate for sharing prompt references across machines, teams, or systems
   where the originating session log is accessible through a web-facing MCP
   endpoint.
 
-- **Local-only (`prompt:/...`)** — The single slash signals that no authority is
+- **Local-only (`prompt:/...`)**  --  The single slash signals that no authority is
   present.  The URI is resolvable only by a local MCP server instance that has
   access to the originating agent's session logs on the same machine.  This form
   is appropriate for provenance records that will only ever be resolved on the
@@ -544,7 +654,7 @@ by string comparison, without consulting the session log.
 
 **Timestamp form (fallback):** When no prompt identifier is available, the
 canonical URI SHOULD use the timestamp at which the originating prompt was
-submitted by the user — not the timestamp of any particular tool call within
+submitted by the user  --  not the timestamp of any particular tool call within
 the prompt's processing.  An implementation that records prompt-submission
 timestamps MAY use that timestamp in the canonical URI even if individual
 tool calls use their own tool-call timestamps (Section 4.3).
@@ -573,7 +683,7 @@ following hold after applying the normalization rules in [RFC3986] Section 6:
 3. When both have an authority: their host subcomponents are identical
    (case-insensitively per [RFC3986] Section 6.2.2.1); their port subcomponents
    are equivalent (treating an absent port as equal to port `7560`); and their
-   username (userinfo) subcomponents are equivalent — both absent, both present
+   username (userinfo) subcomponents are equivalent  --  both absent, both present
    and identical after percent-decoding (case-sensitive), or both present and
    determined by the resolver to map to the same identity principal.
 4. Their agent-name components are identical (case-insensitively).
@@ -620,10 +730,10 @@ A conformant resolver SHALL apply the following steps:
 1. Parse the prompt URI and determine the resolution mode (Section 4.0):
    - **Remote** (`prompt://...`): extract `host`, `username` (if present),
      `agent-name`, `session-ref`, and `prompt-ref`.  Contact the MCP server at
-     `host` to perform steps 2–7 on the remote server.  If `username` is present,
+     `host` to perform steps 2-7 on the remote server.  If `username` is present,
      pass it to the remote server so that it MAY scope its session log search.
    - **Local-only** (`prompt:/...`): extract `agent-name`, `session-ref`, and
-     `prompt-ref`.  Perform steps 2–7 using the local session log store.
+     `prompt-ref`.  Perform steps 2-7 using the local session log store.
 
    If `session-ref` is an alias, resolve it per Section 6.2 to obtain the
    session identifier before proceeding.
@@ -639,12 +749,12 @@ A conformant resolver SHALL apply the following steps:
    prompt correlation identifier matches.  If exactly one entry is found, the
    URI resolves to that prompt.  Proceed to step 5.
 
-   If `prompt-ref` is a `date-time`: convert the timestamp to UTC milliseconds
-   and identify all session log entries whose recorded timestamp falls within a
-   resolution window centered on the URI timestamp.  The RECOMMENDED resolution
-   window is ±1 second; resolvers MAY use a narrower window when the URI
-   timestamp has sub-second precision and the session log records sub-second
-   timestamps.
+   If `prompt-ref` is a `date-time`: identify the most recent
+   human-authored prompt entry in the session log whose recorded timestamp
+   is on or before the URI timestamp.  Because a single prompt may drive
+   multiple agent actions -- file writes, commits, and pushes -- before the
+   URI timestamp is captured, the elapsed time between the prompt and the
+   URI timestamp may be substantial.
 
 4. From the candidate entries, identify those that are prompt-type entries
    (user messages that initiated a turn), as opposed to tool call or response
@@ -701,7 +811,7 @@ A prompt URI is unresolvable if any of the following conditions hold:
   the resolver.
 - The session log has been deleted, expired, or is otherwise unavailable.
 - The `agent-name` is not recognized by the resolver.
-- No session log entries fall within the resolution window.
+- No human-authored prompt entry is found on or before the URI timestamp.
 
 An unresolvable URI is NOT invalid.  The URI remains a valid provenance
 identifier and SHALL be preserved in provenance records even when the
@@ -787,7 +897,7 @@ an agent-internal correlation identifier when that identifier is known at
 call time:
 
 ```
-prompt:/claude-code/5674b542.../2026-07-07T16:45:23.856Z#promptId=abc123
+prompt:/claude-code/5674b542.../2026-07-07T16:45:23.856Z#id=abc123
 ```
 
 Fragment identifiers used for this purpose are implementation-specific and
@@ -807,11 +917,17 @@ reliability of URI-based prompt identification in their deployment context.
 ## 9. Security Considerations
 
 **Confidentiality:** A prompt URI encodes the agent identity, session
-identifier, and approximate timestamp of a tool call.  This information
-MAY be sensitive in deployments where session identifiers are treated as
-access credentials or where the existence of a particular agent interaction
-is confidential.  Implementors SHOULD treat prompt URIs with the same
-access controls applied to session logs.
+identifier, and approximate timestamp of a tool call.  In its remote form,
+it additionally encodes the hostname of the user's machine and optionally
+the username of the account under which the agent operates.  Any or all of
+this information MAY be sensitive: session identifiers may be treated as
+access credentials; hostnames and usernames identify specific individuals
+and machines; and the existence of a particular agent interaction may itself
+be confidential in some deployments.  Implementors SHOULD treat prompt
+URIs  --  particularly remote-form URIs containing hostname or username  --  with
+the same access controls applied to session logs, and SHOULD NOT embed
+remote-form URIs in artifacts that will be shared beyond the trust boundary
+of the originating user and machine.
 
 **Spoofability:** Prompt URIs are not cryptographically signed.  Any party
 with knowledge of a valid agent name, session identifier, and approximate

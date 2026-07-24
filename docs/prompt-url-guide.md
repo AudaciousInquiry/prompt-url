@@ -108,10 +108,31 @@ Prompt-URL: prompt:/github-copilot/95602ecf-.../~8e16a698-...
 ### Automatic Trailer via Git Hook
 
 The repository ships a `prepare-commit-msg` hook at `hooks/prepare-commit-msg`
-that automatically appends a `Prompt-URL:` trailer to any commit that carries a
-`Co-authored-by: Copilot` line.  It queries the local `prompt-url-mcp` daemon for
-the most recent Copilot prompt in the last 30 minutes, and silently does nothing if
-the daemon is not running.
+that automatically appends a `Prompt-URL:` trailer to commits initiated by the
+GitHub Copilot CLI.
+
+**How it works:** The hook checks for the `COPILOT_CLI` environment variable,
+which Copilot CLI sets automatically when it drives a commit. If the variable is
+not set (human-authored or a different agent), the hook exits immediately without
+touching the commit message. When `COPILOT_CLI` is set and no `Prompt-URL:` trailer
+is already present, the hook constructs a local-form prompt URI from the
+`COPILOT_AGENT_SESSION_ID` environment variable and the current UTC timestamp, then
+appends it as a trailer.
+
+```sh
+#!/bin/sh
+# Only enforce Prompt-URL: trailer for Copilot-initiated commits
+if [ -z "$COPILOT_CLI" ]; then
+  exit 0
+fi
+
+commit_msg_file="$1"
+if ! grep -q "^Prompt-URL:" "$commit_msg_file"; then
+  timestamp=$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")
+  printf "\nPrompt-URL: prompt:/github-copilot/%s/%s\n" \
+    "$COPILOT_AGENT_SESSION_ID" "$timestamp" >> "$commit_msg_file"
+fi
+```
 
 **Per-repository installation:**
 
@@ -129,8 +150,9 @@ cp hooks/prepare-commit-msg ~/.git-hooks/prepare-commit-msg
 chmod +x ~/.git-hooks/prepare-commit-msg
 ```
 
-The recommended global location is `~/.git-hooks/`.  The hook requires Node.js in
-`PATH` and the `prompt-url-mcp` daemon to be running (`prompt-url-mcp start`).
+The recommended global location is `~/.git-hooks/`. On Windows, run `chmod` in
+Git Bash or WSL; Git for Windows treats copied files as executable by default.
+No additional dependencies are required — the hook is pure POSIX shell.
 
 ## Embedding in File Metadata
 

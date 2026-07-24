@@ -1451,8 +1451,8 @@ li > p:last-of-type:only-child {
       <h2 id="name-introduction">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">AI agent systems produce interactions — prompts from users, tool calls by agents,
-      responses, and observations — that generate artifacts (files, analyses, transformed
+<p id="section-1-1">AI agent systems produce interactions  --  prompts from users, tool calls by agents,
+      responses, and observations  --  that generate artifacts (files, analyses, transformed
       documents) whose provenance is difficult to trace after the fact.  Existing identifier
       schemes are insufficient for this use case:<a href="#section-1-1" class="pilcrow">¶</a></p>
 <ul class="normal">
@@ -1581,15 +1581,16 @@ li > p:last-of-type:only-child {
         <span>[<a href="#RFC3339" class="cite xref">RFC3339</a>]</span> (<code>date-time</code>).<a href="#section-3.2-1" class="pilcrow">¶</a></p>
 <div class="breakable lang-abnf sourcecode" id="section-3.2-2">
 <pre>
-prompt-URI    =  "prompt:" hier-part agent-name "/" session-ref "/" prompt-ref
+prompt-URI    =  "prompt:" hier-part
+                 agent-name "/" session-ref "/" prompt-ref
 
-hier-part     =  "//" authority "/"   ; remote -- MCP server at authority host
+hier-part     =  "//" authority "/"   ; remote: authority-based
                / "/"                  ; local-only resolution
 
 authority     =  [ userinfo "@" ] host [ ":" port ]
-                 ; host: network hostname or IP-literal per RFC 3986 s3.2.3
+                 ; host: hostname or IP-literal (RFC 3986 s3.2.3)
                  ; userinfo: optional username
-                 ; port: optional port number; defaults to 7560 when absent
+                 ; port: optional; default port is 7560
 
 userinfo      =  1*( unreserved / pct-encoded / sub-delims )
                  ; Username identifying the user at the remote host;
@@ -1600,14 +1601,14 @@ host          =  &lt;host as defined in RFC 3986 Section 3.2.3&gt;
                  ; DNS hostname, IPv4 address, or IP-literal
 
 port          =  *DIGIT
-                 ; Decimal port number; absent port is equivalent to 7560
+                 ; decimal; absent port defaults to 7560
 
 agent-name    =  1*agent-char
 agent-char    =  unreserved / pct-encoded / "+" / "."
 
 session-ref   =  session-id / session-alias
-                 ; Parsers cannot distinguish the two forms syntactically;
-                 ; the distinction is semantic (Section 4.4, Section 4.6)
+                 ; parsers cannot distinguish the two forms;
+                 ; the distinction is semantic (Sections 4.4, 4.6)
 
 session-id    =  1*( unreserved / pct-encoded )
                  ; Typically a UUID per RFC 9562
@@ -1617,7 +1618,7 @@ session-alias =  1*( unreserved / pct-encoded )
                  ; percent-encoded per [RFC3986] -- see Section 4.6
 
 prompt-ref    =  date-time / prompt-id
-                 ; Either an RFC 3339 timestamp or a prompt identifier;
+                 ; RFC 3339 timestamp or a prompt identifier;
                  ; date-time always begins with a 4-digit year, so
                  ; the "~" prefix of prompt-id is unambiguous
                  ; See Sections 4.5 and 4.7
@@ -1629,7 +1630,7 @@ date-time     =  &lt;date-time as defined in RFC 3339, Section 5.6&gt;
 
 prompt-id     =  "~" 1*( unreserved / pct-encoded )
                  ; Agent-internal prompt correlation identifier;
-                 ; "~" (U+007E, unreserved per RFC 3986) distinguishes
+                 ; "~" (U+007E, unreserved, RFC 3986) distinguishes
                  ; prompt-id from date-time in all syntactic contexts
                  ; Example: ~abc123, ~promptId%3Axyz
 </pre><a href="#section-3.2-2" class="pilcrow">¶</a>
@@ -1639,56 +1640,63 @@ prompt-id     =  "~" 1*( unreserved / pct-encoded )
         remote resolution via a named host:<a href="#section-3.2-3" class="pilcrow">¶</a></p>
 <div class="sourcecode" id="section-3.2-4">
 <pre>
+; NOTE: Lines ending with '\' are folded per [RFC8792].
+;       No whitespace is implied at the fold point.
+
 ; Local-only forms (prompt:/ -- single slash, no authority)
-prompt:/claude-code/5674b542-0b94-4d12-bc05-d271a4131354/2026-07-07T16:45:23.856Z
+prompt:/claude-code/\
+  5674b542-0b94-4d12-bc05-d271a4131354/2026-07-07T16:45:23.856Z
 prompt:/claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
 
 ; Remote forms (prompt:// -- authority present)
-prompt://mcp.example.com/claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
-prompt://kboone@mcp.example.com/claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
-prompt://mcp.example.com/claude-code/md-csv-mcp%20design/2026-07-07T16:45:23.856Z
+prompt://mcp.example.com/claude-code/\
+  5674b542-0b94-4d12-bc05-d271a4131354/~abc123
+prompt://kboone@mcp.example.com/claude-code/\
+  5674b542-0b94-4d12-bc05-d271a4131354/~abc123
+prompt://mcp.example.com/claude-code/\
+  md-csv-mcp%20design/2026-07-07T16:45:23.856Z
 </pre><a href="#section-3.2-4" class="pilcrow">¶</a>
 </div>
 <p id="section-3.2-5">Breaking the local prompt-id form into components:<a href="#section-3.2-5" class="pilcrow">¶</a></p>
 <div class="sourcecode" id="section-3.2-6">
 <pre>
 prompt-URI  = "prompt:"
-              "/"                             ; hier-part: local-only (single slash)
-              "claude-code"                   ; agent-name
+              "/"  ; hier-part: local-only (single slash)
+              "claude-code"  ; agent-name
               "/"
               "5674b542-0b94-4d12-bc05-d271a4131354"  ; session-id
               "/"
-              "~abc123"                       ; prompt-ref: prompt-id form
+              "~abc123"  ; prompt-ref: prompt-id form
 </pre><a href="#section-3.2-6" class="pilcrow">¶</a>
 </div>
 <p id="section-3.2-7">Breaking the remote form with username into components:<a href="#section-3.2-7" class="pilcrow">¶</a></p>
 <div class="sourcecode" id="section-3.2-8">
 <pre>
 prompt-URI  = "prompt:"
-              "//"                            ; hier-part: remote resolution
-              "kboone"                        ; userinfo (username)
+              "//"  ; hier-part: remote resolution
+              "kboone"  ; userinfo (username)
               "@"
-              "mcp.example.com"               ; host (agent client machine)
+              "mcp.example.com"  ; host (agent client machine)
               "/"
-              "claude-code"                   ; agent-name
+              "claude-code"  ; agent-name
               "/"
               "5674b542-0b94-4d12-bc05-d271a4131354"  ; session-id
               "/"
-              "~abc123"                       ; prompt-ref: prompt-id form
+              "~abc123"  ; prompt-ref: prompt-id form
 </pre><a href="#section-3.2-8" class="pilcrow">¶</a>
 </div>
 <p id="section-3.2-9">Breaking the remote alias form into components:<a href="#section-3.2-9" class="pilcrow">¶</a></p>
 <div class="sourcecode" id="section-3.2-10">
 <pre>
 prompt-URI  = "prompt:"
-              "//"                            ; hier-part: remote resolution
-              "mcp.example.com"               ; host (no username)
+              "//"  ; hier-part: remote resolution
+              "mcp.example.com"  ; host (no username)
               "/"
-              "claude-code"                   ; agent-name
+              "claude-code"  ; agent-name
               "/"
-              "md-csv-mcp%20design"           ; session-alias (space encoded as %20)
+              "md-csv-mcp%20design"  ; session-alias (%20 = space)
               "/"
-              "2026-07-07T16:45:23.856Z"      ; prompt-ref: timestamp form (RFC 3339)
+              "2026-07-07T16:45:23.856Z"  ; prompt-ref: timestamp
 </pre><a href="#section-3.2-10" class="pilcrow">¶</a>
 </div>
 </section>
@@ -1740,14 +1748,14 @@ prompt-URI  = "prompt:"
 <p id="section-3.4-1">The path component <span class="bcp14">SHALL</span> consist of exactly three segments separated by
         slashes:<a href="#section-3.4-1" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-3.4-2">
-          <li id="section-3.4-2.1">The agent name (<a href="#agent-name-comp" class="auto internal xref">Section 4.4</a>) — identifies the software
+          <li id="section-3.4-2.1">The agent name (<a href="#agent-name-comp" class="auto internal xref">Section 4.4</a>)  --  identifies the software
           agent that generated the URI.<a href="#section-3.4-2.1" class="pilcrow">¶</a>
 </li>
-          <li id="section-3.4-2.2">A session reference — either a session identifier
+          <li id="section-3.4-2.2">A session reference  --  either a session identifier
           (<a href="#session-id-comp" class="auto internal xref">Section 4.5</a>) or a registered session alias
           (<a href="#session-aliases" class="auto internal xref">Section 4.7</a>).<a href="#section-3.4-2.2" class="pilcrow">¶</a>
 </li>
-          <li id="section-3.4-2.3">A prompt reference — either an RFC 3339 timestamp
+          <li id="section-3.4-2.3">A prompt reference  --  either an RFC 3339 timestamp
           (<a href="#timestamp-comp" class="auto internal xref">Section 4.6</a>) or a prompt identifier
           (<a href="#canonical-uri" class="auto internal xref">Section 4.8</a>).<a href="#section-3.4-2.3" class="pilcrow">¶</a>
 </li>
@@ -1784,7 +1792,7 @@ prompt-URI  = "prompt:"
         authority (<code>//host</code>) prefix:<a href="#section-4.1-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4.1-2.1">
-            <strong>Remote (<code>prompt://[user@]host/...</code>)</strong> — The double-slash signals
+            <strong>Remote (<code>prompt://[user@]host/...</code>)</strong>  --  The double-slash signals
           that an authority is present.  The URI is intended to be resolved by contacting
           the <code>prompt</code>-scheme MCP server running at <code>host</code> over the network.  This
           form is appropriate for sharing prompt references across machines, teams, or
@@ -1792,7 +1800,7 @@ prompt-URI  = "prompt:"
           MCP endpoint.<a href="#section-4.1-2.1" class="pilcrow">¶</a>
 </li>
           <li class="normal" id="section-4.1-2.2">
-            <strong>Local-only (<code>prompt:/...</code>)</strong> — The single slash signals that no
+            <strong>Local-only (<code>prompt:/...</code>)</strong>  --  The single slash signals that no
           authority is present.  The URI is resolvable only by a local MCP server instance
           that has access to the originating agent's session logs on the same machine.
           This form is appropriate for provenance records that will only ever be resolved
@@ -1988,7 +1996,7 @@ prompt:/claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
         by string comparison, without consulting the session log.<a href="#section-4.8-4" class="pilcrow">¶</a></p>
 <p id="section-4.8-5"><strong>Timestamp form (fallback):</strong> When no prompt identifier is available, the
         canonical URI <span class="bcp14">SHOULD</span> use the timestamp at which the originating prompt was
-        submitted by the user — not the timestamp of any particular tool call within
+        submitted by the user  --  not the timestamp of any particular tool call within
         the prompt's processing.  An implementation that records prompt-submission
         timestamps <span class="bcp14">MAY</span> use that timestamp in the canonical URI even if individual
         tool calls use their own tool-call timestamps (<a href="#timestamp-comp" class="auto internal xref">Section 4.6</a>).<a href="#section-4.8-5" class="pilcrow">¶</a></p>
@@ -2023,7 +2031,7 @@ prompt:/claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
           <p id="section-5-2.3.1">When both have an authority: their host subcomponents are identical
         (case-insensitively per <span>[<a href="#RFC3986" class="cite xref">RFC3986</a>]</span> Section 6.2.2.1); their port
         subcomponents are equivalent (treating an absent port as equal to port
-        <code>7560</code>); and their username (userinfo) subcomponents are equivalent —
+        <code>7560</code>); and their username (userinfo) subcomponents are equivalent  -- 
         both absent, both present and identical after percent-decoding
         (case-sensitive), or both present and determined by the resolver to map to
         the same identity principal.<a href="#section-5-2.3.1" class="pilcrow">¶</a></p>
@@ -2098,12 +2106,12 @@ prompt:/claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
                 <strong>Remote</strong> (<code>prompt://...</code>): extract <code>host</code>,
             <code>username</code> (if present), <code>agent-name</code>, <code>session-ref</code>, and
             <code>prompt-ref</code>.  Contact the MCP server at <code>host</code> to perform steps
-            2–7 on the remote server.  If <code>username</code> is present, pass it to the
+            2-7 on the remote server.  If <code>username</code> is present, pass it to the
             remote server so that it <span class="bcp14">MAY</span> scope its session log search.<a href="#section-6.1-3.1.2.1" class="pilcrow">¶</a>
 </li>
               <li class="normal" id="section-6.1-3.1.2.2">
                 <strong>Local-only</strong> (<code>prompt:/...</code>): extract <code>agent-name</code>,
-            <code>session-ref</code>, and <code>prompt-ref</code>.  Perform steps 2–7 using the
+            <code>session-ref</code>, and <code>prompt-ref</code>.  Perform steps 2-7 using the
             local session log store.<a href="#section-6.1-3.1.2.2" class="pilcrow">¶</a>
 </li>
             </ul>
@@ -2123,12 +2131,12 @@ prompt:/claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
           <code>~</code> prefix, percent-decode the remainder, and locate all session log entries
           whose prompt correlation identifier matches.  If exactly one entry is found,
           the URI resolves to that prompt.  Proceed to step 5.<a href="#section-6.1-3.3.1" class="pilcrow">¶</a></p>
-<p id="section-6.1-3.3.2">If <code>prompt-ref</code> is a <code>date-time</code>: convert the timestamp to UTC
-          milliseconds and identify all session log entries whose recorded timestamp
-          falls within a resolution window centered on the URI timestamp.  The
-          <span class="bcp14">RECOMMENDED</span> resolution window is ±1 second; resolvers <span class="bcp14">MAY</span> use a narrower
-          window when the URI timestamp has sub-second precision and the session log
-          records sub-second timestamps.<a href="#section-6.1-3.3.2" class="pilcrow">¶</a></p>
+<p id="section-6.1-3.3.2">If <code>prompt-ref</code> is a <code>date-time</code>: identify the most recent
+          human-authored prompt entry in the session log whose recorded timestamp is on
+          or before the URI timestamp.  Because a single prompt may drive multiple agent
+          actions -- file writes, commits, and pushes -- before the URI timestamp is
+          captured, the elapsed time between the prompt and the URI timestamp may be
+          substantial.<a href="#section-6.1-3.3.2" class="pilcrow">¶</a></p>
 </li>
           <li id="section-6.1-3.4">From the candidate entries, identify those that are prompt-type entries
           (user messages that initiated a turn), as opposed to tool call or response
@@ -2296,7 +2304,7 @@ prompt:/claude-code/5674b542.../2026-07-07T16:45:23.856Z
         time:<a href="#section-8.1-2" class="pilcrow">¶</a></p>
 <div class="sourcecode" id="section-8.1-3">
 <pre>
-prompt:/claude-code/5674b542.../2026-07-07T16:45:23.856Z#promptId=abc123
+prompt:/claude-code/5674b542.../2026-07-07T16:45:23.856Z#id=abc123
 </pre><a href="#section-8.1-3" class="pilcrow">¶</a>
 </div>
 <p id="section-8.1-4">Fragment identifiers used for this purpose are implementation-specific and
@@ -2386,11 +2394,17 @@ prompt:/claude-code/5674b542.../2026-07-07T16:45:23.856Z#promptId=abc123
 <a href="#section-10" class="section-number selfRef">10. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
       </h2>
 <p id="section-10-1"><strong>Confidentiality:</strong> A prompt URI encodes the agent identity, session
-      identifier, and approximate timestamp of a tool call.  This information <span class="bcp14">MAY</span>
-      be sensitive in deployments where session identifiers are treated as access
-      credentials or where the existence of a particular agent interaction is
-      confidential.  Implementors <span class="bcp14">SHOULD</span> treat prompt URIs with the same access
-      controls applied to session logs.<a href="#section-10-1" class="pilcrow">¶</a></p>
+      identifier, and approximate timestamp of a tool call.  In its remote form,
+      it additionally encodes the hostname of the user's machine and optionally
+      the username of the account under which the agent operates.  Any or all of
+      this information <span class="bcp14">MAY</span> be sensitive: session identifiers may be treated as
+      access credentials; hostnames and usernames identify specific individuals
+      and machines; and the existence of a particular agent interaction may itself
+      be confidential in some deployments.  Implementors <span class="bcp14">SHOULD</span> treat prompt
+      URIs  --  particularly remote-form URIs containing hostname or username  --  with
+      the same access controls applied to session logs, and <span class="bcp14">SHOULD NOT</span> embed
+      remote-form URIs in artifacts that will be shared beyond the trust boundary
+      of the originating user and machine.<a href="#section-10-1" class="pilcrow">¶</a></p>
 <p id="section-10-2"><strong>Spoofability:</strong> Prompt URIs are not cryptographically signed.  Any party
       with knowledge of a valid agent name, session identifier, and approximate
       timestamp can construct a syntactically valid URI.  Resolvers <span class="bcp14">SHALL NOT</span> treat a

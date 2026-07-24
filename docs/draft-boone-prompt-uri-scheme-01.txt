@@ -73,34 +73,34 @@ Table of Contents
      3.2.  Complete ABNF . . . . . . . . . . . . . . . . . . . . . .   5
      3.3.  Authority Component (Optional)  . . . . . . . . . . . . .   7
      3.4.  Path Component  . . . . . . . . . . . . . . . . . . . . .   8
-     3.5.  Query and Fragment Components . . . . . . . . . . . . . .   8
-   4.  URI Components and Semantics  . . . . . . . . . . . . . . . .   8
-     4.1.  Remote vs. Local Resolution . . . . . . . . . . . . . . .   8
+     3.5.  Query and Fragment Components . . . . . . . . . . . . . .   9
+   4.  URI Components and Semantics  . . . . . . . . . . . . . . . .   9
+     4.1.  Remote vs. Local Resolution . . . . . . . . . . . . . . .   9
      4.2.  Host  . . . . . . . . . . . . . . . . . . . . . . . . . .   9
      4.3.  Username  . . . . . . . . . . . . . . . . . . . . . . . .  10
      4.4.  Agent Name  . . . . . . . . . . . . . . . . . . . . . . .  10
-     4.5.  Session Identifier  . . . . . . . . . . . . . . . . . . .  10
+     4.5.  Session Identifier  . . . . . . . . . . . . . . . . . . .  11
      4.6.  Timestamp . . . . . . . . . . . . . . . . . . . . . . . .  11
      4.7.  Session Aliases . . . . . . . . . . . . . . . . . . . . .  11
      4.8.  Canonical Prompt URI  . . . . . . . . . . . . . . . . . .  13
-   5.  Normalization and Comparison  . . . . . . . . . . . . . . . .  13
+   5.  Normalization and Comparison  . . . . . . . . . . . . . . . .  14
    6.  Resolution  . . . . . . . . . . . . . . . . . . . . . . . . .  15
      6.1.  Resolution Algorithm  . . . . . . . . . . . . . . . . . .  15
      6.2.  Alias Resolution  . . . . . . . . . . . . . . . . . . . .  16
-     6.3.  Unresolvable URIs . . . . . . . . . . . . . . . . . . . .  16
-   7.  Ambiguity: Multiple URIs for One Prompt . . . . . . . . . . .  17
+     6.3.  Unresolvable URIs . . . . . . . . . . . . . . . . . . . .  17
+   7.  Ambiguity: Multiple URIs for One Prompt . . . . . . . . . . .  18
    8.  Ambiguity: One URI for Multiple Prompts . . . . . . . . . . .  18
      8.1.  Mitigation  . . . . . . . . . . . . . . . . . . . . . . .  19
      8.2.  Disclosure Requirement  . . . . . . . . . . . . . . . . .  19
    9.  MCP Resolution API  . . . . . . . . . . . . . . . . . . . . .  19
-   10. Security Considerations . . . . . . . . . . . . . . . . . . .  20
+   10. Security Considerations . . . . . . . . . . . . . . . . . . .  21
    11. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  21
-   12. References  . . . . . . . . . . . . . . . . . . . . . . . . .  21
-     12.1.  Normative References . . . . . . . . . . . . . . . . . .  21
+   12. References  . . . . . . . . . . . . . . . . . . . . . . . . .  22
+     12.1.  Normative References . . . . . . . . . . . . . . . . . .  22
      12.2.  Informative References . . . . . . . . . . . . . . . . .  22
    Appendix A: Automatic Prompt-URL Trailer via Git Hook . . . . . .  23
      Operation . . . . . . . . . . . . . . . . . . . . . . . . . . .  23
-     Installation  . . . . . . . . . . . . . . . . . . . . . . . . .  23
+     Installation  . . . . . . . . . . . . . . . . . . . . . . . . .  24
      Resulting Commit Message  . . . . . . . . . . . . . . . . . . .  24
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  24
 
@@ -116,8 +116,8 @@ Internet-Draft              prompt URI Scheme                  July 2026
 
 1.  Introduction
 
-   AI agent systems produce interactions — prompts from users, tool
-   calls by agents, responses, and observations — that generate
+   AI agent systems produce interactions -- prompts from users, tool
+   calls by agents, responses, and observations -- that generate
    artifacts (files, analyses, transformed documents) whose provenance
    is difficult to trace after the fact.  Existing identifier schemes
    are insufficient for this use case:
@@ -247,15 +247,16 @@ Internet-Draft              prompt URI Scheme                  July 2026
    here are imported from [RFC3986] (unreserved, pct-encoded, host, sub-
    delims) and [RFC3339] (date-time).
 
-   prompt-URI    =  "prompt:" hier-part agent-name "/" session-ref "/" prompt-ref
+   prompt-URI    =  "prompt:" hier-part
+                    agent-name "/" session-ref "/" prompt-ref
 
-   hier-part     =  "//" authority "/"   ; remote -- MCP server at authority host
+   hier-part     =  "//" authority "/"   ; remote: authority-based
                   / "/"                  ; local-only resolution
 
    authority     =  [ userinfo "@" ] host [ ":" port ]
-                    ; host: network hostname or IP-literal per RFC 3986 s3.2.3
+                    ; host: hostname or IP-literal (RFC 3986 s3.2.3)
                     ; userinfo: optional username
-                    ; port: optional port number; defaults to 7560 when absent
+                    ; port: optional; default port is 7560
 
    userinfo      =  1*( unreserved / pct-encoded / sub-delims )
                     ; Username identifying the user at the remote host;
@@ -266,14 +267,13 @@ Internet-Draft              prompt URI Scheme                  July 2026
                     ; DNS hostname, IPv4 address, or IP-literal
 
    port          =  *DIGIT
-                    ; Decimal port number; absent port is equivalent to 7560
+                    ; decimal; absent port defaults to 7560
 
    agent-name    =  1*agent-char
    agent-char    =  unreserved / pct-encoded / "+" / "."
 
    session-ref   =  session-id / session-alias
-                    ; Parsers cannot distinguish the two forms syntactically;
-                    ; the distinction is semantic (Section 4.4, Section 4.6)
+                    ; parsers cannot distinguish the two forms;
 
 
 
@@ -281,6 +281,8 @@ Boone                    Expires 22 January 2027                [Page 5]
 
 Internet-Draft              prompt URI Scheme                  July 2026
 
+
+                    ; the distinction is semantic (Sections 4.4, 4.6)
 
    session-id    =  1*( unreserved / pct-encoded )
                     ; Typically a UUID per RFC 9562
@@ -290,7 +292,7 @@ Internet-Draft              prompt URI Scheme                  July 2026
                     ; percent-encoded per [RFC3986] -- see Section 4.6
 
    prompt-ref    =  date-time / prompt-id
-                    ; Either an RFC 3339 timestamp or a prompt identifier;
+                    ; RFC 3339 timestamp or a prompt identifier;
                     ; date-time always begins with a 4-digit year, so
                     ; the "~" prefix of prompt-id is unambiguous
                     ; See Sections 4.5 and 4.7
@@ -302,7 +304,7 @@ Internet-Draft              prompt URI Scheme                  July 2026
 
    prompt-id     =  "~" 1*( unreserved / pct-encoded )
                     ; Agent-internal prompt correlation identifier;
-                    ; "~" (U+007E, unreserved per RFC 3986) distinguishes
+                    ; "~" (U+007E, unreserved, RFC 3986) distinguishes
                     ; prompt-id from date-time in all syntactic contexts
                     ; Example: ~abc123, ~promptId%3Axyz
 
@@ -310,26 +312,24 @@ Internet-Draft              prompt URI Scheme                  July 2026
    two use local-only resolution (single slash, no authority); the
    remaining three use remote resolution via a named host:
 
+   ; NOTE: Lines ending with '\' are folded per [RFC8792].
+   ;       No whitespace is implied at the fold point.
+
    ; Local-only forms (prompt:/ -- single slash, no authority)
-   prompt:/claude-code/5674b542-0b94-4d12-bc05-d271a4131354/2026-07-07T16:45:23.856Z
+   prompt:/claude-code/\
+     5674b542-0b94-4d12-bc05-d271a4131354/2026-07-07T16:45:23.856Z
    prompt:/claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
 
    ; Remote forms (prompt:// -- authority present)
-   prompt://mcp.example.com/claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
-   prompt://kboone@mcp.example.com/claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
-   prompt://mcp.example.com/claude-code/md-csv-mcp%20design/2026-07-07T16:45:23.856Z
+   prompt://mcp.example.com/claude-code/\
+     5674b542-0b94-4d12-bc05-d271a4131354/~abc123
+   prompt://kboone@mcp.example.com/claude-code/\
+     5674b542-0b94-4d12-bc05-d271a4131354/~abc123
+   prompt://mcp.example.com/claude-code/\
+     md-csv-mcp%20design/2026-07-07T16:45:23.856Z
 
    Breaking the local prompt-id form into components:
 
-   prompt-URI  = "prompt:"
-                 "/"                             ; hier-part: local-only (single slash)
-                 "claude-code"                   ; agent-name
-                 "/"
-                 "5674b542-0b94-4d12-bc05-d271a4131354"  ; session-id
-                 "/"
-                 "~abc123"                       ; prompt-ref: prompt-id form
-
-   Breaking the remote form with username into components:
 
 
 
@@ -339,28 +339,38 @@ Internet-Draft              prompt URI Scheme                  July 2026
 
 
    prompt-URI  = "prompt:"
-                 "//"                            ; hier-part: remote resolution
-                 "kboone"                        ; userinfo (username)
-                 "@"
-                 "mcp.example.com"               ; host (agent client machine)
-                 "/"
-                 "claude-code"                   ; agent-name
+                 "/"  ; hier-part: local-only (single slash)
+                 "claude-code"  ; agent-name
                  "/"
                  "5674b542-0b94-4d12-bc05-d271a4131354"  ; session-id
                  "/"
-                 "~abc123"                       ; prompt-ref: prompt-id form
+                 "~abc123"  ; prompt-ref: prompt-id form
+
+   Breaking the remote form with username into components:
+
+   prompt-URI  = "prompt:"
+                 "//"  ; hier-part: remote resolution
+                 "kboone"  ; userinfo (username)
+                 "@"
+                 "mcp.example.com"  ; host (agent client machine)
+                 "/"
+                 "claude-code"  ; agent-name
+                 "/"
+                 "5674b542-0b94-4d12-bc05-d271a4131354"  ; session-id
+                 "/"
+                 "~abc123"  ; prompt-ref: prompt-id form
 
    Breaking the remote alias form into components:
 
    prompt-URI  = "prompt:"
-                 "//"                            ; hier-part: remote resolution
-                 "mcp.example.com"               ; host (no username)
+                 "//"  ; hier-part: remote resolution
+                 "mcp.example.com"  ; host (no username)
                  "/"
-                 "claude-code"                   ; agent-name
+                 "claude-code"  ; agent-name
                  "/"
-                 "md-csv-mcp%20design"           ; session-alias (space encoded as %20)
+                 "md-csv-mcp%20design"  ; session-alias (%20 = space)
                  "/"
-                 "2026-07-07T16:45:23.856Z"      ; prompt-ref: timestamp form (RFC 3339)
+                 "2026-07-07T16:45:23.856Z"  ; prompt-ref: timestamp
 
 3.3.  Authority Component (Optional)
 
@@ -374,16 +384,6 @@ Internet-Draft              prompt URI Scheme                  July 2026
 
    [ username "@" ] host [ ":" port ]
 
-   The host subcomponent identifies the network host where the agent
-   client application resides and operates on behalf of the user.  The
-   agent may reside in the cloud (such as Claude Code or GitHub
-   Copilot), but this is the user machine where the agent's client
-   application stores logs and session data that enable prompt
-   resolution.  The host MAY also provide an HTTP endpoint where an MCP
-   server is accessible, enabling remote resolution of the URI over the
-   network.  It follows the host syntax of [RFC3986] Section 3.2.3 (DNS
-   name, IPv4 address, or IP-literal).
-
 
 
 
@@ -393,6 +393,16 @@ Boone                    Expires 22 January 2027                [Page 7]
 
 Internet-Draft              prompt URI Scheme                  July 2026
 
+
+   The host subcomponent identifies the network host where the agent
+   client application resides and operates on behalf of the user.  The
+   agent may reside in the cloud (such as Claude Code or GitHub
+   Copilot), but this is the user machine where the agent's client
+   application stores logs and session data that enable prompt
+   resolution.  The host MAY also provide an HTTP endpoint where an MCP
+   server is accessible, enabling remote resolution of the URI over the
+   network.  It follows the host syntax of [RFC3986] Section 3.2.3 (DNS
+   name, IPv4 address, or IP-literal).
 
    The port subcomponent is OPTIONAL.  When present, it is separated
    from the host by a colon (:), as defined in [RFC3986] Section 3.2.3.
@@ -415,17 +425,30 @@ Internet-Draft              prompt URI Scheme                  July 2026
    The path component SHALL consist of exactly three segments separated
    by slashes:
 
-   1.  The agent name (Section 4.4) — identifies the software agent that
-       generated the URI.
+   1.  The agent name (Section 4.4) -- identifies the software agent
+       that generated the URI.
 
-   2.  A session reference — either a session identifier (Section 4.5)
+   2.  A session reference -- either a session identifier (Section 4.5)
        or a registered session alias (Section 4.7).
 
-   3.  A prompt reference — either an RFC 3339 timestamp (Section 4.6)
+   3.  A prompt reference -- either an RFC 3339 timestamp (Section 4.6)
        or a prompt identifier (Section 4.8).
 
    The path MUST begin with a slash.  All three segments MUST NOT be
    empty.
+
+
+
+
+
+
+
+
+
+Boone                    Expires 22 January 2027                [Page 8]
+
+Internet-Draft              prompt URI Scheme                  July 2026
+
 
 3.5.  Query and Fragment Components
 
@@ -443,14 +466,7 @@ Internet-Draft              prompt URI Scheme                  July 2026
    A prompt URI selects its resolution mode by the presence or absence
    of the authority (//host) prefix:
 
-
-
-Boone                    Expires 22 January 2027                [Page 8]
-
-Internet-Draft              prompt URI Scheme                  July 2026
-
-
-   *  *Remote (prompt://[user@]host/...)* — The double-slash signals
+   *  *Remote (prompt://[user@]host/...)* -- The double-slash signals
       that an authority is present.  The URI is intended to be resolved
       by contacting the prompt-scheme MCP server running at host over
       the network.  This form is appropriate for sharing prompt
@@ -458,7 +474,7 @@ Internet-Draft              prompt URI Scheme                  July 2026
       originating session log is accessible through a web-facing MCP
       endpoint.
 
-   *  *Local-only (prompt:/...)* — The single slash signals that no
+   *  *Local-only (prompt:/...)* -- The single slash signals that no
       authority is present.  The URI is resolvable only by a local MCP
       server instance that has access to the originating agent's session
       logs on the same machine.  This form is appropriate for provenance
@@ -482,6 +498,14 @@ Internet-Draft              prompt URI Scheme                  July 2026
    Section 3.2.3.  The host MAY also provide an HTTP endpoint where a
    prompt-scheme MCP server is accessible, enabling remote resolution of
    the URI over the network.  A single MCP server MAY host resolution
+
+
+
+Boone                    Expires 22 January 2027                [Page 9]
+
+Internet-Draft              prompt URI Scheme                  July 2026
+
+
    for multiple AI agents.
 
    Host names SHOULD be stable DNS names.  IP addresses SHOULD be
@@ -494,17 +518,6 @@ Internet-Draft              prompt URI Scheme                  July 2026
    implementation.  When an explicit port number equal to 7560 is
    present, it is equivalent to the form with no port for comparison
    purposes (Section 5).
-
-
-
-
-
-
-
-Boone                    Expires 22 January 2027                [Page 9]
-
-Internet-Draft              prompt URI Scheme                  July 2026
-
 
 4.3.  Username
 
@@ -542,6 +555,13 @@ Internet-Draft              prompt URI Scheme                  July 2026
    agent name is NOT RECOMMENDED, as it would render URIs from different
    versions incomparable even when they refer to the same logical agent.
 
+
+
+Boone                    Expires 22 January 2027               [Page 10]
+
+Internet-Draft              prompt URI Scheme                  July 2026
+
+
 4.5.  Session Identifier
 
    The session identifier SHALL be an opaque string assigned by the
@@ -553,14 +573,6 @@ Internet-Draft              prompt URI Scheme                  July 2026
 
    The session identifier SHALL be consistent throughout a session and
    SHALL NOT change during a session's lifetime.
-
-
-
-
-Boone                    Expires 22 January 2027               [Page 10]
-
-Internet-Draft              prompt URI Scheme                  July 2026
-
 
 4.6.  Timestamp
 
@@ -594,18 +606,6 @@ Internet-Draft              prompt URI Scheme                  July 2026
    prompt:/claude-code/md-csv-mcp-design/... is more immediately
    meaningful than prompt:/claude-code/5674b542-.../....
 
-   *Registration:* Aliases SHALL be registered in a local alias registry
-   that maps each alias to the session identifier it represents.  An
-   alias is scoped to a single agent name and MUST map to exactly one
-   session within that agent's registry.  A session MAY have more than
-   one alias registered to it.
-
-   Attempting to register an alias that is already registered to a
-   different session SHALL be rejected with a conflict error.
-   Attempting to register an alias that is already registered to the
-   same session is idempotent and SHALL succeed without modifying the
-   registry.
-
 
 
 
@@ -617,6 +617,18 @@ Boone                    Expires 22 January 2027               [Page 11]
 
 Internet-Draft              prompt URI Scheme                  July 2026
 
+
+   *Registration:* Aliases SHALL be registered in a local alias registry
+   that maps each alias to the session identifier it represents.  An
+   alias is scoped to a single agent name and MUST map to exactly one
+   session within that agent's registry.  A session MAY have more than
+   one alias registered to it.
+
+   Attempting to register an alias that is already registered to a
+   different session SHALL be rejected with a conflict error.
+   Attempting to register an alias that is already registered to the
+   same session is idempotent and SHALL succeed without modifying the
+   registry.
 
    *Case insensitivity:* Alias lookup SHALL be case-insensitive.  The
    alias MD-CSV-MCP-Design, md-csv-mcp-design, and Md-Csv-Mcp-Design
@@ -654,6 +666,14 @@ Internet-Draft              prompt URI Scheme                  July 2026
    use the session-identifier form of the prompt URI rather than the
    alias form, since session identifiers are generated by the agent and
    stored in its session log independently of any alias registry.
+
+
+
+Boone                    Expires 22 January 2027               [Page 12]
+
+Internet-Draft              prompt URI Scheme                  July 2026
+
+
    Prompt URIs using an alias remain valid provenance references as long
    as the alias registry is intact, but are subject to becoming
    unresolvable (Section 6.3) if the registry is lost or unavailable.
@@ -663,16 +683,6 @@ Internet-Draft              prompt URI Scheme                  July 2026
    and refer to the same session.  Implementations MAY use the alias
    form in newly generated provenance records when an alias is
    registered, as it improves human readability.
-
-
-
-
-
-
-Boone                    Expires 22 January 2027               [Page 12]
-
-Internet-Draft              prompt URI Scheme                  July 2026
-
 
 4.8.  Canonical Prompt URI
 
@@ -699,7 +709,7 @@ Internet-Draft              prompt URI Scheme                  July 2026
 
    *Timestamp form (fallback):* When no prompt identifier is available,
    the canonical URI SHOULD use the timestamp at which the originating
-   prompt was submitted by the user — not the timestamp of any
+   prompt was submitted by the user -- not the timestamp of any
    particular tool call within the prompt's processing.  An
    implementation that records prompt-submission timestamps MAY use that
    timestamp in the canonical URI even if individual tool calls use
@@ -710,6 +720,15 @@ Internet-Draft              prompt URI Scheme                  July 2026
    multiple such URIs from the same prompt are not equivalent by
    comparison (Section 5), even though they resolve to the same prompt
    (Section 6).
+
+
+
+
+
+Boone                    Expires 22 January 2027               [Page 13]
+
+Internet-Draft              prompt URI Scheme                  July 2026
+
 
    *Normalizing to canonical form:* Implementations SHOULD normalize all
    prompt URI references for a given prompt to the canonical URI before
@@ -723,13 +742,6 @@ Internet-Draft              prompt URI Scheme                  July 2026
    the following hold after applying the normalization rules in
    [RFC3986] Section 6:
 
-
-
-Boone                    Expires 22 January 2027               [Page 13]
-
-Internet-Draft              prompt URI Scheme                  July 2026
-
-
    1.  Their scheme components are identical (case-insensitively).
 
    2.  Their resolution mode is identical: either both have an authority
@@ -739,7 +751,7 @@ Internet-Draft              prompt URI Scheme                  July 2026
        identical (case-insensitively per [RFC3986] Section 6.2.2.1);
        their port subcomponents are equivalent (treating an absent port
        as equal to port 7560); and their username (userinfo)
-       subcomponents are equivalent — both absent, both present and
+       subcomponents are equivalent -- both absent, both present and
        identical after percent-decoding (case-sensitive), or both
        present and determined by the resolver to map to the same
        identity principal.
@@ -766,6 +778,14 @@ Internet-Draft              prompt URI Scheme                  July 2026
           instant in time, after normalizing to UTC and applying the
           date-time comparison rules of [RFC3339].
 
+
+
+
+Boone                    Expires 22 January 2027               [Page 14]
+
+Internet-Draft              prompt URI Scheme                  July 2026
+
+
        *  If both are prompt identifiers (prompt-id): they are identical
           after percent-decoding (case-sensitive, following percent-
           decoding).
@@ -778,14 +798,6 @@ Internet-Draft              prompt URI Scheme                  July 2026
    equivalent and SHALL NOT be treated as identifying the same prompt
    URI.  Equivalence and resolution are distinct concepts: two non-
    equivalent URIs MAY nonetheless resolve to the same prompt
-
-
-
-Boone                    Expires 22 January 2027               [Page 14]
-
-Internet-Draft              prompt URI Scheme                  July 2026
-
-
    (Section 7), and a single URI MAY be ambiguous (Section 8).  Two URIs
    that differ only in their prompt-ref form (one using a timestamp, one
    using a prompt identifier) are likewise non-equivalent by this
@@ -807,16 +819,28 @@ Internet-Draft              prompt URI Scheme                  July 2026
 
        *  *Remote* (prompt://...): extract host, username (if present),
           agent-name, session-ref, and prompt-ref.  Contact the MCP
-          server at host to perform steps 2–7 on the remote server.  If
+          server at host to perform steps 2-7 on the remote server.  If
           username is present, pass it to the remote server so that it
           MAY scope its session log search.
 
        *  *Local-only* (prompt:/...): extract agent-name, session-ref,
-          and prompt-ref.  Perform steps 2–7 using the local session log
+          and prompt-ref.  Perform steps 2-7 using the local session log
           store.
 
        If session-ref is an alias, resolve it per Section 6.2 to obtain
        the session identifier before proceeding.
+
+
+
+
+
+
+
+
+Boone                    Expires 22 January 2027               [Page 15]
+
+Internet-Draft              prompt URI Scheme                  July 2026
+
 
    2.  Locate the session log associated with the session identifier for
        the agent identified by agent-name.  If resolving remotely and a
@@ -831,21 +855,12 @@ Internet-Draft              prompt URI Scheme                  July 2026
        entry is found, the URI resolves to that prompt.  Proceed to step
        5.
 
-       If prompt-ref is a date-time: convert the timestamp to UTC
-       milliseconds and identify all session log entries whose recorded
-       timestamp falls within a resolution window centered on the URI
-
-
-
-Boone                    Expires 22 January 2027               [Page 15]
-
-Internet-Draft              prompt URI Scheme                  July 2026
-
-
-       timestamp.  The RECOMMENDED resolution window is ±1 second;
-       resolvers MAY use a narrower window when the URI timestamp has
-       sub-second precision and the session log records sub-second
-       timestamps.
+       If prompt-ref is a date-time: identify the most recent human-
+       authored prompt entry in the session log whose recorded timestamp
+       is on or before the URI timestamp.  Because a single prompt may
+       drive multiple agent actions -- file writes, commits, and pushes
+       -- before the URI timestamp is captured, the elapsed time between
+       the prompt and the URI timestamp may be substantial.
 
    4.  From the candidate entries, identify those that are prompt-type
        entries (user messages that initiated a turn), as opposed to tool
@@ -876,6 +891,13 @@ Internet-Draft              prompt URI Scheme                  July 2026
    2.  Look up the normalized alias in the alias registry for the agent
        identified by agent-name.
 
+
+
+Boone                    Expires 22 January 2027               [Page 16]
+
+Internet-Draft              prompt URI Scheme                  July 2026
+
+
    3.  If a matching entry is found, substitute the corresponding
        session identifier into the resolution process and continue with
        Section 6.1 step 2.
@@ -888,15 +910,6 @@ Internet-Draft              prompt URI Scheme                  July 2026
 6.3.  Unresolvable URIs
 
    A prompt URI is unresolvable if any of the following conditions hold:
-
-
-
-
-
-Boone                    Expires 22 January 2027               [Page 16]
-
-Internet-Draft              prompt URI Scheme                  July 2026
-
 
    *  The URI is in remote form (prompt://) and the host subcomponent
       does not match the hostname of the machine on which the resolver
@@ -933,6 +946,14 @@ Internet-Draft              prompt URI Scheme                  July 2026
    in the same form as the URI that was presented for resolution: if the
    input was a local-only URI (prompt:/...), the returned canonical_uri
    SHALL be in local form; if the input was a remote URI (prompt://...),
+
+
+
+Boone                    Expires 22 January 2027               [Page 17]
+
+Internet-Draft              prompt URI Scheme                  July 2026
+
+
    the returned canonical_uri SHALL be in remote form, preserving the
    host, username (if present), and port (if non-default) from the input
    URI.
@@ -944,15 +965,6 @@ Internet-Draft              prompt URI Scheme                  July 2026
    common case in agent workflows, where a single user message triggers
    a sequence of file reads, web fetches, and file writes, each
    implemented as a separate tool call.
-
-
-
-
-
-Boone                    Expires 22 January 2027               [Page 17]
-
-Internet-Draft              prompt URI Scheme                  July 2026
-
 
    All prompt URIs generated within the same session from the same
    originating prompt refer to that same prompt, even though their
@@ -990,6 +1002,14 @@ Internet-Draft              prompt URI Scheme                  July 2026
    *Within-session collision:* Two or more distinct user prompts within
    the same session are submitted and processed within the same second
    (or within the resolution window of a sub-second timestamp).  This is
+
+
+
+Boone                    Expires 22 January 2027               [Page 18]
+
+Internet-Draft              prompt URI Scheme                  July 2026
+
+
    uncommon in interactive agent sessions, where user prompts are
    typically separated by seconds to minutes, but MAY occur in automated
    pipelines where prompts are submitted programmatically without human
@@ -1001,14 +1021,6 @@ Internet-Draft              prompt URI Scheme                  July 2026
    access to session logs from multiple agents with the same agent-name,
    and two such logs share a session-id value (which SHOULD NOT occur
    when UUIDs are used), a cross-log collision is possible.
-
-
-
-
-Boone                    Expires 22 January 2027               [Page 18]
-
-Internet-Draft              prompt URI Scheme                  July 2026
-
 
 8.1.  Mitigation
 
@@ -1022,7 +1034,7 @@ Internet-Draft              prompt URI Scheme                  July 2026
    encode an agent-internal correlation identifier when that identifier
    is known at call time:
 
-   prompt:/claude-code/5674b542.../2026-07-07T16:45:23.856Z#promptId=abc123
+   prompt:/claude-code/5674b542.../2026-07-07T16:45:23.856Z#id=abc123
 
    Fragment identifiers used for this purpose are implementation-
    specific and are OPTIONAL and not required for interoperability.
@@ -1044,6 +1056,16 @@ Internet-Draft              prompt URI Scheme                  July 2026
    That definition is deferred to a future revision or companion
    document.
 
+
+
+
+
+
+Boone                    Expires 22 January 2027               [Page 19]
+
+Internet-Draft              prompt URI Scheme                  July 2026
+
+
    However, the reference implementation [PROMPT-URL-MCP] demonstrates a
    working API, and it is RECOMMENDED that implementations follow it for
    interoperability.  The reference implementation exposes the following
@@ -1056,15 +1078,6 @@ Internet-Draft              prompt URI Scheme                  July 2026
       text, agent identifier, session identifier, timestamp, and
       canonical URI.  Validates host and username in remote URIs against
       the local machine's hostname and current OS user, respectively.
-
-
-
-
-
-Boone                    Expires 22 January 2027               [Page 19]
-
-Internet-Draft              prompt URI Scheme                  July 2026
-
 
    generate_prompt_url
       Generates a prompt URI for a given agent, session identifier, and
@@ -1099,19 +1112,6 @@ Internet-Draft              prompt URI Scheme                  July 2026
    expose the service on a non-loopback interface MUST implement
    appropriate access controls.
 
-10.  Security Considerations
-
-   *Confidentiality:* A prompt URI encodes the agent identity, session
-   identifier, and approximate timestamp of a tool call.  This
-   information MAY be sensitive in deployments where session identifiers
-   are treated as access credentials or where the existence of a
-   particular agent interaction is confidential.  Implementors SHOULD
-   treat prompt URIs with the same access controls applied to session
-   logs.
-
-
-
-
 
 
 
@@ -1121,6 +1121,22 @@ Boone                    Expires 22 January 2027               [Page 20]
 
 Internet-Draft              prompt URI Scheme                  July 2026
 
+
+10.  Security Considerations
+
+   *Confidentiality:* A prompt URI encodes the agent identity, session
+   identifier, and approximate timestamp of a tool call.  In its remote
+   form, it additionally encodes the hostname of the user's machine and
+   optionally the username of the account under which the agent
+   operates.  Any or all of this information MAY be sensitive: session
+   identifiers may be treated as access credentials; hostnames and
+   usernames identify specific individuals and machines; and the
+   existence of a particular agent interaction may itself be
+   confidential in some deployments.  Implementors SHOULD treat prompt
+   URIs -- particularly remote-form URIs containing hostname or username
+   -- with the same access controls applied to session logs, and SHOULD
+   NOT embed remote-form URIs in artifacts that will be shared beyond
+   the trust boundary of the originating user and machine.
 
    *Spoofability:* Prompt URIs are not cryptographically signed.  Any
    party with knowledge of a valid agent name, session identifier, and
@@ -1154,6 +1170,14 @@ Internet-Draft              prompt URI Scheme                  July 2026
    Applications/protocols that use this scheme:  AI agent provenance
       metadata, session log indexers, agent tool frameworks.
 
+
+
+
+Boone                    Expires 22 January 2027               [Page 21]
+
+Internet-Draft              prompt URI Scheme                  July 2026
+
+
    Contact:  Keith W.  Boone
 
    Change controller:  Keith W.  Boone
@@ -1167,16 +1191,6 @@ Internet-Draft              prompt URI Scheme                  July 2026
 12.  References
 
 12.1.  Normative References
-
-
-
-
-
-
-Boone                    Expires 22 January 2027               [Page 21]
-
-Internet-Draft              prompt URI Scheme                  July 2026
-
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -1212,6 +1226,14 @@ Internet-Draft              prompt URI Scheme                  July 2026
 
 12.2.  Informative References
 
+
+
+
+Boone                    Expires 22 January 2027               [Page 22]
+
+Internet-Draft              prompt URI Scheme                  July 2026
+
+
    [MCP]      Anthropic, "Model Context Protocol Specification",
               Available at: https://modelcontextprotocol.io/, 2024.
 
@@ -1220,19 +1242,6 @@ Internet-Draft              prompt URI Scheme                  July 2026
               format; session logs stored at ~/.claude/
               projects/{project}/{session-id}.jsonl.  Prompt correlation
               field: promptId., 2026.
-
-
-
-
-
-
-
-
-
-Boone                    Expires 22 January 2027               [Page 22]
-
-Internet-Draft              prompt URI Scheme                  July 2026
-
 
    [COPILOT-SESSIONS]
               GitHub, "Copilot Session State Format", Internal format;
@@ -1272,6 +1281,15 @@ Operation
        the local-form prompt URI (prompt:/github-copilot/...) to the
        commit message.
 
+
+
+
+
+Boone                    Expires 22 January 2027               [Page 23]
+
+Internet-Draft              prompt URI Scheme                  July 2026
+
+
    4.  If the daemon is not running or returns no results, exits
        silently without modifying the commit message.  The hook MUST NOT
        block a commit under any error condition.
@@ -1281,14 +1299,6 @@ Installation
    The hook is a Node.js script that requires Node.js in PATH and the
    prompt-url-mcp daemon to be running.  It is located at hooks/prepare-
    commit-msg in the reference implementation repository.
-
-
-
-
-Boone                    Expires 22 January 2027               [Page 23]
-
-Internet-Draft              prompt URI Scheme                  July 2026
-
 
    *Per-repository installation:*
 
@@ -1324,16 +1334,6 @@ Author's Address
    Keith W. Boone
    Audacious Inquiry
    Email: kboone@ainq.com
-
-
-
-
-
-
-
-
-
-
 
 
 
