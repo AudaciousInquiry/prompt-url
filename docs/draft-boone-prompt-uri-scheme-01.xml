@@ -2,7 +2,7 @@
 <!DOCTYPE rfc>
 <rfc xmlns:xi="http://www.w3.org/2001/XInclude"
      category="info"
-     docName="draft-boone-prompt-uri-scheme-00"
+     docName="draft-boone-prompt-uri-scheme-01"
      ipr="trust200902"
      submissionType="independent"
      xml:lang="en"
@@ -11,7 +11,7 @@
   <front>
     <title abbrev="prompt URI Scheme">The 'prompt' URI Scheme for AI Agent Sessions and Prompts</title>
 
-    <seriesInfo name="Internet-Draft" value="draft-boone-prompt-uri-scheme-00"/>
+    <seriesInfo name="Internet-Draft" value="draft-boone-prompt-uri-scheme-01"/>
 
     <author fullname="Keith W. Boone" initials="K." surname="Boone">
       <organization>Audacious Inquiry</organization>
@@ -20,7 +20,7 @@
       </address>
     </author>
 
-    <date year="2026" month="July" day="19"/>
+    <date year="2026" month="July" day="21"/>
 
     <area>Applications and Real-Time</area>
     <workgroup>agentproto</workgroup>
@@ -137,64 +137,54 @@
         case-insensitive per <xref target="RFC3986"/> Section 6.2.2.1.</t>
       </section>
 
-      <section anchor="authority" numbered="true" toc="default">
-        <name>Authority Component</name>
-        <t>The authority component of a prompt URI identifies the agent that generated the
-        URI.  It consists solely of the agent name; no userinfo or port subcomponents are
-        defined.  The authority <bcp14>MUST</bcp14> be present and <bcp14>MUST NOT</bcp14> be empty.</t>
-      </section>
-
-      <section anchor="path" numbered="true" toc="default">
-        <name>Path Component</name>
-        <t>The path component <bcp14>SHALL</bcp14> consist of exactly two segments separated by a slash:</t>
-        <ol>
-          <li>A session reference — either a session identifier
-          (<xref target="session-id-comp"/>) or a registered session alias
-          (<xref target="session-aliases"/>).</li>
-          <li>The prompt reference — either a timestamp or a prompt identifier
-          (<xref target="canonical-uri"/>).</li>
-        </ol>
-        <t>The path <bcp14>MUST</bcp14> begin with a slash.  Both segments <bcp14>MUST NOT</bcp14> be empty.</t>
-      </section>
-
-      <section anchor="query-fragment" numbered="true" toc="default">
-        <name>Query and Fragment Components</name>
-        <t>This specification does not define semantics for query (<tt>?</tt>) or fragment
-        (<tt>#</tt>) components.  Implementations <bcp14>MAY</bcp14> append a fragment to a prompt URI as
-        an implementation-specific disambiguation hint (see <xref target="ambiguity-one-uri"/>),
-        but <bcp14>SHALL NOT</bcp14> rely on fragment processing in interoperable contexts.  The query
-        component <bcp14>SHOULD NOT</bcp14> be used; its presence does not affect identity or
-        comparison.</t>
-      </section>
-
       <section anchor="abnf" numbered="true" toc="default">
         <name>Complete ABNF</name>
         <t>The following grammar, expressed in Augmented Backus-Naur Form
         <xref target="RFC5234"/>, defines the syntax of a prompt URI.  Terms not defined
         here are imported from <xref target="RFC3986"/> (<tt>unreserved</tt>,
-        <tt>pct-encoded</tt>) and <xref target="RFC3339"/> (<tt>date-time</tt>).</t>
+        <tt>pct-encoded</tt>, <tt>host</tt>, <tt>sub-delims</tt>) and
+        <xref target="RFC3339"/> (<tt>date-time</tt>).</t>
         <sourcecode type="abnf"><![CDATA[
-prompt-URI    =  "prompt://" agent-name "/" session-ref "/" prompt-ref
+prompt-URI    =  "prompt:" hier-part agent-name "/" session-ref "/" prompt-ref
+
+hier-part     =  "//" authority "/"   ; remote -- MCP server at authority host
+               / "/"                  ; local-only resolution
+
+authority     =  [ userinfo "@" ] host [ ":" port ]
+                 ; host: network hostname or IP-literal per RFC 3986 s3.2.3
+                 ; userinfo: optional username
+                 ; port: optional port number; defaults to 7560 when absent
+
+userinfo      =  1*( unreserved / pct-encoded / sub-delims )
+                 ; Username identifying the user at the remote host;
+                 ; the "user:password" form of RFC 3986 s3.2.1 is
+                 ; NOT RECOMMENDED -- use username only
+
+host          =  <host as defined in RFC 3986 Section 3.2.3>
+                 ; DNS hostname, IPv4 address, or IP-literal
+
+port          =  *DIGIT
+                 ; Decimal port number; absent port is equivalent to 7560
 
 agent-name    =  1*agent-char
 agent-char    =  unreserved / pct-encoded / "+" / "."
 
 session-ref   =  session-id / session-alias
                  ; Parsers cannot distinguish the two forms syntactically;
-                 ; the distinction is semantic (Section 4.2, Section 4.4)
+                 ; the distinction is semantic (Section 4.4, Section 4.6)
 
 session-id    =  1*( unreserved / pct-encoded )
                  ; Typically a UUID per RFC 9562
 
 session-alias =  1*( unreserved / pct-encoded )
                  ; Special characters including SP (U+0020) MUST be
-                 ; percent-encoded per [RFC3986] -- see Section 4.4
+                 ; percent-encoded per [RFC3986] -- see Section 4.6
 
 prompt-ref    =  date-time / prompt-id
                  ; Either an RFC 3339 timestamp or a prompt identifier;
                  ; date-time always begins with a 4-digit year, so
                  ; the "~" prefix of prompt-id is unambiguous
-                 ; See Sections 4.3 and 4.5
+                 ; See Sections 4.5 and 4.7
 
 date-time     =  <date-time as defined in RFC 3339, Section 5.6>
                  ; Colons within date-time are valid in URI path
@@ -207,46 +197,190 @@ prompt-id     =  "~" 1*( unreserved / pct-encoded )
                  ; prompt-id from date-time in all syntactic contexts
                  ; Example: ~abc123, ~promptId%3Axyz
 ]]></sourcecode>
-        <t>The following prompt URIs are all syntactically valid.  The first uses a
-        session identifier with a timestamp; the second uses a session alias with a
-        timestamp; the third uses a session identifier with a prompt identifier
-        (the canonical preferred form; see <xref target="canonical-uri"/>):</t>
+        <t>The following prompt URIs illustrate the syntactic forms.  The first two use
+        local-only resolution (single slash, no authority); the remaining three use
+        remote resolution via a named host:</t>
         <sourcecode><![CDATA[
-prompt://claude-code/5674b542-0b94-4d12-bc05-d271a4131354/2026-07-07T16:45:23.856Z
-prompt://claude-code/md-csv-mcp%20design/2026-07-07T16:45:23.856Z
-prompt://claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
+; Local-only forms (prompt:/ -- single slash, no authority)
+prompt:/claude-code/5674b542-0b94-4d12-bc05-d271a4131354/2026-07-07T16:45:23.856Z
+prompt:/claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
+
+; Remote forms (prompt:// -- authority present)
+prompt://mcp.example.com/claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
+prompt://kboone@mcp.example.com/claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
+prompt://mcp.example.com/claude-code/md-csv-mcp%20design/2026-07-07T16:45:23.856Z
 ]]></sourcecode>
-        <t>Breaking the alias-based example into components:</t>
+        <t>Breaking the local prompt-id form into components:</t>
         <sourcecode><![CDATA[
-prompt-URI = "prompt://"
-             "claude-code"               ; agent-name
-             "/"
-             "md-csv-mcp%20design"       ; session-alias (space encoded as %20)
-             "/"
-             "2026-07-07T16:45:23.856Z"  ; prompt-ref: timestamp form (RFC 3339)
+prompt-URI  = "prompt:"
+              "/"                             ; hier-part: local-only (single slash)
+              "claude-code"                   ; agent-name
+              "/"
+              "5674b542-0b94-4d12-bc05-d271a4131354"  ; session-id
+              "/"
+              "~abc123"                       ; prompt-ref: prompt-id form
 ]]></sourcecode>
-        <t>Breaking the canonical prompt-id example into components:</t>
+        <t>Breaking the remote form with username into components:</t>
         <sourcecode><![CDATA[
-prompt-URI = "prompt://"
-             "claude-code"                              ; agent-name
-             "/"
-             "5674b542-0b94-4d12-bc05-d271a4131354"    ; session-id
-             "/"
-             "~abc123"                                  ; prompt-ref: prompt-id form
+prompt-URI  = "prompt:"
+              "//"                            ; hier-part: remote resolution
+              "kboone"                        ; userinfo (username)
+              "@"
+              "mcp.example.com"               ; host (agent client machine)
+              "/"
+              "claude-code"                   ; agent-name
+              "/"
+              "5674b542-0b94-4d12-bc05-d271a4131354"  ; session-id
+              "/"
+              "~abc123"                       ; prompt-ref: prompt-id form
+]]></sourcecode>
+        <t>Breaking the remote alias form into components:</t>
+        <sourcecode><![CDATA[
+prompt-URI  = "prompt:"
+              "//"                            ; hier-part: remote resolution
+              "mcp.example.com"               ; host (no username)
+              "/"
+              "claude-code"                   ; agent-name
+              "/"
+              "md-csv-mcp%20design"           ; session-alias (space encoded as %20)
+              "/"
+              "2026-07-07T16:45:23.856Z"      ; prompt-ref: timestamp form (RFC 3339)
 ]]></sourcecode>
       </section>
+
+      <section anchor="authority-comp" numbered="true" toc="default">
+        <name>Authority Component (Optional)</name>
+        <t>The authority component is <bcp14>OPTIONAL</bcp14>.  Its presence is signaled by the
+        double-slash <tt>//</tt> prefix following the scheme (<tt>prompt://</tt>), in
+        accordance with <xref target="RFC3986"/> Section 3.  When the authority is absent,
+        the URI uses a single slash (<tt>prompt:/</tt>) and is resolvable only through a
+        local MCP server instance.</t>
+        <t>When present, the authority takes the form:</t>
+        <sourcecode><![CDATA[
+[ username "@" ] host [ ":" port ]
+]]></sourcecode>
+        <t>The <tt>host</tt> subcomponent identifies the network host where the agent client
+        application resides and operates on behalf of the user.  The agent may reside in
+        the cloud (such as Claude Code or GitHub Copilot), but this is the user machine
+        where the agent's client application stores logs and session data that enable
+        prompt resolution.  The host <bcp14>MAY</bcp14> also provide an HTTP endpoint where an MCP
+        server is accessible, enabling remote resolution of the URI over the network.
+        It follows the <tt>host</tt> syntax of <xref target="RFC3986"/> Section 3.2.3
+        (DNS name, IPv4 address, or IP-literal).</t>
+        <t>The <tt>port</tt> subcomponent is <bcp14>OPTIONAL</bcp14>.  When present, it is separated from
+        the <tt>host</tt> by a colon (<tt>:</tt>), as defined in <xref target="RFC3986"/>
+        Section 3.2.3.  When absent, the port defaults to <tt>7560</tt>, which is the
+        registered default port for the <tt>prompt</tt>-scheme MCP server reference
+        implementation.</t>
+        <t>The <tt>username</tt> subcomponent is <bcp14>OPTIONAL</bcp14>.  When present, it is separated
+        from the <tt>host</tt> by an <tt>@</tt> (U+0040) character, following the same
+        convention as HTTP and other URI schemes (<xref target="RFC3986"/> Section 3.2.1).
+        It identifies the user account or identity principal under which the agent
+        session log is stored at the remote host, and <bcp14>MAY</bcp14> be used by the remote MCP
+        server to scope its session log search.</t>
+        <t>The <tt>agent-name</tt> is NOT part of the authority; it is always the first
+        segment of the path (<xref target="path-comp"/>).</t>
+      </section>
+
+      <section anchor="path-comp" numbered="true" toc="default">
+        <name>Path Component</name>
+        <t>The path component <bcp14>SHALL</bcp14> consist of exactly three segments separated by
+        slashes:</t>
+        <ol>
+          <li>The agent name (<xref target="agent-name-comp"/>) — identifies the software
+          agent that generated the URI.</li>
+          <li>A session reference — either a session identifier
+          (<xref target="session-id-comp"/>) or a registered session alias
+          (<xref target="session-aliases"/>).</li>
+          <li>A prompt reference — either an RFC 3339 timestamp
+          (<xref target="timestamp-comp"/>) or a prompt identifier
+          (<xref target="canonical-uri"/>).</li>
+        </ol>
+        <t>The path <bcp14>MUST</bcp14> begin with a slash.  All three segments <bcp14>MUST NOT</bcp14> be empty.</t>
+      </section>
+
+      <section anchor="query-fragment" numbered="true" toc="default">
+        <name>Query and Fragment Components</name>
+        <t>This specification does not define semantics for query (<tt>?</tt>) or fragment
+        (<tt>#</tt>) components.  Implementations <bcp14>MAY</bcp14> append a fragment to a prompt URI as
+        an implementation-specific disambiguation hint (see <xref target="ambiguity-one-uri"/>),
+        but <bcp14>SHALL NOT</bcp14> rely on fragment processing in interoperable contexts.  The query
+        component <bcp14>SHOULD NOT</bcp14> be used; its presence does not affect identity or
+        comparison.</t>
+      </section>
+
     </section>
 
     <section anchor="semantics" numbered="true" toc="default">
       <name>URI Components and Semantics</name>
 
+      <section anchor="resolution-mode" numbered="true" toc="default">
+        <name>Remote vs. Local Resolution</name>
+        <t>A prompt URI selects its resolution mode by the presence or absence of the
+        authority (<tt>//host</tt>) prefix:</t>
+        <ul>
+          <li><strong>Remote (<tt>prompt://[user@]host/...</tt>)</strong> — The double-slash signals
+          that an authority is present.  The URI is intended to be resolved by contacting
+          the <tt>prompt</tt>-scheme MCP server running at <tt>host</tt> over the network.  This
+          form is appropriate for sharing prompt references across machines, teams, or
+          systems where the originating session log is accessible through a web-facing
+          MCP endpoint.</li>
+          <li><strong>Local-only (<tt>prompt:/...</tt>)</strong> — The single slash signals that no
+          authority is present.  The URI is resolvable only by a local MCP server instance
+          that has access to the originating agent's session logs on the same machine.
+          This form is appropriate for provenance records that will only ever be resolved
+          on the machine that generated them.</li>
+        </ul>
+        <t>Implementations that generate prompt URIs <bcp14>SHOULD</bcp14> choose the local form by
+        default and <bcp14>SHOULD</bcp14> allow the user or configuration to specify a remote host when
+        a web-accessible MCP server is available.  Implementations <bcp14>SHOULD NOT</bcp14> silently
+        upgrade a local URI to a remote one; the resolution mode is part of the URI's
+        identity.</t>
+      </section>
+
+      <section anchor="host-comp" numbered="true" toc="default">
+        <name>Host</name>
+        <t>The host subcomponent identifies the network host where the agent client
+        application resides and operates on behalf of the user.  The agent may reside in
+        the cloud (such as Claude Code or GitHub Copilot), but this is the user machine
+        where the agent's client application stores logs and session data that enable
+        prompt resolution.  It follows the <tt>host</tt> production of
+        <xref target="RFC3986"/> Section 3.2.3.  The host <bcp14>MAY</bcp14> also provide an HTTP
+        endpoint where a <tt>prompt</tt>-scheme MCP server is accessible, enabling remote
+        resolution of the URI over the network.  A single MCP server <bcp14>MAY</bcp14> host
+        resolution for multiple AI agents.</t>
+        <t>Host names <bcp14>SHOULD</bcp14> be stable DNS names.  IP addresses <bcp14>SHOULD</bcp14> be avoided in
+        long-lived provenance records because they are subject to renumbering.</t>
+        <t>The optional port number, when present, identifies the TCP port on which the
+        <tt>prompt</tt>-scheme MCP server listens at that host.  When absent, the port
+        defaults to <tt>7560</tt>, the default port of the reference implementation.
+        When an explicit port number equal to <tt>7560</tt> is present, it is equivalent
+        to the form with no port for comparison purposes
+        (<xref target="normalization"/>).</t>
+      </section>
+
+      <section anchor="username-comp" numbered="true" toc="default">
+        <name>Username</name>
+        <t>The username is the <bcp14>OPTIONAL</bcp14> <tt>userinfo</tt> subcomponent of the authority.
+        When present, it identifies the user account or identity principal whose agent
+        session logs are stored at the remote host.  The remote MCP server <bcp14>MAY</bcp14> use it
+        to scope its session log search to that user's log partition.</t>
+        <t>The username is meaningful only when the authority is present (remote form).
+        It <bcp14>SHOULD</bcp14> be omitted in local-only URIs, and <bcp14>SHOULD</bcp14> be omitted in remote URIs
+        when the MCP server does not partition logs by user.</t>
+        <t>Two prompt URIs that differ only in the presence or absence of a username, or
+        in the value of the username, are NOT equivalent (<xref target="normalization"/>)
+        unless the resolver determines that both usernames map to the same identity
+        principal.</t>
+      </section>
+
       <section anchor="agent-name-comp" numbered="true" toc="default">
         <name>Agent Name</name>
-        <t>The agent name identifies the software agent that generated the URI.  It is
-        NOT a globally registered identifier; implementations <bcp14>SHOULD</bcp14> use a stable,
-        recognizable short name (e.g., <tt>claude-code</tt>, <tt>github-copilot</tt>,
-        <tt>cursor</tt>).  Agents operated by different organizations <bcp14>SHOULD</bcp14> use distinct
-        names to avoid collision.</t>
+        <t>The agent name is the first segment of the path.  It identifies the software
+        agent that generated the URI.  It is NOT a globally registered identifier;
+        implementations <bcp14>SHOULD</bcp14> use a stable, recognizable short name (e.g.,
+        <tt>claude-code</tt>, <tt>github-copilot</tt>, <tt>cursor</tt>).  Agents operated by
+        different organizations <bcp14>SHOULD</bcp14> use distinct names to avoid collision.</t>
         <t>The agent name <bcp14>MAY</bcp14> include a dot-separated hierarchy for namespacing
         (e.g., <tt>anthropic.claude-code</tt>), but this structure carries no defined
         semantics in this specification.</t>
@@ -293,9 +427,9 @@ prompt-URI = "prompt://"
         <name>Session Aliases</name>
         <t>A session alias is a human-readable string that a user or implementation
         <bcp14>MAY</bcp14> register as an alternative to the session identifier in a prompt URI.
-        Aliases improve legibility: <tt>prompt://claude-code/md-csv-mcp-design/...</tt> is
+        Aliases improve legibility: <tt>prompt:/claude-code/md-csv-mcp-design/...</tt> is
         more immediately meaningful than
-        <tt>prompt://claude-code/5674b542-.../...</tt>.</t>
+        <tt>prompt:/claude-code/5674b542-.../...</tt>.</t>
         <t><strong>Registration:</strong> Aliases <bcp14>SHALL</bcp14> be registered in a local alias registry
         that maps each alias to the session identifier it represents.  An alias is
         scoped to a single agent name and <bcp14>MUST</bcp14> map to exactly one session within
@@ -354,7 +488,7 @@ prompt-URI = "prompt://"
         logs <xref target="COPILOT-SESSIONS"/>), the canonical URI <bcp14>SHOULD</bcp14> use the
         <tt>prompt-id</tt> form (<xref target="abnf"/>) with a leading <tt>~</tt> character:</t>
         <sourcecode><![CDATA[
-prompt://claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
+prompt:/claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
 ]]></sourcecode>
         <t>A canonical prompt-id URI uniquely identifies the prompt regardless of when
         tool calls execute within the prompt's processing.  Because all tool calls from
@@ -386,6 +520,15 @@ prompt://claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
       Section 6:</t>
       <ol>
         <li>Their scheme components are identical (case-insensitively).</li>
+        <li>Their resolution mode is identical: either both have an authority (remote)
+        or both lack one (local-only).</li>
+        <li><t>When both have an authority: their host subcomponents are identical
+        (case-insensitively per <xref target="RFC3986"/> Section 6.2.2.1); their port
+        subcomponents are equivalent (treating an absent port as equal to port
+        <tt>7560</tt>); and their username (userinfo) subcomponents are equivalent —
+        both absent, both present and identical after percent-decoding
+        (case-sensitive), or both present and determined by the resolver to map to
+        the same identity principal.</t></li>
         <li>Their agent-name components are identical (case-insensitively).</li>
         <li>
           <t>Their session-ref components identify the same session, determined as
@@ -436,12 +579,27 @@ prompt://claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
         log is unavailable.</t>
         <t>A conformant resolver <bcp14>SHALL</bcp14> apply the following steps:</t>
         <ol>
-          <li>Parse the prompt URI and extract <tt>agent-name</tt>, <tt>session-ref</tt>, and
-          <tt>prompt-ref</tt>.  If <tt>session-ref</tt> is an alias, resolve it per
-          <xref target="alias-resolution"/> to obtain the session identifier.</li>
+          <li><t>Parse the prompt URI and determine the resolution mode
+          (<xref target="resolution-mode"/>):</t>
+          <ul>
+            <li><strong>Remote</strong> (<tt>prompt://...</tt>): extract <tt>host</tt>,
+            <tt>username</tt> (if present), <tt>agent-name</tt>, <tt>session-ref</tt>, and
+            <tt>prompt-ref</tt>.  Contact the MCP server at <tt>host</tt> to perform steps
+            2–7 on the remote server.  If <tt>username</tt> is present, pass it to the
+            remote server so that it <bcp14>MAY</bcp14> scope its session log search.</li>
+            <li><strong>Local-only</strong> (<tt>prompt:/...</tt>): extract <tt>agent-name</tt>,
+            <tt>session-ref</tt>, and <tt>prompt-ref</tt>.  Perform steps 2–7 using the
+            local session log store.</li>
+          </ul>
+          <t>If <tt>session-ref</tt> is an alias, resolve it per
+          <xref target="alias-resolution"/> to obtain the session identifier before
+          proceeding.</t></li>
           <li>Locate the session log associated with the session identifier for the
-          agent identified by <tt>agent-name</tt>.  If no such log is accessible, the URI
-          is unresolvable (<xref target="unresolvable"/>).</li>
+          agent identified by <tt>agent-name</tt>.  If resolving remotely and a
+          <tt>username</tt> is present, the resolver <bcp14>MAY</bcp14> restrict its search to session
+          logs owned by or accessible under that identity principal.  If no matching
+          log is accessible, the URI is unresolvable
+          (<xref target="unresolvable"/>).</li>
           <li><t>If <tt>prompt-ref</tt> is a <tt>prompt-id</tt> (begins with <tt>~</tt>): strip the
           <tt>~</tt> prefix, percent-decode the remainder, and locate all session log entries
           whose prompt correlation identifier matches.  If exactly one entry is found,
@@ -492,6 +650,16 @@ prompt://claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
         <name>Unresolvable URIs</name>
         <t>A prompt URI is unresolvable if any of the following conditions hold:</t>
         <ul>
+          <li>The URI is in remote form (<tt>prompt://</tt>) and the <tt>host</tt>
+          subcomponent does not match the hostname of the machine on which the
+          resolver is running (case-insensitive comparison).  A resolver
+          <bcp14>MUST NOT</bcp14> attempt to forward the request to another machine; it
+          <bcp14>SHALL</bcp14> return an error indicating the host mismatch.</li>
+          <li>The URI is in remote form and contains a <tt>username</tt>
+          subcomponent that does not match the OS-level username of the user
+          under whose account the resolver is operating (case-insensitive
+          comparison).  The resolver <bcp14>SHALL</bcp14> return an error indicating the
+          user mismatch.</li>
           <li>The <tt>session-ref</tt> is a session alias that is not registered in the
           alias registry.</li>
           <li>The session log for the resolved session identifier is not accessible
@@ -504,7 +672,16 @@ prompt://claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
         <t>An unresolvable URI is NOT invalid.  The URI remains a valid provenance
         identifier and <bcp14>SHALL</bcp14> be preserved in provenance records even when the
         referenced session is no longer accessible.  Resolvers <bcp14>SHOULD</bcp14> distinguish
-        between "unresolvable" and "invalid" when reporting resolution status.</t>
+        between "unresolvable" and "invalid" when reporting resolution status, and
+        <bcp14>SHOULD</bcp14> report host-mismatch and user-mismatch conditions as distinct
+        errors to aid debugging.</t>
+        <t>When resolution succeeds, the resolver <bcp14>SHALL</bcp14> return the canonical URI
+        in the same form as the URI that was presented for resolution: if the input
+        was a local-only URI (<tt>prompt:/...</tt>), the returned
+        <tt>canonical_uri</tt> <bcp14>SHALL</bcp14> be in local form; if the input was a remote
+        URI (<tt>prompt://...</tt>), the returned <tt>canonical_uri</tt> <bcp14>SHALL</bcp14>
+        be in remote form, preserving the <tt>host</tt>, <tt>username</tt> (if
+        present), and <tt>port</tt> (if non-default) from the input URI.</t>
       </section>
     </section>
 
@@ -527,8 +704,8 @@ prompt://claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
       <t>Additionally, the same prompt may be identifiable by URIs with different
       timestamp precision:</t>
       <sourcecode><![CDATA[
-prompt://claude-code/5674b542.../2026-07-07T16:45:23Z
-prompt://claude-code/5674b542.../2026-07-07T16:45:23.856Z
+prompt:/claude-code/5674b542.../2026-07-07T16:45:23Z
+prompt:/claude-code/5674b542.../2026-07-07T16:45:23.856Z
 ]]></sourcecode>
       <t>Both of the above URIs identify the same instant in time at different precision
       levels.  Per <xref target="normalization"/>, these URIs are NOT equivalent.  Per
@@ -566,12 +743,12 @@ prompt://claude-code/5674b542.../2026-07-07T16:45:23.856Z
         an agent-internal correlation identifier when that identifier is known at call
         time:</t>
         <sourcecode><![CDATA[
-prompt://claude-code/5674b542.../2026-07-07T16:45:23.856Z#promptId=abc123
+prompt:/claude-code/5674b542.../2026-07-07T16:45:23.856Z#promptId=abc123
 ]]></sourcecode>
         <t>Fragment identifiers used for this purpose are implementation-specific and
-        are <bcp14>OPTIONAL</bcp14> and not required for interoperability.  Resolvers that do not recognize a
-        fragment identifier <bcp14>SHOULD</bcp14> ignore it and apply the standard resolution
-        algorithm.</t>
+        are <bcp14>OPTIONAL</bcp14> and not required for interoperability.  Resolvers that do not
+        recognize a fragment identifier <bcp14>SHOULD</bcp14> ignore it and apply the standard
+        resolution algorithm.</t>
       </section>
 
       <section anchor="disclosure" numbered="true" toc="default">
@@ -581,6 +758,55 @@ prompt://claude-code/5674b542.../2026-07-07T16:45:23.856Z#promptId=abc123
         are possible, so that consumers of provenance records can assess the
         reliability of URI-based prompt identification in their deployment context.</t>
       </section>
+    </section>
+
+    <section anchor="mcp-api" numbered="true" toc="default">
+      <name>MCP Resolution API</name>
+      <t>This document does not yet formally define the Model Context Protocol
+      <xref target="MCP"/> API that a conformant <tt>prompt</tt>-scheme resolver
+      <bcp14>SHALL</bcp14> implement.  That definition is deferred to a future revision or
+      companion document.</t>
+      <t>However, the reference implementation <xref target="PROMPT-URL-MCP"/>
+      demonstrates a working API, and it is <bcp14>RECOMMENDED</bcp14> that
+      implementations follow it for interoperability.  The reference implementation
+      exposes the following MCP tools over an HTTP/1.1 StreamableHTTP transport
+      (JSON-RPC 2.0, <tt>POST /mcp</tt>, default port <tt>7560</tt>):</t>
+      <dl newline="true" spacing="normal">
+        <dt><tt>resolve_prompt</tt></dt>
+        <dd>Resolves a prompt URI to the originating user message.  Accepts a
+        single parameter <tt>uri</tt> (string).  Returns the resolved user message
+        text, agent identifier, session identifier, timestamp, and canonical URI.
+        Validates host and username in remote URIs against the local machine's
+        hostname and current OS user, respectively.</dd>
+        <dt><tt>generate_prompt_url</tt></dt>
+        <dd>Generates a prompt URI for a given agent, session identifier, and
+        optional prompt reference.  Accepts <tt>agent</tt>, <tt>session_id</tt>,
+        <tt>prompt_ref</tt> (optional), <tt>host</tt> (optional), <tt>username</tt>
+        (optional), and <tt>port</tt> (optional).  When <tt>host</tt> is absent,
+        generates a local-only URI (<tt>prompt:/...</tt>); when present, generates a
+        remote URI (<tt>prompt://[user@]host[:port]/...</tt>).</dd>
+        <dt><tt>find_prompt</tt></dt>
+        <dd>Searches session logs for prompts within a time range.  Accepts
+        <tt>since</tt>, <tt>until</tt>, <tt>agent</tt>, and <tt>limit</tt> parameters.
+        Returns a list of matching prompts sorted oldest first, each including its
+        <tt>prompt_url</tt>, <tt>user_message</tt>, and <tt>timestamp</tt>.  A
+        <tt>commit</tt> parameter <bcp14>MAY</bcp14> be supplied in lieu of explicit time
+        bounds; when present, the time range is derived from the commit timestamp
+        and its predecessor using <tt>git log</tt>.</dd>
+        <dt><tt>list_sessions</tt></dt>
+        <dd>Lists known agent sessions for the current user, optionally filtered
+        by agent identifier.</dd>
+        <dt><tt>register_alias</tt></dt>
+        <dd>Registers a human-readable alias for a session identifier, enabling
+        the alias form of the prompt URI (<xref target="session-aliases"/>).</dd>
+      </dl>
+      <t>Implementations that provide remote resolution (<tt>prompt://</tt> form) over
+      the network <bcp14>SHOULD</bcp14> require authentication before serving session log
+      content.  The reference implementation currently binds to
+      <tt>127.0.0.1</tt> only (loopback) and does not expose session content to
+      other machines without explicit network reconfiguration.  Deployers that
+      choose to expose the service on a non-loopback interface
+      <bcp14>MUST</bcp14> implement appropriate access controls.</t>
     </section>
 
     <section anchor="security" numbered="true" toc="default">
@@ -687,7 +913,7 @@ prompt://claude-code/5674b542.../2026-07-07T16:45:23.856Z#promptId=abc123
         </reference>
         <reference anchor="PROMPT-URL-MCP">
           <front>
-            <title>prompt-url-mcp: MCP Server for prompt:// URI Resolution and Generation</title>
+            <title>prompt-url-mcp: MCP Server for prompt: URI Resolution and Generation</title>
             <author fullname="Keith W. Boone" initials="K." surname="Boone">
               <organization>Audacious Inquiry</organization>
             </author>
@@ -698,6 +924,75 @@ prompt://claude-code/5674b542.../2026-07-07T16:45:23.856Z#promptId=abc123
         </reference>
       </references>
     </references>
+
+    <section anchor="git-hook" numbered="false" toc="default">
+      <name>Appendix A: Automatic Prompt-URL Trailer via Git Hook</name>
+      <t>This appendix describes a <tt>prepare-commit-msg</tt> git hook, provided
+      alongside the reference implementation <xref target="PROMPT-URL-MCP"/>, that
+      automatically appends a <tt>Prompt-URL:</tt> trailer to any git commit that was
+      AI-assisted by GitHub Copilot.</t>
+
+      <section anchor="git-hook-operation" numbered="false" toc="default">
+        <name>Operation</name>
+        <t>Git invokes <tt>prepare-commit-msg</tt> after the initial commit message
+        is prepared but before the editor is opened.  The hook:</t>
+        <ol>
+          <li>Examines the draft commit message for a
+          <tt>Co-authored-by: Copilot</tt> trailer injected automatically by
+          VS Code / GitHub Copilot.</li>
+          <li>If the trailer is present and no <tt>Prompt-URL:</tt> trailer already
+          exists, queries the local <tt>prompt-url-mcp</tt> daemon (via its
+          <tt>find_prompt</tt> tool, <xref target="mcp-api"/>) for the most recent
+          Copilot prompt submitted within the past 30 minutes.</li>
+          <li>If a result is returned, appends a <tt>Prompt-URL:</tt> trailer
+          containing the local-form prompt URI
+          (<tt>prompt:/github-copilot/...</tt>) to the commit message.</li>
+          <li>If the daemon is not running or returns no results, exits silently
+          without modifying the commit message.  The hook
+          <bcp14>MUST NOT</bcp14> block a commit under any error condition.</li>
+        </ol>
+      </section>
+
+      <section anchor="git-hook-installation" numbered="false" toc="default">
+        <name>Installation</name>
+        <t>The hook is a Node.js script that requires Node.js in <tt>PATH</tt>
+        and the <tt>prompt-url-mcp</tt> daemon to be running.  It is located at
+        <tt>hooks/prepare-commit-msg</tt> in the reference implementation
+        repository.</t>
+        <t><strong>Per-repository installation:</strong></t>
+        <sourcecode type="bash"><![CDATA[
+cp hooks/prepare-commit-msg .git/hooks/prepare-commit-msg
+chmod +x .git/hooks/prepare-commit-msg
+]]></sourcecode>
+        <t><strong>Global installation</strong> (applies to all repositories for the
+        current user).  The recommended global hooks directory is
+        <tt>~/.git-hooks/</tt>:</t>
+        <sourcecode type="bash"><![CDATA[
+git config --global core.hooksPath ~/.git-hooks
+mkdir -p ~/.git-hooks
+cp hooks/prepare-commit-msg ~/.git-hooks/prepare-commit-msg
+chmod +x ~/.git-hooks/prepare-commit-msg
+]]></sourcecode>
+        <t>On Windows the <tt>chmod</tt> command may be run in Git Bash or WSL.
+        Git for Windows treats copied scripts as executable by default.</t>
+      </section>
+
+      <section anchor="git-hook-example" numbered="false" toc="default">
+        <name>Resulting Commit Message</name>
+        <t>A commit message with Copilot co-authorship, after the hook appends
+        the trailer, takes the following form:</t>
+        <sourcecode><![CDATA[
+feat: add user registration validation
+
+Implement unique-email check at registration time. Returns 409
+if the email address is already in use.
+
+Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
+Prompt-URL: prompt:/github-copilot/95602ecf-.../~8e16a698-...
+]]></sourcecode>
+      </section>
+    </section>
+
   </back>
 
 </rfc>

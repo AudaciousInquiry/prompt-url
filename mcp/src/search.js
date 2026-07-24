@@ -45,8 +45,8 @@ function searchPrompts({ since, until, agent = 'all', limit = 10 } = {}) {
         if (isNaN(ts) || ts <= sinceMs || ts >= untilMs) continue;
         result = {
           prompt_url: entry.promptId
-            ? `prompt://claude-code/${session.session_id}/~${entry.promptId}`
-            : `prompt://claude-code/${session.session_id}/${entry.timestamp}`,
+            ? `prompt:/claude-code/${session.session_id}/~${entry.promptId}`
+            : `prompt:/claude-code/${session.session_id}/${entry.timestamp}`,
           user_message: entry.message.content,
           agent: 'claude-code',
           session_id: session.session_id,
@@ -60,8 +60,8 @@ function searchPrompts({ since, until, agent = 'all', limit = 10 } = {}) {
         if (isNaN(ts) || ts <= sinceMs || ts >= untilMs) continue;
         result = {
           prompt_url: entry.id
-            ? `prompt://github-copilot/${session.session_id}/~${entry.id}`
-            : `prompt://github-copilot/${session.session_id}/${entry.timestamp}`,
+            ? `prompt:/github-copilot/${session.session_id}/~${entry.id}`
+            : `prompt:/github-copilot/${session.session_id}/${entry.timestamp}`,
           user_message: entry.data?.content ?? '',
           agent: 'github-copilot',
           session_id: session.session_id,

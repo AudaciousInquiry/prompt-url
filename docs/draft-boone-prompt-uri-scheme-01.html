@@ -23,7 +23,7 @@
 <meta content="agent" name="keyword">
 <meta content="prompt" name="keyword">
 <meta content="provenance" name="keyword">
-<meta content="draft-boone-prompt-uri-scheme-00" name="ietf.draft">
+<meta content="draft-boone-prompt-uri-scheme-01" name="ietf.draft">
 <!-- Generator version information:
   xml2rfc 3.34.0
     Python 3.13.11
@@ -40,7 +40,7 @@
     requests 2.34.2
     wcwidth 0.8.2
 -->
-<link href="draft-boone-prompt-uri-scheme-00.xml" rel="alternate" type="application/rfc+xml">
+<link href="draft-boone-prompt-uri-scheme-01.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
 <style type="text/css">/*
 
@@ -1233,7 +1233,7 @@ li > p:last-of-type:only-child {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Boone</td>
-<td class="center">Expires 20 January 2027</td>
+<td class="center">Expires 22 January 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1243,15 +1243,15 @@ li > p:last-of-type:only-child {
 <dt class="label-workgroup">Workgroup:</dt>
 <dd class="workgroup">agentproto</dd>
 <dt class="label-internet-draft">Internet-Draft:</dt>
-<dd class="internet-draft">draft-boone-prompt-uri-scheme-00</dd>
+<dd class="internet-draft">draft-boone-prompt-uri-scheme-01</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-07-19" class="published">19 July 2026</time>
+<time datetime="2026-07-21" class="published">21 July 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-01-20">20 January 2027</time></dd>
+<dd class="expires"><time datetime="2027-01-22">22 January 2027</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1293,7 +1293,7 @@ li > p:last-of-type:only-child {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 20 January 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 22 January 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1332,16 +1332,16 @@ li > p:last-of-type:only-child {
                 <p id="section-toc.1-1.3.2.1.1" class="keepWithNext"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-scheme-name" class="internal xref">Scheme Name</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
-                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-authority-component" class="internal xref">Authority Component</a></p>
+                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-complete-abnf" class="internal xref">Complete ABNF</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3">
-                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-path-component" class="internal xref">Path Component</a></p>
+                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-authority-component-optiona" class="internal xref">Authority Component (Optional)</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.4">
-                <p id="section-toc.1-1.3.2.4.1"><a href="#section-3.4" class="auto internal xref">3.4</a>.  <a href="#name-query-and-fragment-componen" class="internal xref">Query and Fragment Components</a></p>
+                <p id="section-toc.1-1.3.2.4.1"><a href="#section-3.4" class="auto internal xref">3.4</a>.  <a href="#name-path-component" class="internal xref">Path Component</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.5">
-                <p id="section-toc.1-1.3.2.5.1"><a href="#section-3.5" class="auto internal xref">3.5</a>.  <a href="#name-complete-abnf" class="internal xref">Complete ABNF</a></p>
+                <p id="section-toc.1-1.3.2.5.1"><a href="#section-3.5" class="auto internal xref">3.5</a>.  <a href="#name-query-and-fragment-componen" class="internal xref">Query and Fragment Components</a></p>
 </li>
             </ul>
 </li>
@@ -1349,19 +1349,28 @@ li > p:last-of-type:only-child {
             <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-uri-components-and-semantic" class="internal xref">URI Components and Semantics</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
-                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-agent-name" class="internal xref">Agent Name</a></p>
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-remote-vs-local-resolution" class="internal xref">Remote vs. Local Resolution</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
-                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-session-identifier" class="internal xref">Session Identifier</a></p>
+                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-host" class="internal xref">Host</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3">
-                <p id="section-toc.1-1.4.2.3.1"><a href="#section-4.3" class="auto internal xref">4.3</a>.  <a href="#name-timestamp" class="internal xref">Timestamp</a></p>
+                <p id="section-toc.1-1.4.2.3.1"><a href="#section-4.3" class="auto internal xref">4.3</a>.  <a href="#name-username" class="internal xref">Username</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4">
-                <p id="section-toc.1-1.4.2.4.1"><a href="#section-4.4" class="auto internal xref">4.4</a>.  <a href="#name-session-aliases" class="internal xref">Session Aliases</a></p>
+                <p id="section-toc.1-1.4.2.4.1"><a href="#section-4.4" class="auto internal xref">4.4</a>.  <a href="#name-agent-name" class="internal xref">Agent Name</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.5">
-                <p id="section-toc.1-1.4.2.5.1"><a href="#section-4.5" class="auto internal xref">4.5</a>.  <a href="#name-canonical-prompt-uri" class="internal xref">Canonical Prompt URI</a></p>
+                <p id="section-toc.1-1.4.2.5.1"><a href="#section-4.5" class="auto internal xref">4.5</a>.  <a href="#name-session-identifier" class="internal xref">Session Identifier</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.6">
+                <p id="section-toc.1-1.4.2.6.1"><a href="#section-4.6" class="auto internal xref">4.6</a>.  <a href="#name-timestamp" class="internal xref">Timestamp</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.7">
+                <p id="section-toc.1-1.4.2.7.1"><a href="#section-4.7" class="auto internal xref">4.7</a>.  <a href="#name-session-aliases" class="internal xref">Session Aliases</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.8">
+                <p id="section-toc.1-1.4.2.8.1"><a href="#section-4.8" class="auto internal xref">4.8</a>.  <a href="#name-canonical-prompt-uri" class="internal xref">Canonical Prompt URI</a></p>
 </li>
             </ul>
 </li>
@@ -1397,24 +1406,41 @@ li > p:last-of-type:only-child {
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
-            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-mcp-resolution-api" class="internal xref">MCP Resolution API</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
-            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
-            <p id="section-toc.1-1.11.1"><a href="#section-11" class="auto internal xref">11</a>. <a href="#name-references" class="internal xref">References</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.1">
-                <p id="section-toc.1-1.11.2.1.1"><a href="#section-11.1" class="auto internal xref">11.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+            <p id="section-toc.1-1.11.1"><a href="#section-11" class="auto internal xref">11</a>. <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.2">
-                <p id="section-toc.1-1.11.2.2.1"><a href="#section-11.2" class="auto internal xref">11.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
+            <p id="section-toc.1-1.12.1"><a href="#section-12" class="auto internal xref">12</a>. <a href="#name-references" class="internal xref">References</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.1">
+                <p id="section-toc.1-1.12.2.1.1"><a href="#section-12.1" class="auto internal xref">12.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.2">
+                <p id="section-toc.1-1.12.2.2.1"><a href="#section-12.2" class="auto internal xref">12.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
 </li>
             </ul>
 </li>
-          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
-            <p id="section-toc.1-1.12.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13">
+            <p id="section-toc.1-1.13.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-appendix-a-automatic-prompt" class="internal xref">Appendix A: Automatic Prompt-URL Trailer via Git Hook</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.1">
+                <p id="section-toc.1-1.13.2.1.1"><a href="#appendix-A.1" class="auto internal xref"></a><a href="#name-operation" class="internal xref">Operation</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.2">
+                <p id="section-toc.1-1.13.2.2.1"><a href="#appendix-A.2" class="auto internal xref"></a><a href="#name-installation" class="internal xref">Installation</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.3">
+                <p id="section-toc.1-1.13.2.3.1"><a href="#appendix-A.3" class="auto internal xref"></a><a href="#name-resulting-commit-message" class="internal xref">Resulting Commit Message</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14">
+            <p id="section-toc.1-1.14.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
 </li>
         </ul>
 </nav>
@@ -1447,6 +1473,18 @@ li > p:last-of-type:only-child {
       cross-references, and audit records.  It is NOT a globally unique identifier in
       the strict sense; see <a href="#ambiguity-multiple-uris" class="auto internal xref">Section 7</a> and
       <a href="#ambiguity-one-uri" class="auto internal xref">Section 8</a> for a full treatment of ambiguity.<a href="#section-1-4" class="pilcrow">¶</a></p>
+<p id="section-1-5">The scheme has been implemented and deployed as an open-source Model Context
+      Protocol (MCP) server <span>[<a href="#PROMPT-URL-MCP" class="cite xref">PROMPT-URL-MCP</a>]</span> that resolves, generates,
+      and searches <code>prompt</code> URIs against local agent session logs.  This
+      implementation validates the design under real-world agent workloads involving
+      both Claude Code and GitHub Copilot sessions.<a href="#section-1-5" class="pilcrow">¶</a></p>
+<p id="section-1-6">Several proposals currently under active consideration in IETF AI-focused
+      forums address broader questions of AI agent accountability, transparency,
+      auditability, and interoperability.  The <code>prompt</code> URI scheme is intended
+      as a composable, low-level building block for those frameworks: any mechanism
+      that tracks, attests to, or makes claims about AI-generated artifacts needs a
+      stable, lightweight way to reference the specific agent interaction that produced
+      them.  This document defines that reference.<a href="#section-1-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="terminology">
@@ -1531,79 +1569,58 @@ li > p:last-of-type:only-child {
         case-insensitive per <span>[<a href="#RFC3986" class="cite xref">RFC3986</a>]</span> Section 6.2.2.1.<a href="#section-3.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="authority">
-<section id="section-3.2">
-        <h3 id="name-authority-component">
-<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-authority-component" class="section-name selfRef">Authority Component</a>
-        </h3>
-<p id="section-3.2-1">The authority component of a prompt URI identifies the agent that generated the
-        URI.  It consists solely of the agent name; no userinfo or port subcomponents are
-        defined.  The authority <span class="bcp14">MUST</span> be present and <span class="bcp14">MUST NOT</span> be empty.<a href="#section-3.2-1" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="path">
-<section id="section-3.3">
-        <h3 id="name-path-component">
-<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-path-component" class="section-name selfRef">Path Component</a>
-        </h3>
-<p id="section-3.3-1">The path component <span class="bcp14">SHALL</span> consist of exactly two segments separated by a slash:<a href="#section-3.3-1" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-3.3-2">
-          <li id="section-3.3-2.1">A session reference — either a session identifier
-          (<a href="#session-id-comp" class="auto internal xref">Section 4.2</a>) or a registered session alias
-          (<a href="#session-aliases" class="auto internal xref">Section 4.4</a>).<a href="#section-3.3-2.1" class="pilcrow">¶</a>
-</li>
-          <li id="section-3.3-2.2">The prompt reference — either a timestamp or a prompt identifier
-          (<a href="#canonical-uri" class="auto internal xref">Section 4.5</a>).<a href="#section-3.3-2.2" class="pilcrow">¶</a>
-</li>
-        </ol>
-<p id="section-3.3-3">The path <span class="bcp14">MUST</span> begin with a slash.  Both segments <span class="bcp14">MUST NOT</span> be empty.<a href="#section-3.3-3" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="query-fragment">
-<section id="section-3.4">
-        <h3 id="name-query-and-fragment-componen">
-<a href="#section-3.4" class="section-number selfRef">3.4. </a><a href="#name-query-and-fragment-componen" class="section-name selfRef">Query and Fragment Components</a>
-        </h3>
-<p id="section-3.4-1">This specification does not define semantics for query (<code>?</code>) or fragment
-        (<code>#</code>) components.  Implementations <span class="bcp14">MAY</span> append a fragment to a prompt URI as
-        an implementation-specific disambiguation hint (see <a href="#ambiguity-one-uri" class="auto internal xref">Section 8</a>),
-        but <span class="bcp14">SHALL NOT</span> rely on fragment processing in interoperable contexts.  The query
-        component <span class="bcp14">SHOULD NOT</span> be used; its presence does not affect identity or
-        comparison.<a href="#section-3.4-1" class="pilcrow">¶</a></p>
-</section>
-</div>
 <div id="abnf">
-<section id="section-3.5">
+<section id="section-3.2">
         <h3 id="name-complete-abnf">
-<a href="#section-3.5" class="section-number selfRef">3.5. </a><a href="#name-complete-abnf" class="section-name selfRef">Complete ABNF</a>
+<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-complete-abnf" class="section-name selfRef">Complete ABNF</a>
         </h3>
-<p id="section-3.5-1">The following grammar, expressed in Augmented Backus-Naur Form
+<p id="section-3.2-1">The following grammar, expressed in Augmented Backus-Naur Form
         <span>[<a href="#RFC5234" class="cite xref">RFC5234</a>]</span>, defines the syntax of a prompt URI.  Terms not defined
         here are imported from <span>[<a href="#RFC3986" class="cite xref">RFC3986</a>]</span> (<code>unreserved</code>,
-        <code>pct-encoded</code>) and <span>[<a href="#RFC3339" class="cite xref">RFC3339</a>]</span> (<code>date-time</code>).<a href="#section-3.5-1" class="pilcrow">¶</a></p>
-<div class="lang-abnf sourcecode" id="section-3.5-2">
+        <code>pct-encoded</code>, <code>host</code>, <code>sub-delims</code>) and
+        <span>[<a href="#RFC3339" class="cite xref">RFC3339</a>]</span> (<code>date-time</code>).<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+<div class="breakable lang-abnf sourcecode" id="section-3.2-2">
 <pre>
-prompt-URI    =  "prompt://" agent-name "/" session-ref "/" prompt-ref
+prompt-URI    =  "prompt:" hier-part agent-name "/" session-ref "/" prompt-ref
+
+hier-part     =  "//" authority "/"   ; remote -- MCP server at authority host
+               / "/"                  ; local-only resolution
+
+authority     =  [ userinfo "@" ] host [ ":" port ]
+                 ; host: network hostname or IP-literal per RFC 3986 s3.2.3
+                 ; userinfo: optional username
+                 ; port: optional port number; defaults to 7560 when absent
+
+userinfo      =  1*( unreserved / pct-encoded / sub-delims )
+                 ; Username identifying the user at the remote host;
+                 ; the "user:password" form of RFC 3986 s3.2.1 is
+                 ; NOT RECOMMENDED -- use username only
+
+host          =  &lt;host as defined in RFC 3986 Section 3.2.3&gt;
+                 ; DNS hostname, IPv4 address, or IP-literal
+
+port          =  *DIGIT
+                 ; Decimal port number; absent port is equivalent to 7560
 
 agent-name    =  1*agent-char
 agent-char    =  unreserved / pct-encoded / "+" / "."
 
 session-ref   =  session-id / session-alias
                  ; Parsers cannot distinguish the two forms syntactically;
-                 ; the distinction is semantic (Section 4.2, Section 4.4)
+                 ; the distinction is semantic (Section 4.4, Section 4.6)
 
 session-id    =  1*( unreserved / pct-encoded )
                  ; Typically a UUID per RFC 9562
 
 session-alias =  1*( unreserved / pct-encoded )
                  ; Special characters including SP (U+0020) MUST be
-                 ; percent-encoded per [RFC3986] -- see Section 4.4
+                 ; percent-encoded per [RFC3986] -- see Section 4.6
 
 prompt-ref    =  date-time / prompt-id
                  ; Either an RFC 3339 timestamp or a prompt identifier;
                  ; date-time always begins with a 4-digit year, so
                  ; the "~" prefix of prompt-id is unambiguous
-                 ; See Sections 4.3 and 4.5
+                 ; See Sections 4.5 and 4.7
 
 date-time     =  &lt;date-time as defined in RFC 3339, Section 5.6&gt;
                  ; Colons within date-time are valid in URI path
@@ -1615,41 +1632,140 @@ prompt-id     =  "~" 1*( unreserved / pct-encoded )
                  ; "~" (U+007E, unreserved per RFC 3986) distinguishes
                  ; prompt-id from date-time in all syntactic contexts
                  ; Example: ~abc123, ~promptId%3Axyz
-</pre><a href="#section-3.5-2" class="pilcrow">¶</a>
+</pre><a href="#section-3.2-2" class="pilcrow">¶</a>
 </div>
-<p id="section-3.5-3">The following prompt URIs are all syntactically valid.  The first uses a
-        session identifier with a timestamp; the second uses a session alias with a
-        timestamp; the third uses a session identifier with a prompt identifier
-        (the canonical preferred form; see <a href="#canonical-uri" class="auto internal xref">Section 4.5</a>):<a href="#section-3.5-3" class="pilcrow">¶</a></p>
-<div class="sourcecode" id="section-3.5-4">
+<p id="section-3.2-3">The following prompt URIs illustrate the syntactic forms.  The first two use
+        local-only resolution (single slash, no authority); the remaining three use
+        remote resolution via a named host:<a href="#section-3.2-3" class="pilcrow">¶</a></p>
+<div class="sourcecode" id="section-3.2-4">
 <pre>
-prompt://claude-code/5674b542-0b94-4d12-bc05-d271a4131354/2026-07-07T16:45:23.856Z
-prompt://claude-code/md-csv-mcp%20design/2026-07-07T16:45:23.856Z
-prompt://claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
-</pre><a href="#section-3.5-4" class="pilcrow">¶</a>
+; Local-only forms (prompt:/ -- single slash, no authority)
+prompt:/claude-code/5674b542-0b94-4d12-bc05-d271a4131354/2026-07-07T16:45:23.856Z
+prompt:/claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
+
+; Remote forms (prompt:// -- authority present)
+prompt://mcp.example.com/claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
+prompt://kboone@mcp.example.com/claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
+prompt://mcp.example.com/claude-code/md-csv-mcp%20design/2026-07-07T16:45:23.856Z
+</pre><a href="#section-3.2-4" class="pilcrow">¶</a>
 </div>
-<p id="section-3.5-5">Breaking the alias-based example into components:<a href="#section-3.5-5" class="pilcrow">¶</a></p>
-<div class="sourcecode" id="section-3.5-6">
+<p id="section-3.2-5">Breaking the local prompt-id form into components:<a href="#section-3.2-5" class="pilcrow">¶</a></p>
+<div class="sourcecode" id="section-3.2-6">
 <pre>
-prompt-URI = "prompt://"
-             "claude-code"               ; agent-name
-             "/"
-             "md-csv-mcp%20design"       ; session-alias (space encoded as %20)
-             "/"
-             "2026-07-07T16:45:23.856Z"  ; prompt-ref: timestamp form (RFC 3339)
-</pre><a href="#section-3.5-6" class="pilcrow">¶</a>
+prompt-URI  = "prompt:"
+              "/"                             ; hier-part: local-only (single slash)
+              "claude-code"                   ; agent-name
+              "/"
+              "5674b542-0b94-4d12-bc05-d271a4131354"  ; session-id
+              "/"
+              "~abc123"                       ; prompt-ref: prompt-id form
+</pre><a href="#section-3.2-6" class="pilcrow">¶</a>
 </div>
-<p id="section-3.5-7">Breaking the canonical prompt-id example into components:<a href="#section-3.5-7" class="pilcrow">¶</a></p>
-<div class="sourcecode" id="section-3.5-8">
+<p id="section-3.2-7">Breaking the remote form with username into components:<a href="#section-3.2-7" class="pilcrow">¶</a></p>
+<div class="sourcecode" id="section-3.2-8">
 <pre>
-prompt-URI = "prompt://"
-             "claude-code"                              ; agent-name
-             "/"
-             "5674b542-0b94-4d12-bc05-d271a4131354"    ; session-id
-             "/"
-             "~abc123"                                  ; prompt-ref: prompt-id form
-</pre><a href="#section-3.5-8" class="pilcrow">¶</a>
+prompt-URI  = "prompt:"
+              "//"                            ; hier-part: remote resolution
+              "kboone"                        ; userinfo (username)
+              "@"
+              "mcp.example.com"               ; host (agent client machine)
+              "/"
+              "claude-code"                   ; agent-name
+              "/"
+              "5674b542-0b94-4d12-bc05-d271a4131354"  ; session-id
+              "/"
+              "~abc123"                       ; prompt-ref: prompt-id form
+</pre><a href="#section-3.2-8" class="pilcrow">¶</a>
 </div>
+<p id="section-3.2-9">Breaking the remote alias form into components:<a href="#section-3.2-9" class="pilcrow">¶</a></p>
+<div class="sourcecode" id="section-3.2-10">
+<pre>
+prompt-URI  = "prompt:"
+              "//"                            ; hier-part: remote resolution
+              "mcp.example.com"               ; host (no username)
+              "/"
+              "claude-code"                   ; agent-name
+              "/"
+              "md-csv-mcp%20design"           ; session-alias (space encoded as %20)
+              "/"
+              "2026-07-07T16:45:23.856Z"      ; prompt-ref: timestamp form (RFC 3339)
+</pre><a href="#section-3.2-10" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="authority-comp">
+<section id="section-3.3">
+        <h3 id="name-authority-component-optiona">
+<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-authority-component-optiona" class="section-name selfRef">Authority Component (Optional)</a>
+        </h3>
+<p id="section-3.3-1">The authority component is <span class="bcp14">OPTIONAL</span>.  Its presence is signaled by the
+        double-slash <code>//</code> prefix following the scheme (<code>prompt://</code>), in
+        accordance with <span>[<a href="#RFC3986" class="cite xref">RFC3986</a>]</span> Section 3.  When the authority is absent,
+        the URI uses a single slash (<code>prompt:/</code>) and is resolvable only through a
+        local MCP server instance.<a href="#section-3.3-1" class="pilcrow">¶</a></p>
+<p id="section-3.3-2">When present, the authority takes the form:<a href="#section-3.3-2" class="pilcrow">¶</a></p>
+<div class="sourcecode" id="section-3.3-3">
+<pre>
+[ username "@" ] host [ ":" port ]
+</pre><a href="#section-3.3-3" class="pilcrow">¶</a>
+</div>
+<p id="section-3.3-4">The <code>host</code> subcomponent identifies the network host where the agent client
+        application resides and operates on behalf of the user.  The agent may reside in
+        the cloud (such as Claude Code or GitHub Copilot), but this is the user machine
+        where the agent's client application stores logs and session data that enable
+        prompt resolution.  The host <span class="bcp14">MAY</span> also provide an HTTP endpoint where an MCP
+        server is accessible, enabling remote resolution of the URI over the network.
+        It follows the <code>host</code> syntax of <span>[<a href="#RFC3986" class="cite xref">RFC3986</a>]</span> Section 3.2.3
+        (DNS name, IPv4 address, or IP-literal).<a href="#section-3.3-4" class="pilcrow">¶</a></p>
+<p id="section-3.3-5">The <code>port</code> subcomponent is <span class="bcp14">OPTIONAL</span>.  When present, it is separated from
+        the <code>host</code> by a colon (<code>:</code>), as defined in <span>[<a href="#RFC3986" class="cite xref">RFC3986</a>]</span>
+        Section 3.2.3.  When absent, the port defaults to <code>7560</code>, which is the
+        registered default port for the <code>prompt</code>-scheme MCP server reference
+        implementation.<a href="#section-3.3-5" class="pilcrow">¶</a></p>
+<p id="section-3.3-6">The <code>username</code> subcomponent is <span class="bcp14">OPTIONAL</span>.  When present, it is separated
+        from the <code>host</code> by an <code>@</code> (U+0040) character, following the same
+        convention as HTTP and other URI schemes (<span>[<a href="#RFC3986" class="cite xref">RFC3986</a>]</span> Section 3.2.1).
+        It identifies the user account or identity principal under which the agent
+        session log is stored at the remote host, and <span class="bcp14">MAY</span> be used by the remote MCP
+        server to scope its session log search.<a href="#section-3.3-6" class="pilcrow">¶</a></p>
+<p id="section-3.3-7">The <code>agent-name</code> is NOT part of the authority; it is always the first
+        segment of the path (<a href="#path-comp" class="auto internal xref">Section 3.4</a>).<a href="#section-3.3-7" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="path-comp">
+<section id="section-3.4">
+        <h3 id="name-path-component">
+<a href="#section-3.4" class="section-number selfRef">3.4. </a><a href="#name-path-component" class="section-name selfRef">Path Component</a>
+        </h3>
+<p id="section-3.4-1">The path component <span class="bcp14">SHALL</span> consist of exactly three segments separated by
+        slashes:<a href="#section-3.4-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-3.4-2">
+          <li id="section-3.4-2.1">The agent name (<a href="#agent-name-comp" class="auto internal xref">Section 4.4</a>) — identifies the software
+          agent that generated the URI.<a href="#section-3.4-2.1" class="pilcrow">¶</a>
+</li>
+          <li id="section-3.4-2.2">A session reference — either a session identifier
+          (<a href="#session-id-comp" class="auto internal xref">Section 4.5</a>) or a registered session alias
+          (<a href="#session-aliases" class="auto internal xref">Section 4.7</a>).<a href="#section-3.4-2.2" class="pilcrow">¶</a>
+</li>
+          <li id="section-3.4-2.3">A prompt reference — either an RFC 3339 timestamp
+          (<a href="#timestamp-comp" class="auto internal xref">Section 4.6</a>) or a prompt identifier
+          (<a href="#canonical-uri" class="auto internal xref">Section 4.8</a>).<a href="#section-3.4-2.3" class="pilcrow">¶</a>
+</li>
+        </ol>
+<p id="section-3.4-3">The path <span class="bcp14">MUST</span> begin with a slash.  All three segments <span class="bcp14">MUST NOT</span> be empty.<a href="#section-3.4-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="query-fragment">
+<section id="section-3.5">
+        <h3 id="name-query-and-fragment-componen">
+<a href="#section-3.5" class="section-number selfRef">3.5. </a><a href="#name-query-and-fragment-componen" class="section-name selfRef">Query and Fragment Components</a>
+        </h3>
+<p id="section-3.5-1">This specification does not define semantics for query (<code>?</code>) or fragment
+        (<code>#</code>) components.  Implementations <span class="bcp14">MAY</span> append a fragment to a prompt URI as
+        an implementation-specific disambiguation hint (see <a href="#ambiguity-one-uri" class="auto internal xref">Section 8</a>),
+        but <span class="bcp14">SHALL NOT</span> rely on fragment processing in interoperable contexts.  The query
+        component <span class="bcp14">SHOULD NOT</span> be used; its presence does not affect identity or
+        comparison.<a href="#section-3.5-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1659,106 +1775,179 @@ prompt-URI = "prompt://"
       <h2 id="name-uri-components-and-semantic">
 <a href="#section-4" class="section-number selfRef">4. </a><a href="#name-uri-components-and-semantic" class="section-name selfRef">URI Components and Semantics</a>
       </h2>
-<div id="agent-name-comp">
+<div id="resolution-mode">
 <section id="section-4.1">
-        <h3 id="name-agent-name">
-<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-agent-name" class="section-name selfRef">Agent Name</a>
+        <h3 id="name-remote-vs-local-resolution">
+<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-remote-vs-local-resolution" class="section-name selfRef">Remote vs. Local Resolution</a>
         </h3>
-<p id="section-4.1-1">The agent name identifies the software agent that generated the URI.  It is
-        NOT a globally registered identifier; implementations <span class="bcp14">SHOULD</span> use a stable,
-        recognizable short name (e.g., <code>claude-code</code>, <code>github-copilot</code>,
-        <code>cursor</code>).  Agents operated by different organizations <span class="bcp14">SHOULD</span> use distinct
-        names to avoid collision.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
-<p id="section-4.1-2">The agent name <span class="bcp14">MAY</span> include a dot-separated hierarchy for namespacing
+<p id="section-4.1-1">A prompt URI selects its resolution mode by the presence or absence of the
+        authority (<code>//host</code>) prefix:<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1-2.1">
+            <strong>Remote (<code>prompt://[user@]host/...</code>)</strong> — The double-slash signals
+          that an authority is present.  The URI is intended to be resolved by contacting
+          the <code>prompt</code>-scheme MCP server running at <code>host</code> over the network.  This
+          form is appropriate for sharing prompt references across machines, teams, or
+          systems where the originating session log is accessible through a web-facing
+          MCP endpoint.<a href="#section-4.1-2.1" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="section-4.1-2.2">
+            <strong>Local-only (<code>prompt:/...</code>)</strong> — The single slash signals that no
+          authority is present.  The URI is resolvable only by a local MCP server instance
+          that has access to the originating agent's session logs on the same machine.
+          This form is appropriate for provenance records that will only ever be resolved
+          on the machine that generated them.<a href="#section-4.1-2.2" class="pilcrow">¶</a>
+</li>
+        </ul>
+<p id="section-4.1-3">Implementations that generate prompt URIs <span class="bcp14">SHOULD</span> choose the local form by
+        default and <span class="bcp14">SHOULD</span> allow the user or configuration to specify a remote host when
+        a web-accessible MCP server is available.  Implementations <span class="bcp14">SHOULD NOT</span> silently
+        upgrade a local URI to a remote one; the resolution mode is part of the URI's
+        identity.<a href="#section-4.1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="host-comp">
+<section id="section-4.2">
+        <h3 id="name-host">
+<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-host" class="section-name selfRef">Host</a>
+        </h3>
+<p id="section-4.2-1">The host subcomponent identifies the network host where the agent client
+        application resides and operates on behalf of the user.  The agent may reside in
+        the cloud (such as Claude Code or GitHub Copilot), but this is the user machine
+        where the agent's client application stores logs and session data that enable
+        prompt resolution.  It follows the <code>host</code> production of
+        <span>[<a href="#RFC3986" class="cite xref">RFC3986</a>]</span> Section 3.2.3.  The host <span class="bcp14">MAY</span> also provide an HTTP
+        endpoint where a <code>prompt</code>-scheme MCP server is accessible, enabling remote
+        resolution of the URI over the network.  A single MCP server <span class="bcp14">MAY</span> host
+        resolution for multiple AI agents.<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+<p id="section-4.2-2">Host names <span class="bcp14">SHOULD</span> be stable DNS names.  IP addresses <span class="bcp14">SHOULD</span> be avoided in
+        long-lived provenance records because they are subject to renumbering.<a href="#section-4.2-2" class="pilcrow">¶</a></p>
+<p id="section-4.2-3">The optional port number, when present, identifies the TCP port on which the
+        <code>prompt</code>-scheme MCP server listens at that host.  When absent, the port
+        defaults to <code>7560</code>, the default port of the reference implementation.
+        When an explicit port number equal to <code>7560</code> is present, it is equivalent
+        to the form with no port for comparison purposes
+        (<a href="#normalization" class="auto internal xref">Section 5</a>).<a href="#section-4.2-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="username-comp">
+<section id="section-4.3">
+        <h3 id="name-username">
+<a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-username" class="section-name selfRef">Username</a>
+        </h3>
+<p id="section-4.3-1">The username is the <span class="bcp14">OPTIONAL</span> <code>userinfo</code> subcomponent of the authority.
+        When present, it identifies the user account or identity principal whose agent
+        session logs are stored at the remote host.  The remote MCP server <span class="bcp14">MAY</span> use it
+        to scope its session log search to that user's log partition.<a href="#section-4.3-1" class="pilcrow">¶</a></p>
+<p id="section-4.3-2">The username is meaningful only when the authority is present (remote form).
+        It <span class="bcp14">SHOULD</span> be omitted in local-only URIs, and <span class="bcp14">SHOULD</span> be omitted in remote URIs
+        when the MCP server does not partition logs by user.<a href="#section-4.3-2" class="pilcrow">¶</a></p>
+<p id="section-4.3-3">Two prompt URIs that differ only in the presence or absence of a username, or
+        in the value of the username, are NOT equivalent (<a href="#normalization" class="auto internal xref">Section 5</a>)
+        unless the resolver determines that both usernames map to the same identity
+        principal.<a href="#section-4.3-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="agent-name-comp">
+<section id="section-4.4">
+        <h3 id="name-agent-name">
+<a href="#section-4.4" class="section-number selfRef">4.4. </a><a href="#name-agent-name" class="section-name selfRef">Agent Name</a>
+        </h3>
+<p id="section-4.4-1">The agent name is the first segment of the path.  It identifies the software
+        agent that generated the URI.  It is NOT a globally registered identifier;
+        implementations <span class="bcp14">SHOULD</span> use a stable, recognizable short name (e.g.,
+        <code>claude-code</code>, <code>github-copilot</code>, <code>cursor</code>).  Agents operated by
+        different organizations <span class="bcp14">SHOULD</span> use distinct names to avoid collision.<a href="#section-4.4-1" class="pilcrow">¶</a></p>
+<p id="section-4.4-2">The agent name <span class="bcp14">MAY</span> include a dot-separated hierarchy for namespacing
         (e.g., <code>anthropic.claude-code</code>), but this structure carries no defined
-        semantics in this specification.<a href="#section-4.1-2" class="pilcrow">¶</a></p>
-<p id="section-4.1-3">The agent name <span class="bcp14">SHALL</span> remain constant across all sessions and versions of a
+        semantics in this specification.<a href="#section-4.4-2" class="pilcrow">¶</a></p>
+<p id="section-4.4-3">The agent name <span class="bcp14">SHALL</span> remain constant across all sessions and versions of a
         given agent implementation.  Including a version number in the agent name is
         <span class="bcp14">NOT RECOMMENDED</span>, as it would render URIs from different versions incomparable
-        even when they refer to the same logical agent.<a href="#section-4.1-3" class="pilcrow">¶</a></p>
+        even when they refer to the same logical agent.<a href="#section-4.4-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="session-id-comp">
-<section id="section-4.2">
+<section id="section-4.5">
         <h3 id="name-session-identifier">
-<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-session-identifier" class="section-name selfRef">Session Identifier</a>
+<a href="#section-4.5" class="section-number selfRef">4.5. </a><a href="#name-session-identifier" class="section-name selfRef">Session Identifier</a>
         </h3>
-<p id="section-4.2-1">The session identifier <span class="bcp14">SHALL</span> be an opaque string assigned by the agent at
+<p id="section-4.5-1">The session identifier <span class="bcp14">SHALL</span> be an opaque string assigned by the agent at
         session initiation.  Implementations <span class="bcp14">SHOULD</span> use a UUID <span>[<a href="#RFC9562" class="cite xref">RFC9562</a>]</span> for
         the session identifier to minimize collision probability across agents and
         deployments.  UUID version 7 <span>[<a href="#RFC9562" class="cite xref">RFC9562</a>]</span> is <span class="bcp14">RECOMMENDED</span> over version 4
         because its monotonically increasing structure supports chronological ordering
-        of sessions.<a href="#section-4.2-1" class="pilcrow">¶</a></p>
-<p id="section-4.2-2">The session identifier <span class="bcp14">SHALL</span> be consistent throughout a session and
-        <span class="bcp14">SHALL NOT</span> change during a session's lifetime.<a href="#section-4.2-2" class="pilcrow">¶</a></p>
+        of sessions.<a href="#section-4.5-1" class="pilcrow">¶</a></p>
+<p id="section-4.5-2">The session identifier <span class="bcp14">SHALL</span> be consistent throughout a session and
+        <span class="bcp14">SHALL NOT</span> change during a session's lifetime.<a href="#section-4.5-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="timestamp-comp">
-<section id="section-4.3">
+<section id="section-4.6">
         <h3 id="name-timestamp">
-<a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-timestamp" class="section-name selfRef">Timestamp</a>
+<a href="#section-4.6" class="section-number selfRef">4.6. </a><a href="#name-timestamp" class="section-name selfRef">Timestamp</a>
         </h3>
-<p id="section-4.3-1">The timestamp <span class="bcp14">SHALL</span> be formatted as an RFC 3339 <span>[<a href="#RFC3339" class="cite xref">RFC3339</a>]</span>
+<p id="section-4.6-1">The timestamp <span class="bcp14">SHALL</span> be formatted as an RFC 3339 <span>[<a href="#RFC3339" class="cite xref">RFC3339</a>]</span>
           <code>date-time</code> value and <span class="bcp14">SHALL</span> use UTC (the <code>Z</code> suffix).  The timestamp
         records the wall-clock time at which the tool call generating the URI was
-        executed.<a href="#section-4.3-1" class="pilcrow">¶</a></p>
-<p id="section-4.3-2">Implementations <span class="bcp14">SHOULD</span> include sub-second precision (milliseconds) in the
+        executed.<a href="#section-4.6-1" class="pilcrow">¶</a></p>
+<p id="section-4.6-2">Implementations <span class="bcp14">SHOULD</span> include sub-second precision (milliseconds) in the
         timestamp to reduce the probability of within-session collisions
         (see <a href="#ambiguity-one-uri" class="auto internal xref">Section 8</a>).  A timestamp with second-level precision is
         <span class="bcp14">REQUIRED</span>; millisecond precision is <span class="bcp14">RECOMMENDED</span>; microsecond precision
-        <span class="bcp14">MAY</span> be used.<a href="#section-4.3-2" class="pilcrow">¶</a></p>
-<p id="section-4.3-3">The timestamp is NOT the time at which the originating prompt was submitted.
+        <span class="bcp14">MAY</span> be used.<a href="#section-4.6-2" class="pilcrow">¶</a></p>
+<p id="section-4.6-3">The timestamp is NOT the time at which the originating prompt was submitted.
         It is the time at which the tool call was executed.  For a given prompt, multiple
         tool calls <span class="bcp14">MAY</span> be executed, potentially spanning multiple seconds.  Each tool
         call produces a URI with its own timestamp; all such URIs are considered to
-        refer to the same prompt for resolution purposes (see <a href="#resolution" class="auto internal xref">Section 6</a>).<a href="#section-4.3-3" class="pilcrow">¶</a></p>
-<p id="section-4.3-4">When the agent maintains an internal prompt correlation identifier, the
+        refer to the same prompt for resolution purposes (see <a href="#resolution" class="auto internal xref">Section 6</a>).<a href="#section-4.6-3" class="pilcrow">¶</a></p>
+<p id="section-4.6-4">When the agent maintains an internal prompt correlation identifier, the
         canonical form of the URI <span class="bcp14">SHOULD</span> use that identifier in place of the timestamp
-        (see <a href="#canonical-uri" class="auto internal xref">Section 4.5</a>).<a href="#section-4.3-4" class="pilcrow">¶</a></p>
+        (see <a href="#canonical-uri" class="auto internal xref">Section 4.8</a>).<a href="#section-4.6-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="session-aliases">
-<section id="section-4.4">
+<section id="section-4.7">
         <h3 id="name-session-aliases">
-<a href="#section-4.4" class="section-number selfRef">4.4. </a><a href="#name-session-aliases" class="section-name selfRef">Session Aliases</a>
+<a href="#section-4.7" class="section-number selfRef">4.7. </a><a href="#name-session-aliases" class="section-name selfRef">Session Aliases</a>
         </h3>
-<p id="section-4.4-1">A session alias is a human-readable string that a user or implementation
+<p id="section-4.7-1">A session alias is a human-readable string that a user or implementation
         <span class="bcp14">MAY</span> register as an alternative to the session identifier in a prompt URI.
-        Aliases improve legibility: <code>prompt://claude-code/md-csv-mcp-design/...</code> is
+        Aliases improve legibility: <code>prompt:/claude-code/md-csv-mcp-design/...</code> is
         more immediately meaningful than
-        <code>prompt://claude-code/5674b542-.../...</code>.<a href="#section-4.4-1" class="pilcrow">¶</a></p>
-<p id="section-4.4-2"><strong>Registration:</strong> Aliases <span class="bcp14">SHALL</span> be registered in a local alias registry
+        <code>prompt:/claude-code/5674b542-.../...</code>.<a href="#section-4.7-1" class="pilcrow">¶</a></p>
+<p id="section-4.7-2"><strong>Registration:</strong> Aliases <span class="bcp14">SHALL</span> be registered in a local alias registry
         that maps each alias to the session identifier it represents.  An alias is
         scoped to a single agent name and <span class="bcp14">MUST</span> map to exactly one session within
         that agent's registry.  A session <span class="bcp14">MAY</span> have more than one alias registered
-        to it.<a href="#section-4.4-2" class="pilcrow">¶</a></p>
-<p id="section-4.4-3">Attempting to register an alias that is already registered to a different
+        to it.<a href="#section-4.7-2" class="pilcrow">¶</a></p>
+<p id="section-4.7-3">Attempting to register an alias that is already registered to a different
         session <span class="bcp14">SHALL</span> be rejected with a conflict error.  Attempting to register an
         alias that is already registered to the same session is idempotent and
-        <span class="bcp14">SHALL</span> succeed without modifying the registry.<a href="#section-4.4-3" class="pilcrow">¶</a></p>
-<p id="section-4.4-4"><strong>Case insensitivity:</strong> Alias lookup <span class="bcp14">SHALL</span> be case-insensitive.  The alias
+        <span class="bcp14">SHALL</span> succeed without modifying the registry.<a href="#section-4.7-3" class="pilcrow">¶</a></p>
+<p id="section-4.7-4"><strong>Case insensitivity:</strong> Alias lookup <span class="bcp14">SHALL</span> be case-insensitive.  The alias
         <code>MD-CSV-MCP-Design</code>, <code>md-csv-mcp-design</code>, and <code>Md-Csv-Mcp-Design</code>
           <span class="bcp14">MUST</span> all resolve to the same session.  Implementations <span class="bcp14">SHOULD</span> store aliases
         in normalized lowercase and normalize incoming aliases to lowercase before
-        lookup.<a href="#section-4.4-4" class="pilcrow">¶</a></p>
-<p id="section-4.4-5"><strong>Canonical URI form:</strong> In a prompt URI, an alias <span class="bcp14">SHALL</span> appear in its
+        lookup.<a href="#section-4.7-4" class="pilcrow">¶</a></p>
+<p id="section-4.7-5"><strong>Canonical URI form:</strong> In a prompt URI, an alias <span class="bcp14">SHALL</span> appear in its
         canonical URI form, which is the percent-encoded representation of the alias
-        string with all characters encoded per <span>[<a href="#RFC3986" class="cite xref">RFC3986</a>]</span> as required.<a href="#section-4.4-5" class="pilcrow">¶</a></p>
-<p id="section-4.4-6"><strong>Handling of spaces and special characters:</strong> Spaces (U+0020) and any other
+        string with all characters encoded per <span>[<a href="#RFC3986" class="cite xref">RFC3986</a>]</span> as required.<a href="#section-4.7-5" class="pilcrow">¶</a></p>
+<p id="section-4.7-6"><strong>Handling of spaces and special characters:</strong> Spaces (U+0020) and any other
         characters not permitted in a URI path segment by <span>[<a href="#RFC3986" class="cite xref">RFC3986</a>]</span> <span class="bcp14">MUST</span> be
         percent-encoded in the canonical URI form of an alias.  The alias
         <code>md-csv-mcp design</code> is canonically encoded as <code>md-csv-mcp%20design</code> in a
         prompt URI.  Hyphens and spaces remain distinct: the alias
         <code>md-csv-mcp design</code> and the alias <code>md-csv-mcp-design</code> are different aliases
-        and resolve to different sessions (if both are registered).<a href="#section-4.4-6" class="pilcrow">¶</a></p>
-<p id="section-4.4-7">Implementations that accept prompt URIs as input <span class="bcp14">MAY</span> repair aliases
+        and resolve to different sessions (if both are registered).<a href="#section-4.7-6" class="pilcrow">¶</a></p>
+<p id="section-4.7-7">Implementations that accept prompt URIs as input <span class="bcp14">MAY</span> repair aliases
         containing unencoded special characters by applying percent-encoding before
-        lookup, in the same manner that web browsers correct malformed URIs.<a href="#section-4.4-7" class="pilcrow">¶</a></p>
-<p id="section-4.4-8">Implementations <span class="bcp14">MUST</span> preserve the original human-readable alias string
+        lookup, in the same manner that web browsers correct malformed URIs.<a href="#section-4.7-7" class="pilcrow">¶</a></p>
+<p id="section-4.7-8">Implementations <span class="bcp14">MUST</span> preserve the original human-readable alias string
         (as supplied at registration time, before percent-encoding) in the alias
         registry.  This allows the original label to be displayed in user interfaces
-        without loss of information.<a href="#section-4.4-8" class="pilcrow">¶</a></p>
-<p id="section-4.4-9"><strong>Alias persistence:</strong> Alias registries are implementation-defined and may
+        without loss of information.<a href="#section-4.7-8" class="pilcrow">¶</a></p>
+<p id="section-4.7-9"><strong>Alias persistence:</strong> Alias registries are implementation-defined and may
         not persist indefinitely.  Agents are not required to maintain alias registries
         across restarts, updates, or deployments.  Users and systems requiring
         long-term, portable provenance references <span class="bcp14">SHOULD</span> use the session-identifier
@@ -1767,51 +1956,51 @@ prompt-URI = "prompt://"
         alias registry.  Prompt URIs using an alias remain valid provenance references
         as long as the alias registry is intact, but are subject to becoming
         unresolvable (<a href="#unresolvable" class="auto internal xref">Section 6.3</a>) if the registry is lost or
-        unavailable.<a href="#section-4.4-9" class="pilcrow">¶</a></p>
-<p id="section-4.4-10"><strong>Alias-to-session-id URIs:</strong> When a session has both a registered alias and
+        unavailable.<a href="#section-4.7-9" class="pilcrow">¶</a></p>
+<p id="section-4.7-10"><strong>Alias-to-session-id URIs:</strong> When a session has both a registered alias and
         a session identifier, both forms of prompt URI are valid and refer to the same
         session.  Implementations <span class="bcp14">MAY</span> use the alias form in newly generated provenance
-        records when an alias is registered, as it improves human readability.<a href="#section-4.4-10" class="pilcrow">¶</a></p>
+        records when an alias is registered, as it improves human readability.<a href="#section-4.7-10" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="canonical-uri">
-<section id="section-4.5">
+<section id="section-4.8">
         <h3 id="name-canonical-prompt-uri">
-<a href="#section-4.5" class="section-number selfRef">4.5. </a><a href="#name-canonical-prompt-uri" class="section-name selfRef">Canonical Prompt URI</a>
+<a href="#section-4.8" class="section-number selfRef">4.8. </a><a href="#name-canonical-prompt-uri" class="section-name selfRef">Canonical Prompt URI</a>
         </h3>
-<p id="section-4.5-1">A prompt URI is <em>canonical</em> if its <code>prompt-ref</code> component is the most
+<p id="section-4.8-1">A prompt URI is <em>canonical</em> if its <code>prompt-ref</code> component is the most
         specific and stable identifier available for the prompt it represents.  The
-        canonical form determines which URI <span class="bcp14">SHOULD</span> be stored in provenance records.<a href="#section-4.5-1" class="pilcrow">¶</a></p>
-<p id="section-4.5-2"><strong>Prompt identifier form (preferred):</strong> When the agent maintains an internal
+        canonical form determines which URI <span class="bcp14">SHOULD</span> be stored in provenance records.<a href="#section-4.8-1" class="pilcrow">¶</a></p>
+<p id="section-4.8-2"><strong>Prompt identifier form (preferred):</strong> When the agent maintains an internal
         correlation identifier for each prompt (for example, <code>promptId</code> in Claude Code
         session logs <span>[<a href="#CLAUDE-SESSIONS" class="cite xref">CLAUDE-SESSIONS</a>]</span> or <code>interactionId</code> in Copilot session
         logs <span>[<a href="#COPILOT-SESSIONS" class="cite xref">COPILOT-SESSIONS</a>]</span>), the canonical URI <span class="bcp14">SHOULD</span> use the
-        <code>prompt-id</code> form (<a href="#abnf" class="auto internal xref">Section 3.5</a>) with a leading <code>~</code> character:<a href="#section-4.5-2" class="pilcrow">¶</a></p>
-<div class="sourcecode" id="section-4.5-3">
+        <code>prompt-id</code> form (<a href="#abnf" class="auto internal xref">Section 3.2</a>) with a leading <code>~</code> character:<a href="#section-4.8-2" class="pilcrow">¶</a></p>
+<div class="sourcecode" id="section-4.8-3">
 <pre>
-prompt://claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
-</pre><a href="#section-4.5-3" class="pilcrow">¶</a>
+prompt:/claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
+</pre><a href="#section-4.8-3" class="pilcrow">¶</a>
 </div>
-<p id="section-4.5-4">A canonical prompt-id URI uniquely identifies the prompt regardless of when
+<p id="section-4.8-4">A canonical prompt-id URI uniquely identifies the prompt regardless of when
         tool calls execute within the prompt's processing.  Because all tool calls from
         the same prompt share the same prompt identifier, two prompt-id URIs with the
         same <code>session-ref</code> and <code>prompt-id</code> components can be detected as equivalent
-        by string comparison, without consulting the session log.<a href="#section-4.5-4" class="pilcrow">¶</a></p>
-<p id="section-4.5-5"><strong>Timestamp form (fallback):</strong> When no prompt identifier is available, the
+        by string comparison, without consulting the session log.<a href="#section-4.8-4" class="pilcrow">¶</a></p>
+<p id="section-4.8-5"><strong>Timestamp form (fallback):</strong> When no prompt identifier is available, the
         canonical URI <span class="bcp14">SHOULD</span> use the timestamp at which the originating prompt was
         submitted by the user — not the timestamp of any particular tool call within
         the prompt's processing.  An implementation that records prompt-submission
         timestamps <span class="bcp14">MAY</span> use that timestamp in the canonical URI even if individual
-        tool calls use their own tool-call timestamps (<a href="#timestamp-comp" class="auto internal xref">Section 4.3</a>).<a href="#section-4.5-5" class="pilcrow">¶</a></p>
-<p id="section-4.5-6">Tool-call timestamp URIs (those generated at the time a tool call executes)
+        tool calls use their own tool-call timestamps (<a href="#timestamp-comp" class="auto internal xref">Section 4.6</a>).<a href="#section-4.8-5" class="pilcrow">¶</a></p>
+<p id="section-4.8-6">Tool-call timestamp URIs (those generated at the time a tool call executes)
         are valid provenance references but are not canonical: multiple such URIs from
         the same prompt are not equivalent by comparison (<a href="#normalization" class="auto internal xref">Section 5</a>), even
-        though they resolve to the same prompt (<a href="#resolution" class="auto internal xref">Section 6</a>).<a href="#section-4.5-6" class="pilcrow">¶</a></p>
-<p id="section-4.5-7"><strong>Normalizing to canonical form:</strong> Implementations <span class="bcp14">SHOULD</span> normalize all
+        though they resolve to the same prompt (<a href="#resolution" class="auto internal xref">Section 6</a>).<a href="#section-4.8-6" class="pilcrow">¶</a></p>
+<p id="section-4.8-7"><strong>Normalizing to canonical form:</strong> Implementations <span class="bcp14">SHOULD</span> normalize all
         prompt URI references for a given prompt to the canonical URI before writing
         provenance records.  Normalizing to the prompt-id form, when available, enables
         deduplication of provenance entries across the tool calls of a single prompt
-        without requiring session log access.<a href="#section-4.5-7" class="pilcrow">¶</a></p>
+        without requiring session log access.<a href="#section-4.8-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1827,38 +2016,50 @@ prompt://claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
 <ol start="1" type="1" class="normal type-1" id="section-5-2">
         <li id="section-5-2.1">Their scheme components are identical (case-insensitively).<a href="#section-5-2.1" class="pilcrow">¶</a>
 </li>
-        <li id="section-5-2.2">Their agent-name components are identical (case-insensitively).<a href="#section-5-2.2" class="pilcrow">¶</a>
+        <li id="section-5-2.2">Their resolution mode is identical: either both have an authority (remote)
+        or both lack one (local-only).<a href="#section-5-2.2" class="pilcrow">¶</a>
 </li>
         <li id="section-5-2.3">
-          <p id="section-5-2.3.1">Their session-ref components identify the same session, determined as
-          follows:<a href="#section-5-2.3.1" class="pilcrow">¶</a></p>
+          <p id="section-5-2.3.1">When both have an authority: their host subcomponents are identical
+        (case-insensitively per <span>[<a href="#RFC3986" class="cite xref">RFC3986</a>]</span> Section 6.2.2.1); their port
+        subcomponents are equivalent (treating an absent port as equal to port
+        <code>7560</code>); and their username (userinfo) subcomponents are equivalent —
+        both absent, both present and identical after percent-decoding
+        (case-sensitive), or both present and determined by the resolver to map to
+        the same identity principal.<a href="#section-5-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-5-2.4">Their agent-name components are identical (case-insensitively).<a href="#section-5-2.4" class="pilcrow">¶</a>
+</li>
+        <li id="section-5-2.5">
+          <p id="section-5-2.5.1">Their session-ref components identify the same session, determined as
+          follows:<a href="#section-5-2.5.1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5-2.3.2.1">If both are session identifiers: they are identical after
-            percent-decoding (case-sensitive).<a href="#section-5-2.3.2.1" class="pilcrow">¶</a>
+<li class="normal" id="section-5-2.5.2.1">If both are session identifiers: they are identical after
+            percent-decoding (case-sensitive).<a href="#section-5-2.5.2.1" class="pilcrow">¶</a>
 </li>
-            <li class="normal" id="section-5-2.3.2.2">If both are session aliases: they are identical after percent-decoding
-            and case-folding to lowercase.<a href="#section-5-2.3.2.2" class="pilcrow">¶</a>
+            <li class="normal" id="section-5-2.5.2.2">If both are session aliases: they are identical after percent-decoding
+            and case-folding to lowercase.<a href="#section-5-2.5.2.2" class="pilcrow">¶</a>
 </li>
-            <li class="normal" id="section-5-2.3.2.3">If one is a session identifier and the other a session alias: they are
+            <li class="normal" id="section-5-2.5.2.3">If one is a session identifier and the other a session alias: they are
             equivalent if and only if the alias resolves to the same session identifier
-            per the alias registry (<a href="#alias-resolution" class="auto internal xref">Section 6.2</a>).<a href="#section-5-2.3.2.3" class="pilcrow">¶</a>
+            per the alias registry (<a href="#alias-resolution" class="auto internal xref">Section 6.2</a>).<a href="#section-5-2.5.2.3" class="pilcrow">¶</a>
 </li>
           </ul>
 </li>
-        <li id="section-5-2.4">
-          <p id="section-5-2.4.1">Their <code>prompt-ref</code> components identify the same prompt reference, as
-          determined by the following rules:<a href="#section-5-2.4.1" class="pilcrow">¶</a></p>
+        <li id="section-5-2.6">
+          <p id="section-5-2.6.1">Their <code>prompt-ref</code> components identify the same prompt reference, as
+          determined by the following rules:<a href="#section-5-2.6.1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5-2.4.2.1">If both are timestamps (<code>date-time</code>): they represent the same instant
+<li class="normal" id="section-5-2.6.2.1">If both are timestamps (<code>date-time</code>): they represent the same instant
             in time, after normalizing to UTC and applying the date-time comparison rules
-            of <span>[<a href="#RFC3339" class="cite xref">RFC3339</a>]</span>.<a href="#section-5-2.4.2.1" class="pilcrow">¶</a>
+            of <span>[<a href="#RFC3339" class="cite xref">RFC3339</a>]</span>.<a href="#section-5-2.6.2.1" class="pilcrow">¶</a>
 </li>
-            <li class="normal" id="section-5-2.4.2.2">If both are prompt identifiers (<code>prompt-id</code>): they are identical after
-            percent-decoding (case-sensitive, following percent-decoding).<a href="#section-5-2.4.2.2" class="pilcrow">¶</a>
+            <li class="normal" id="section-5-2.6.2.2">If both are prompt identifiers (<code>prompt-id</code>): they are identical after
+            percent-decoding (case-sensitive, following percent-decoding).<a href="#section-5-2.6.2.2" class="pilcrow">¶</a>
 </li>
-            <li class="normal" id="section-5-2.4.2.3">If one is a timestamp and the other is a prompt identifier: they are NOT
+            <li class="normal" id="section-5-2.6.2.3">If one is a timestamp and the other is a prompt identifier: they are NOT
             equivalent; resolution (<a href="#resolution" class="auto internal xref">Section 6</a>) is required to determine
-            whether they refer to the same prompt.<a href="#section-5-2.4.2.3" class="pilcrow">¶</a>
+            whether they refer to the same prompt.<a href="#section-5-2.6.2.3" class="pilcrow">¶</a>
 </li>
           </ul>
 </li>
@@ -1889,13 +2090,33 @@ prompt://claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
         log is unavailable.<a href="#section-6.1-1" class="pilcrow">¶</a></p>
 <p id="section-6.1-2">A conformant resolver <span class="bcp14">SHALL</span> apply the following steps:<a href="#section-6.1-2" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-6.1-3">
-          <li id="section-6.1-3.1">Parse the prompt URI and extract <code>agent-name</code>, <code>session-ref</code>, and
-          <code>prompt-ref</code>.  If <code>session-ref</code> is an alias, resolve it per
-          <a href="#alias-resolution" class="auto internal xref">Section 6.2</a> to obtain the session identifier.<a href="#section-6.1-3.1" class="pilcrow">¶</a>
+          <li id="section-6.1-3.1">
+            <p id="section-6.1-3.1.1">Parse the prompt URI and determine the resolution mode
+          (<a href="#resolution-mode" class="auto internal xref">Section 4.1</a>):<a href="#section-6.1-3.1.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-6.1-3.1.2.1">
+                <strong>Remote</strong> (<code>prompt://...</code>): extract <code>host</code>,
+            <code>username</code> (if present), <code>agent-name</code>, <code>session-ref</code>, and
+            <code>prompt-ref</code>.  Contact the MCP server at <code>host</code> to perform steps
+            2–7 on the remote server.  If <code>username</code> is present, pass it to the
+            remote server so that it <span class="bcp14">MAY</span> scope its session log search.<a href="#section-6.1-3.1.2.1" class="pilcrow">¶</a>
+</li>
+              <li class="normal" id="section-6.1-3.1.2.2">
+                <strong>Local-only</strong> (<code>prompt:/...</code>): extract <code>agent-name</code>,
+            <code>session-ref</code>, and <code>prompt-ref</code>.  Perform steps 2–7 using the
+            local session log store.<a href="#section-6.1-3.1.2.2" class="pilcrow">¶</a>
+</li>
+            </ul>
+<p id="section-6.1-3.1.3">If <code>session-ref</code> is an alias, resolve it per
+          <a href="#alias-resolution" class="auto internal xref">Section 6.2</a> to obtain the session identifier before
+          proceeding.<a href="#section-6.1-3.1.3" class="pilcrow">¶</a></p>
 </li>
           <li id="section-6.1-3.2">Locate the session log associated with the session identifier for the
-          agent identified by <code>agent-name</code>.  If no such log is accessible, the URI
-          is unresolvable (<a href="#unresolvable" class="auto internal xref">Section 6.3</a>).<a href="#section-6.1-3.2" class="pilcrow">¶</a>
+          agent identified by <code>agent-name</code>.  If resolving remotely and a
+          <code>username</code> is present, the resolver <span class="bcp14">MAY</span> restrict its search to session
+          logs owned by or accessible under that identity principal.  If no matching
+          log is accessible, the URI is unresolvable
+          (<a href="#unresolvable" class="auto internal xref">Section 6.3</a>).<a href="#section-6.1-3.2" class="pilcrow">¶</a>
 </li>
           <li id="section-6.1-3.3">
             <p id="section-6.1-3.3.1">If <code>prompt-ref</code> is a <code>prompt-id</code> (begins with <code>~</code>): strip the
@@ -1963,24 +2184,45 @@ prompt://claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
         </h3>
 <p id="section-6.3-1">A prompt URI is unresolvable if any of the following conditions hold:<a href="#section-6.3-1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-6.3-2.1">The <code>session-ref</code> is a session alias that is not registered in the
-          alias registry.<a href="#section-6.3-2.1" class="pilcrow">¶</a>
+<li class="normal" id="section-6.3-2.1">The URI is in remote form (<code>prompt://</code>) and the <code>host</code>
+          subcomponent does not match the hostname of the machine on which the
+          resolver is running (case-insensitive comparison).  A resolver
+          <span class="bcp14">MUST NOT</span> attempt to forward the request to another machine; it
+          <span class="bcp14">SHALL</span> return an error indicating the host mismatch.<a href="#section-6.3-2.1" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-6.3-2.2">The session log for the resolved session identifier is not accessible
-          to the resolver.<a href="#section-6.3-2.2" class="pilcrow">¶</a>
+          <li class="normal" id="section-6.3-2.2">The URI is in remote form and contains a <code>username</code>
+          subcomponent that does not match the OS-level username of the user
+          under whose account the resolver is operating (case-insensitive
+          comparison).  The resolver <span class="bcp14">SHALL</span> return an error indicating the
+          user mismatch.<a href="#section-6.3-2.2" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-6.3-2.3">The session log has been deleted, expired, or is otherwise
-          unavailable.<a href="#section-6.3-2.3" class="pilcrow">¶</a>
+          <li class="normal" id="section-6.3-2.3">The <code>session-ref</code> is a session alias that is not registered in the
+          alias registry.<a href="#section-6.3-2.3" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-6.3-2.4">The <code>agent-name</code> is not recognized by the resolver.<a href="#section-6.3-2.4" class="pilcrow">¶</a>
+          <li class="normal" id="section-6.3-2.4">The session log for the resolved session identifier is not accessible
+          to the resolver.<a href="#section-6.3-2.4" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-6.3-2.5">No session log entries fall within the resolution window.<a href="#section-6.3-2.5" class="pilcrow">¶</a>
+          <li class="normal" id="section-6.3-2.5">The session log has been deleted, expired, or is otherwise
+          unavailable.<a href="#section-6.3-2.5" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="section-6.3-2.6">The <code>agent-name</code> is not recognized by the resolver.<a href="#section-6.3-2.6" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="section-6.3-2.7">No session log entries fall within the resolution window.<a href="#section-6.3-2.7" class="pilcrow">¶</a>
 </li>
         </ul>
 <p id="section-6.3-3">An unresolvable URI is NOT invalid.  The URI remains a valid provenance
         identifier and <span class="bcp14">SHALL</span> be preserved in provenance records even when the
         referenced session is no longer accessible.  Resolvers <span class="bcp14">SHOULD</span> distinguish
-        between "unresolvable" and "invalid" when reporting resolution status.<a href="#section-6.3-3" class="pilcrow">¶</a></p>
+        between "unresolvable" and "invalid" when reporting resolution status, and
+        <span class="bcp14">SHOULD</span> report host-mismatch and user-mismatch conditions as distinct
+        errors to aid debugging.<a href="#section-6.3-3" class="pilcrow">¶</a></p>
+<p id="section-6.3-4">When resolution succeeds, the resolver <span class="bcp14">SHALL</span> return the canonical URI
+        in the same form as the URI that was presented for resolution: if the input
+        was a local-only URI (<code>prompt:/...</code>), the returned
+        <code>canonical_uri</code> <span class="bcp14">SHALL</span> be in local form; if the input was a remote
+        URI (<code>prompt://...</code>), the returned <code>canonical_uri</code> <span class="bcp14">SHALL</span>
+        be in remote form, preserving the <code>host</code>, <code>username</code> (if
+        present), and <code>port</code> (if non-default) from the input URI.<a href="#section-6.3-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2001,15 +2243,15 @@ prompt://claude-code/5674b542-0b94-4d12-bc05-d271a4131354/~abc123
       (<a href="#normalization" class="auto internal xref">Section 5</a>) and will not compare as equal.<a href="#section-7-2" class="pilcrow">¶</a></p>
 <p id="section-7-3">When the agent provides a prompt correlation identifier, implementations
       <span class="bcp14">SHOULD</span> normalize all such URIs to the canonical prompt-id form
-      (<a href="#canonical-uri" class="auto internal xref">Section 4.5</a>) before writing provenance records.  This eliminates the
+      (<a href="#canonical-uri" class="auto internal xref">Section 4.8</a>) before writing provenance records.  This eliminates the
       proliferation of distinct URIs for the same prompt and enables deduplication by
       string comparison, without session log access.<a href="#section-7-3" class="pilcrow">¶</a></p>
 <p id="section-7-4">Additionally, the same prompt may be identifiable by URIs with different
       timestamp precision:<a href="#section-7-4" class="pilcrow">¶</a></p>
 <div class="sourcecode" id="section-7-5">
 <pre>
-prompt://claude-code/5674b542.../2026-07-07T16:45:23Z
-prompt://claude-code/5674b542.../2026-07-07T16:45:23.856Z
+prompt:/claude-code/5674b542.../2026-07-07T16:45:23Z
+prompt:/claude-code/5674b542.../2026-07-07T16:45:23.856Z
 </pre><a href="#section-7-5" class="pilcrow">¶</a>
 </div>
 <p id="section-7-6">Both of the above URIs identify the same instant in time at different precision
@@ -2054,13 +2296,13 @@ prompt://claude-code/5674b542.../2026-07-07T16:45:23.856Z
         time:<a href="#section-8.1-2" class="pilcrow">¶</a></p>
 <div class="sourcecode" id="section-8.1-3">
 <pre>
-prompt://claude-code/5674b542.../2026-07-07T16:45:23.856Z#promptId=abc123
+prompt:/claude-code/5674b542.../2026-07-07T16:45:23.856Z#promptId=abc123
 </pre><a href="#section-8.1-3" class="pilcrow">¶</a>
 </div>
 <p id="section-8.1-4">Fragment identifiers used for this purpose are implementation-specific and
-        are <span class="bcp14">OPTIONAL</span> and not required for interoperability.  Resolvers that do not recognize a
-        fragment identifier <span class="bcp14">SHOULD</span> ignore it and apply the standard resolution
-        algorithm.<a href="#section-8.1-4" class="pilcrow">¶</a></p>
+        are <span class="bcp14">OPTIONAL</span> and not required for interoperability.  Resolvers that do not
+        recognize a fragment identifier <span class="bcp14">SHOULD</span> ignore it and apply the standard
+        resolution algorithm.<a href="#section-8.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="disclosure">
@@ -2076,81 +2318,143 @@ prompt://claude-code/5674b542.../2026-07-07T16:45:23.856Z#promptId=abc123
 </div>
 </section>
 </div>
-<div id="security">
+<div id="mcp-api">
 <section id="section-9">
-      <h2 id="name-security-considerations">
-<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      <h2 id="name-mcp-resolution-api">
+<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-mcp-resolution-api" class="section-name selfRef">MCP Resolution API</a>
       </h2>
-<p id="section-9-1"><strong>Confidentiality:</strong> A prompt URI encodes the agent identity, session
+<p id="section-9-1">This document does not yet formally define the Model Context Protocol
+      <span>[<a href="#MCP" class="cite xref">MCP</a>]</span> API that a conformant <code>prompt</code>-scheme resolver
+      <span class="bcp14">SHALL</span> implement.  That definition is deferred to a future revision or
+      companion document.<a href="#section-9-1" class="pilcrow">¶</a></p>
+<p id="section-9-2">However, the reference implementation <span>[<a href="#PROMPT-URL-MCP" class="cite xref">PROMPT-URL-MCP</a>]</span>
+      demonstrates a working API, and it is <span class="bcp14">RECOMMENDED</span> that
+      implementations follow it for interoperability.  The reference implementation
+      exposes the following MCP tools over an HTTP/1.1 StreamableHTTP transport
+      (JSON-RPC 2.0, <code>POST /mcp</code>, default port <code>7560</code>):<a href="#section-9-2" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlNewline" id="section-9-3">
+        <dt id="section-9-3.1"><code>resolve_prompt</code></dt>
+        <dd style="margin-left: 1.5em" id="section-9-3.2">Resolves a prompt URI to the originating user message.  Accepts a
+        single parameter <code>uri</code> (string).  Returns the resolved user message
+        text, agent identifier, session identifier, timestamp, and canonical URI.
+        Validates host and username in remote URIs against the local machine's
+        hostname and current OS user, respectively.<a href="#section-9-3.2" class="pilcrow">¶</a>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-9-3.3"><code>generate_prompt_url</code></dt>
+        <dd style="margin-left: 1.5em" id="section-9-3.4">Generates a prompt URI for a given agent, session identifier, and
+        optional prompt reference.  Accepts <code>agent</code>, <code>session_id</code>,
+        <code>prompt_ref</code> (optional), <code>host</code> (optional), <code>username</code>
+        (optional), and <code>port</code> (optional).  When <code>host</code> is absent,
+        generates a local-only URI (<code>prompt:/...</code>); when present, generates a
+        remote URI (<code>prompt://[user@]host[:port]/...</code>).<a href="#section-9-3.4" class="pilcrow">¶</a>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-9-3.5"><code>find_prompt</code></dt>
+        <dd style="margin-left: 1.5em" id="section-9-3.6">Searches session logs for prompts within a time range.  Accepts
+        <code>since</code>, <code>until</code>, <code>agent</code>, and <code>limit</code> parameters.
+        Returns a list of matching prompts sorted oldest first, each including its
+        <code>prompt_url</code>, <code>user_message</code>, and <code>timestamp</code>.  A
+        <code>commit</code> parameter <span class="bcp14">MAY</span> be supplied in lieu of explicit time
+        bounds; when present, the time range is derived from the commit timestamp
+        and its predecessor using <code>git log</code>.<a href="#section-9-3.6" class="pilcrow">¶</a>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-9-3.7"><code>list_sessions</code></dt>
+        <dd style="margin-left: 1.5em" id="section-9-3.8">Lists known agent sessions for the current user, optionally filtered
+        by agent identifier.<a href="#section-9-3.8" class="pilcrow">¶</a>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-9-3.9"><code>register_alias</code></dt>
+        <dd style="margin-left: 1.5em" id="section-9-3.10">Registers a human-readable alias for a session identifier, enabling
+        the alias form of the prompt URI (<a href="#session-aliases" class="auto internal xref">Section 4.7</a>).<a href="#section-9-3.10" class="pilcrow">¶</a>
+</dd>
+      <dd class="break"></dd>
+</dl>
+<p id="section-9-4">Implementations that provide remote resolution (<code>prompt://</code> form) over
+      the network <span class="bcp14">SHOULD</span> require authentication before serving session log
+      content.  The reference implementation currently binds to
+      <code>127.0.0.1</code> only (loopback) and does not expose session content to
+      other machines without explicit network reconfiguration.  Deployers that
+      choose to expose the service on a non-loopback interface
+      <span class="bcp14">MUST</span> implement appropriate access controls.<a href="#section-9-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="security">
+<section id="section-10">
+      <h2 id="name-security-considerations">
+<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      </h2>
+<p id="section-10-1"><strong>Confidentiality:</strong> A prompt URI encodes the agent identity, session
       identifier, and approximate timestamp of a tool call.  This information <span class="bcp14">MAY</span>
       be sensitive in deployments where session identifiers are treated as access
       credentials or where the existence of a particular agent interaction is
       confidential.  Implementors <span class="bcp14">SHOULD</span> treat prompt URIs with the same access
-      controls applied to session logs.<a href="#section-9-1" class="pilcrow">¶</a></p>
-<p id="section-9-2"><strong>Spoofability:</strong> Prompt URIs are not cryptographically signed.  Any party
+      controls applied to session logs.<a href="#section-10-1" class="pilcrow">¶</a></p>
+<p id="section-10-2"><strong>Spoofability:</strong> Prompt URIs are not cryptographically signed.  Any party
       with knowledge of a valid agent name, session identifier, and approximate
       timestamp can construct a syntactically valid URI.  Resolvers <span class="bcp14">SHALL NOT</span> treat a
       prompt URI as proof of authenticity; they <span class="bcp14">SHOULD</span> verify that the referenced
-      session log actually contains a prompt at the indicated time.<a href="#section-9-2" class="pilcrow">¶</a></p>
-<p id="section-9-3"><strong>Log availability:</strong> Resolution depends on the availability of session logs,
+      session log actually contains a prompt at the indicated time.<a href="#section-10-2" class="pilcrow">¶</a></p>
+<p id="section-10-3"><strong>Log availability:</strong> Resolution depends on the availability of session logs,
       which are typically stored on the client machine.  Logs may be deleted,
       corrupted, or unavailable to the resolver.  Provenance systems <span class="bcp14">SHALL NOT</span> treat
       an unresolvable URI as evidence of tampering; unresolvability is an expected
-      operational condition.<a href="#section-9-3" class="pilcrow">¶</a></p>
-<p id="section-9-4"><strong>Session identifier reuse:</strong> If an agent implementation reuses session
+      operational condition.<a href="#section-10-3" class="pilcrow">¶</a></p>
+<p id="section-10-4"><strong>Session identifier reuse:</strong> If an agent implementation reuses session
       identifiers across sessions (which <span class="bcp14">SHOULD NOT</span> occur when UUIDs are used), URIs
       from different sessions would become ambiguous.  Implementations <span class="bcp14">SHALL</span> use
-      session identifiers with negligible collision probability.<a href="#section-9-4" class="pilcrow">¶</a></p>
+      session identifiers with negligible collision probability.<a href="#section-10-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana">
-<section id="section-10">
+<section id="section-11">
       <h2 id="name-iana-considerations">
-<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+<a href="#section-11" class="section-number selfRef">11. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
       </h2>
-<p id="section-10-1">This document requests registration of the <code>prompt</code> URI scheme in the IANA
+<p id="section-11-1">This document requests registration of the <code>prompt</code> URI scheme in the IANA
       Uniform Resource Identifier (URI) Schemes registry, established by
-      <span>[<a href="#RFC7595" class="cite xref">RFC7595</a>]</span>.<a href="#section-10-1" class="pilcrow">¶</a></p>
-<span class="break"></span><dl class="dlParallel" id="section-10-2">
-        <dt id="section-10-2.1">Scheme name:</dt>
-        <dd style="margin-left: 1.5em" id="section-10-2.2">
-          <code>prompt</code><a href="#section-10-2.2" class="pilcrow">¶</a>
+      <span>[<a href="#RFC7595" class="cite xref">RFC7595</a>]</span>.<a href="#section-11-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-11-2">
+        <dt id="section-11-2.1">Scheme name:</dt>
+        <dd style="margin-left: 1.5em" id="section-11-2.2">
+          <code>prompt</code><a href="#section-11-2.2" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
-<dt id="section-10-2.3">Status:</dt>
-        <dd style="margin-left: 1.5em" id="section-10-2.4">Provisional<a href="#section-10-2.4" class="pilcrow">¶</a>
+<dt id="section-11-2.3">Status:</dt>
+        <dd style="margin-left: 1.5em" id="section-11-2.4">Provisional<a href="#section-11-2.4" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
-<dt id="section-10-2.5">Applications/protocols that use this scheme:</dt>
-        <dd style="margin-left: 1.5em" id="section-10-2.6">AI agent provenance metadata, session log indexers, agent tool
-        frameworks.<a href="#section-10-2.6" class="pilcrow">¶</a>
+<dt id="section-11-2.5">Applications/protocols that use this scheme:</dt>
+        <dd style="margin-left: 1.5em" id="section-11-2.6">AI agent provenance metadata, session log indexers, agent tool
+        frameworks.<a href="#section-11-2.6" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
-<dt id="section-10-2.7">Contact:</dt>
-        <dd style="margin-left: 1.5em" id="section-10-2.8">Keith W. Boone<a href="#section-10-2.8" class="pilcrow">¶</a>
+<dt id="section-11-2.7">Contact:</dt>
+        <dd style="margin-left: 1.5em" id="section-11-2.8">Keith W. Boone<a href="#section-11-2.8" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
-<dt id="section-10-2.9">Change controller:</dt>
-        <dd style="margin-left: 1.5em" id="section-10-2.10">Keith W. Boone<a href="#section-10-2.10" class="pilcrow">¶</a>
+<dt id="section-11-2.9">Change controller:</dt>
+        <dd style="margin-left: 1.5em" id="section-11-2.10">Keith W. Boone<a href="#section-11-2.10" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
-<dt id="section-10-2.11">References:</dt>
-        <dd style="margin-left: 1.5em" id="section-10-2.12">This document.<a href="#section-10-2.12" class="pilcrow">¶</a>
+<dt id="section-11-2.11">References:</dt>
+        <dd style="margin-left: 1.5em" id="section-11-2.12">This document.<a href="#section-11-2.12" class="pilcrow">¶</a>
 </dd>
       <dd class="break"></dd>
 </dl>
-<p id="section-10-3">Pending IANA registration, implementations <span class="bcp14">SHALL</span> treat the <code>prompt</code> scheme
-      as an unregistered provisional scheme per <span>[<a href="#RFC7595" class="cite xref">RFC7595</a>]</span> Section 3.3.<a href="#section-10-3" class="pilcrow">¶</a></p>
+<p id="section-11-3">Pending IANA registration, implementations <span class="bcp14">SHALL</span> treat the <code>prompt</code> scheme
+      as an unregistered provisional scheme per <span>[<a href="#RFC7595" class="cite xref">RFC7595</a>]</span> Section 3.3.<a href="#section-11-3" class="pilcrow">¶</a></p>
 </section>
 </div>
-<section id="section-11">
+<section id="section-12">
       <h2 id="name-references">
-<a href="#section-11" class="section-number selfRef">11. </a><a href="#name-references" class="section-name selfRef">References</a>
+<a href="#section-12" class="section-number selfRef">12. </a><a href="#name-references" class="section-name selfRef">References</a>
       </h2>
 <div id="normative-refs">
-<section id="section-11.1">
+<section id="section-12.1">
         <h3 id="name-normative-references">
-<a href="#section-11.1" class="section-number selfRef">11.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+<a href="#section-12.1" class="section-number selfRef">12.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
         </h3>
 <dl class="references">
 <dt id="RFC2119">[RFC2119]</dt>
@@ -2185,9 +2489,9 @@ prompt://claude-code/5674b542.../2026-07-07T16:45:23.856Z#promptId=abc123
 </section>
 </div>
 <div id="informative-refs">
-<section id="section-11.2">
+<section id="section-12.2">
         <h3 id="name-informative-references">
-<a href="#section-11.2" class="section-number selfRef">11.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+<a href="#section-12.2" class="section-number selfRef">12.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
         </h3>
 <dl class="references">
 <dt id="MCP">[MCP]</dt>
@@ -2201,18 +2505,113 @@ prompt://claude-code/5674b542.../2026-07-07T16:45:23.856Z#promptId=abc123
           Prompt correlation field: promptId.</span>, <time datetime="2026" class="refDate">2026</time>. </dd>
 <dd class="break"></dd>
 <dt id="COPILOT-SESSIONS">[COPILOT-SESSIONS]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">GitHub</span>, <span class="refTitle">"Copilot Session State Format"</span>, <span class="refContent">Internal format; session events stored at
           ~/.copilot/session-state/{session-id}/events.jsonl.
           Timestamp format: ISO 8601 UTC with milliseconds.
           Prompt correlation field: interactionId.</span>, <time datetime="2026" class="refDate">2026</time>. </dd>
 <dd class="break"></dd>
+<dt id="PROMPT-URL-MCP">[PROMPT-URL-MCP]</dt>
+      <dd>
+<span class="refAuthor">Boone, K.</span>, <span class="refTitle">"prompt-url-mcp: MCP Server for prompt: URI Resolution and Generation"</span>, <span class="refContent">Available at: https://github.com/AudaciousInquiry/prompt-url
+          and https://www.npmjs.com/package/@audaciousinquiry/prompt-url-mcp</span>, <time datetime="2026" class="refDate">2026</time>. </dd>
+<dd class="break"></dd>
 </dl>
 </section>
 </div>
 </section>
-<div id="authors-addresses">
+<div id="git-hook">
 <section id="appendix-A">
+      <h2 id="name-appendix-a-automatic-prompt">
+<a href="#name-appendix-a-automatic-prompt" class="section-name selfRef">Appendix A: Automatic Prompt-URL Trailer via Git Hook</a>
+      </h2>
+<p id="appendix-A-1">This appendix describes a <code>prepare-commit-msg</code> git hook, provided
+      alongside the reference implementation <span>[<a href="#PROMPT-URL-MCP" class="cite xref">PROMPT-URL-MCP</a>]</span>, that
+      automatically appends a <code>Prompt-URL:</code> trailer to any git commit that was
+      AI-assisted by GitHub Copilot.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+<div id="git-hook-operation">
+<section id="appendix-A.1">
+        <h3 id="name-operation">
+<a href="#name-operation" class="section-name selfRef">Operation</a>
+        </h3>
+<p id="appendix-A.1-1">Git invokes <code>prepare-commit-msg</code> after the initial commit message
+        is prepared but before the editor is opened.  The hook:<a href="#appendix-A.1-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="appendix-A.1-2">
+          <li id="appendix-A.1-2.1">Examines the draft commit message for a
+          <code>Co-authored-by: Copilot</code> trailer injected automatically by
+          VS Code / GitHub Copilot.<a href="#appendix-A.1-2.1" class="pilcrow">¶</a>
+</li>
+          <li id="appendix-A.1-2.2">If the trailer is present and no <code>Prompt-URL:</code> trailer already
+          exists, queries the local <code>prompt-url-mcp</code> daemon (via its
+          <code>find_prompt</code> tool, <a href="#mcp-api" class="auto internal xref">Section 9</a>) for the most recent
+          Copilot prompt submitted within the past 30 minutes.<a href="#appendix-A.1-2.2" class="pilcrow">¶</a>
+</li>
+          <li id="appendix-A.1-2.3">If a result is returned, appends a <code>Prompt-URL:</code> trailer
+          containing the local-form prompt URI
+          (<code>prompt:/github-copilot/...</code>) to the commit message.<a href="#appendix-A.1-2.3" class="pilcrow">¶</a>
+</li>
+          <li id="appendix-A.1-2.4">If the daemon is not running or returns no results, exits silently
+          without modifying the commit message.  The hook
+          <span class="bcp14">MUST NOT</span> block a commit under any error condition.<a href="#appendix-A.1-2.4" class="pilcrow">¶</a>
+</li>
+        </ol>
+</section>
+</div>
+<div id="git-hook-installation">
+<section id="appendix-A.2">
+        <h3 id="name-installation">
+<a href="#name-installation" class="section-name selfRef">Installation</a>
+        </h3>
+<p id="appendix-A.2-1">The hook is a Node.js script that requires Node.js in <code>PATH</code>
+        and the <code>prompt-url-mcp</code> daemon to be running.  It is located at
+        <code>hooks/prepare-commit-msg</code> in the reference implementation
+        repository.<a href="#appendix-A.2-1" class="pilcrow">¶</a></p>
+<p id="appendix-A.2-2"><strong>Per-repository installation:</strong><a href="#appendix-A.2-2" class="pilcrow">¶</a></p>
+<div class="lang-bash sourcecode" id="appendix-A.2-3">
+<pre>
+cp hooks/prepare-commit-msg .git/hooks/prepare-commit-msg
+chmod +x .git/hooks/prepare-commit-msg
+</pre><a href="#appendix-A.2-3" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.2-4"><strong>Global installation</strong> (applies to all repositories for the
+        current user).  The recommended global hooks directory is
+        <code>~/.git-hooks/</code>:<a href="#appendix-A.2-4" class="pilcrow">¶</a></p>
+<div class="lang-bash sourcecode" id="appendix-A.2-5">
+<pre>
+git config --global core.hooksPath ~/.git-hooks
+mkdir -p ~/.git-hooks
+cp hooks/prepare-commit-msg ~/.git-hooks/prepare-commit-msg
+chmod +x ~/.git-hooks/prepare-commit-msg
+</pre><a href="#appendix-A.2-5" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.2-6">On Windows the <code>chmod</code> command may be run in Git Bash or WSL.
+        Git for Windows treats copied scripts as executable by default.<a href="#appendix-A.2-6" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="git-hook-example">
+<section id="appendix-A.3">
+        <h3 id="name-resulting-commit-message">
+<a href="#name-resulting-commit-message" class="section-name selfRef">Resulting Commit Message</a>
+        </h3>
+<p id="appendix-A.3-1">A commit message with Copilot co-authorship, after the hook appends
+        the trailer, takes the following form:<a href="#appendix-A.3-1" class="pilcrow">¶</a></p>
+<div class="sourcecode" id="appendix-A.3-2">
+<pre>
+feat: add user registration validation
+
+Implement unique-email check at registration time. Returns 409
+if the email address is already in use.
+
+Co-authored-by: Copilot &lt;223556219+Copilot@users.noreply.github.com&gt;
+Prompt-URL: prompt:/github-copilot/95602ecf-.../~8e16a698-...
+</pre><a href="#appendix-A.3-2" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="authors-addresses">
+<section id="appendix-B">
       <h2 id="name-authors-address">
 <a href="#name-authors-address" class="section-name selfRef">Author's Address</a>
       </h2>

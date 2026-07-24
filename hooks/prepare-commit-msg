@@ -1,0 +1,37 @@
+#!/bin/sh
+# prepare-commit-msg git hook
+#
+# Automatically appends a "Prompt-URL:" trailer to commits initiated by
+# GitHub Copilot CLI.  Uses the COPILOT_CLI and COPILOT_AGENT_SESSION_ID
+# environment variables that Copilot CLI sets when it drives a commit.
+#
+# If COPILOT_CLI is not set (i.e. this is a human-authored commit or a
+# commit from a different agent), the hook exits immediately without
+# modifying the commit message.
+#
+# Installation (run once per repository):
+#
+#   cp hooks/prepare-commit-msg .git/hooks/prepare-commit-msg
+#   chmod +x .git/hooks/prepare-commit-msg
+#
+# Or install globally for all repositories via a global hooks directory
+# (recommended location: ~/.git-hooks/):
+#
+#   git config --global core.hooksPath ~/.git-hooks
+#   mkdir -p ~/.git-hooks
+#   cp hooks/prepare-commit-msg ~/.git-hooks/prepare-commit-msg
+#   chmod +x ~/.git-hooks/prepare-commit-msg
+#
+# On Windows use Git Bash or WSL to run chmod, or copy via File Explorer
+# (Git for Windows treats the file as executable by default).
+
+# Only enforce Prompt-URL: trailer for Copilot-initiated commits
+if [ -z "$COPILOT_CLI" ]; then
+  exit 0
+fi
+
+commit_msg_file="$1"
+if ! grep -q "^Prompt-URL:" "$commit_msg_file"; then
+  timestamp=$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")
+  printf "\nPrompt-URL: prompt:/github-copilot/%s/%s\n" "$COPILOT_AGENT_SESSION_ID" "$timestamp" >> "$commit_msg_file"
+fi
