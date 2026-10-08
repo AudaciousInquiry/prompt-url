@@ -1,12 +1,15 @@
 #!/bin/sh
 # prepare-commit-msg git hook
 #
-# Automatically appends a "Prompt-URL:" trailer to commits initiated by
-# GitHub Copilot CLI.  Uses the COPILOT_CLI and COPILOT_AGENT_SESSION_ID
-# environment variables that Copilot CLI sets when it drives a commit.
+# Automatically appends a "Prompt-URL:" trailer to commits initiated by an
+# AI coding agent. Supports two agents, detected via environment variables
+# the agent's CLI sets in the environment of subprocesses it launches:
 #
-# If COPILOT_CLI is not set (i.e. this is a human-authored commit or a
-# commit from a different agent), the hook exits immediately without
+#   GitHub Copilot CLI:  COPILOT_CLI, COPILOT_AGENT_SESSION_ID
+#   Claude Code:          CLAUDECODE, CLAUDE_CODE_SESSION_ID
+#
+# If neither is set (i.e. this is a human-authored commit, or a commit from
+# an agent this hook does not recognize), the hook exits immediately without
 # modifying the commit message.
 #
 # Installation (run once per repository):
@@ -25,13 +28,26 @@
 # On Windows use Git Bash or WSL to run chmod, or copy via File Explorer
 # (Git for Windows treats the file as executable by default).
 
-# Only enforce Prompt-URL: trailer for Copilot-initiated commits
-if [ -z "$COPILOT_CLI" ]; then
+commit_msg_file="$1"
+
+# Determine agent + session ID. Checked in this order so that a commit run
+# by Copilot CLI acting as a subprocess of Claude Code (or vice versa) is
+# still attributed to the directly-invoking agent.
+if [ -n "$COPILOT_CLI" ]; then
+  agent="github-copilot"
+  session_id="$COPILOT_AGENT_SESSION_ID"
+elif [ "$CLAUDECODE" = "1" ]; then
+  agent="claude-code"
+  session_id="$CLAUDE_CODE_SESSION_ID"
+else
   exit 0
 fi
 
-commit_msg_file="$1"
+if [ -z "$session_id" ]; then
+  exit 0
+fi
+
 if ! grep -q "^Prompt-URL:" "$commit_msg_file"; then
   timestamp=$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")
-  printf "\nPrompt-URL: prompt:/github-copilot/%s/%s\n" "$COPILOT_AGENT_SESSION_ID" "$timestamp" >> "$commit_msg_file"
+  printf "\nPrompt-URL: prompt:/%s/%s/%s\n" "$agent" "$session_id" "$timestamp" >> "$commit_msg_file"
 fi
