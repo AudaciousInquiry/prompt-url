@@ -94,11 +94,20 @@ test('parses remote-form URI with username and port', () => {
   assert.equal(parsed.username, 'keith');
 });
 
-test('parses remote-form URI with IPv6 host literal', () => {
-  const parsed = parsePromptUri('prompt://[::1]:7561/claude-code/sess-xyz/~abc123');
-  assert.equal(parsed.isRemote, true);
-  assert.equal(parsed.host, '::1');
-  assert.equal(parsed.port, 7561);
+test('rejects bracketed IPv6 host literal', () => {
+  assert.throws(() => parsePromptUri('prompt://[::1]:7561/claude-code/sess-xyz/~abc123'), { code: 'INVALID_URI' });
+});
+
+test('rejects unbracketed IPv6 host literal', () => {
+  assert.throws(() => parsePromptUri('prompt://::1/claude-code/sess-xyz/~abc123'), { code: 'INVALID_URI' });
+});
+
+test('rejects IPv4 dotted-quad host literal', () => {
+  assert.throws(() => parsePromptUri('prompt://127.0.0.1/claude-code/sess-xyz/~abc123'), { code: 'INVALID_URI' });
+});
+
+test('rejects IPv4 dotted-quad host literal with port', () => {
+  assert.throws(() => parsePromptUri('prompt://127.0.0.1:7561/claude-code/sess-xyz/~abc123'), { code: 'INVALID_URI' });
 });
 
 test('round-trip: build then parse (remote form)', () => {

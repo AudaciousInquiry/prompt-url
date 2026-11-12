@@ -81,38 +81,40 @@ function parsePromptUri(uri) {
       }
     }
 
-    // Split host from port
-    // Handle IPv6 literals: [::1]:port
-    const ipv6Match = hostPort.match(/^\[([^\]]+)\](?::(\d+))?$/);
-    if (ipv6Match) {
-      host = ipv6Match[1];
-      port = ipv6Match[2] ? parseInt(ipv6Match[2], 10) : null;
-    } else if ((hostPort.match(/:/g) || []).length > 1) {
-      // More than one colon outside brackets can only be an IPv6 literal,
-      // which MUST be bracketed per RFC 3986 — anything else is malformed
-      // rather than a host we can guess at (avoids e.g. "::1" silently
-      // mis-splitting into host ":" / port "1").
+    // Split host from port. IP literals (bracketed IPv6, dotted-quad IPv4) are
+    // not accepted as hosts — the host must identify a machine by DNS hostname,
+    // consistent with validateAuthority() matching against os.hostname() below.
+    // A bracketed or unbracketed IPv6 literal is rejected outright rather than
+    // accepted and later always failing authority validation.
+    if (/^\[([^\]]+)\](?::\d+)?$/.test(hostPort) || (hostPort.match(/:/g) || []).length > 1) {
       throw Object.assign(
-        new Error(`Malformed prompt URI (unbracketed IPv6 literal, use [::1] form): ${uri}`),
+        new Error(`Malformed prompt URI (IP literals are not valid hosts, use a DNS hostname): ${uri}`),
         { code: 'INVALID_URI' }
       );
-    } else {
-      const colonIdx = hostPort.lastIndexOf(':');
-      if (colonIdx !== -1) {
-        const maybePort = hostPort.slice(colonIdx + 1);
-        if (/^\d+$/.test(maybePort)) {
-          host = hostPort.slice(0, colonIdx);
-          port = parseInt(maybePort, 10);
-        } else {
-          host = hostPort;
-        }
+    }
+
+    const colonIdx = hostPort.lastIndexOf(':');
+    if (colonIdx !== -1) {
+      const maybePort = hostPort.slice(colonIdx + 1);
+      if (/^\d+$/.test(maybePort)) {
+        host = hostPort.slice(0, colonIdx);
+        port = parseInt(maybePort, 10);
       } else {
         host = hostPort;
       }
+    } else {
+      host = hostPort;
     }
 
     if (!host) {
       throw Object.assign(new Error(`Empty host in prompt URI: ${uri}`), { code: 'INVALID_URI' });
+    }
+
+    if (/^\d{1,3}(\.\d{1,3}){3}$/.test(host)) {
+      throw Object.assign(
+        new Error(`Malformed prompt URI (IP literals are not valid hosts, use a DNS hostname): ${uri}`),
+        { code: 'INVALID_URI' }
+      );
     }
   } else if (uri.startsWith('prompt:/')) {
     // Local form: prompt:/agent/session/ref
