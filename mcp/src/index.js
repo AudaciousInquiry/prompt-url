@@ -41,8 +41,10 @@ Commands (require the server to be running):
                                           prompt-url-mcp init @config.json
 
 MCP tools:
-  resolve_prompt       Resolve a prompt:// URI to the original user message
-  generate_prompt_url  Generate a prompt:// URL for the current session/turn
+  resolve_prompt       Resolve a prompt: URI (local prompt:/... or remote prompt://host/...)
+                          to the original user message
+  generate_prompt_url  Generate a prompt: URI for the current session/turn
+                          (local form by default; pass host for a remote URI)
   find_prompt          Find the prompt that originated a git commit or time range
   list_sessions        List AI agent sessions available on this machine
 

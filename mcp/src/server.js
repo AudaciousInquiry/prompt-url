@@ -7,7 +7,7 @@ const { z } = require('zod');
 const { McpServer } = require('@modelcontextprotocol/sdk/server/mcp.js');
 const { StreamableHTTPServerTransport } = require('@modelcontextprotocol/sdk/server/streamableHttp.js');
 const { loadConfig, DEFAULTS } = require('./config.js');
-const { resolvePromptUri } = require('./prompt-resolve.js');
+const { resolvePromptUri, validateAuthority, makeCanonicalUri } = require('./prompt-resolve.js');
 const { listSessions } = require('./session-list.js');
 const { searchPrompts, commitToTimeRange } = require('./search.js');
 
@@ -65,16 +65,28 @@ function registerTools(mcpServer) {
       ),
     },
     async ({ agent, session_id, prompt_ref, host, username, port }) => {
-      const ref = prompt_ref || new Date().toISOString();
-      let url;
-      if (host) {
-        const userPart = username ? `${encodeURIComponent(username)}@` : '';
-        const portPart = (port !== undefined && port !== null && port !== DEFAULTS.port) ? `:${port}` : '';
-        url = `prompt://${userPart}${host}${portPart}/${agent}/${session_id}/${ref}`;
-      } else {
-        url = `prompt:/${agent}/${session_id}/${ref}`;
+      if (!host && (username !== undefined || port !== undefined)) {
+        return {
+          content: [{ type: 'text', text: 'username and port are only valid when host is provided' }],
+          isError: true,
+        };
       }
-      return { content: [{ type: 'text', text: url }] };
+
+      const ref = prompt_ref || new Date().toISOString();
+      const authority = {
+        isRemote: !!host,
+        host: host || null,
+        port: (port !== undefined && port !== null) ? port : null,
+        username: username || null,
+      };
+
+      try {
+        if (authority.isRemote) validateAuthority(authority);
+        const url = makeCanonicalUri(authority, agent, session_id, ref);
+        return { content: [{ type: 'text', text: url }] };
+      } catch (err) {
+        return { content: [{ type: 'text', text: err.message }], isError: true };
+      }
     }
   );
 

@@ -3,8 +3,26 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
+const { DEFAULTS } = require('./config.js');
 
 // ── URI parsing ───────────────────────────────────────────────────────────────
+
+// Decode a percent-encoded path component, rejecting malformed escapes and
+// any value that would act as a path separator or traversal segment once
+// decoded (e.g. a %2F-encoded slash or an encoded "..") — both the agent and
+// session-id components flow straight into fs path.join() calls downstream.
+function decodePathComponent(raw, uri) {
+  let decoded;
+  try {
+    decoded = decodeURIComponent(raw);
+  } catch {
+    throw Object.assign(new Error(`Malformed percent-encoding in prompt URI: ${uri}`), { code: 'INVALID_URI' });
+  }
+  if (decoded.includes('/') || decoded.includes('\\') || decoded === '.' || decoded === '..') {
+    throw Object.assign(new Error(`Invalid path component in prompt URI: ${uri}`), { code: 'INVALID_URI' });
+  }
+  return decoded;
+}
 
 /**
  * Parse a prompt URI into its components.
@@ -57,7 +75,7 @@ function parsePromptUri(uri) {
     const atIdx = authorityStr.indexOf('@');
     const hostPort = atIdx === -1 ? authorityStr : authorityStr.slice(atIdx + 1);
     if (atIdx !== -1) {
-      username = decodeURIComponent(authorityStr.slice(0, atIdx));
+      username = decodePathComponent(authorityStr.slice(0, atIdx), uri);
       if (!username) {
         throw Object.assign(new Error(`Empty username in prompt URI: ${uri}`), { code: 'INVALID_URI' });
       }
@@ -69,6 +87,15 @@ function parsePromptUri(uri) {
     if (ipv6Match) {
       host = ipv6Match[1];
       port = ipv6Match[2] ? parseInt(ipv6Match[2], 10) : null;
+    } else if ((hostPort.match(/:/g) || []).length > 1) {
+      // More than one colon outside brackets can only be an IPv6 literal,
+      // which MUST be bracketed per RFC 3986 — anything else is malformed
+      // rather than a host we can guess at (avoids e.g. "::1" silently
+      // mis-splitting into host ":" / port "1").
+      throw Object.assign(
+        new Error(`Malformed prompt URI (unbracketed IPv6 literal, use [::1] form): ${uri}`),
+        { code: 'INVALID_URI' }
+      );
     } else {
       const colonIdx = hostPort.lastIndexOf(':');
       if (colonIdx !== -1) {
@@ -100,9 +127,13 @@ function parsePromptUri(uri) {
   if (parts.length < 3) {
     throw Object.assign(new Error(`Malformed prompt URI (expected agent/session/ref in path): ${uri}`), { code: 'INVALID_URI' });
   }
-  const agent     = decodeURIComponent(parts[0]);
-  const sessionId = decodeURIComponent(parts[1]);
-  const promptRef = parts.slice(2).join('/'); // allow slashes inside prompt-ref if ever needed
+  const agent     = decodePathComponent(parts[0], uri);
+  const sessionId = decodePathComponent(parts[1], uri);
+  const refParts  = parts.slice(2); // allow slashes inside prompt-ref if ever needed
+  if (refParts.some(p => p === '')) {
+    throw Object.assign(new Error(`Malformed prompt URI (empty path component): ${uri}`), { code: 'INVALID_URI' });
+  }
+  const promptRef = refParts.join('/');
 
   if (!agent || !sessionId || !promptRef) {
     throw Object.assign(new Error(`Malformed prompt URI (empty path component): ${uri}`), { code: 'INVALID_URI' });
@@ -160,7 +191,7 @@ function makeCanonicalUri({ isRemote, host, port, username }, agent, sessionId, 
     return `prompt:/${agent}/${sessionId}/${ref}`;
   }
   const userPart = username ? `${encodeURIComponent(username)}@` : '';
-  const portPart = (port !== null && port !== 7560) ? `:${port}` : '';
+  const portPart = (port !== null && port !== DEFAULTS.port) ? `:${port}` : '';
   return `prompt://${userPart}${host}${portPart}/${agent}/${sessionId}/${ref}`;
 }
 
@@ -411,4 +442,4 @@ function resolvePromptUri(uri) {
   }
 }
 
-module.exports = { parsePromptUri, resolvePromptUri };
+module.exports = { parsePromptUri, resolvePromptUri, validateAuthority, makeCanonicalUri };
