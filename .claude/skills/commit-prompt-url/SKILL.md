@@ -85,7 +85,7 @@ Implement unique-email check at registration time. Returns 409
 if the email address is already in use.
 
 Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
-Prompt-URL: prompt://github-copilot/95602ecf-.../~8e16a698-...
+Prompt-URL: prompt:/github-copilot/95602ecf-.../~8e16a698-...
 ```
 
 ## Notes

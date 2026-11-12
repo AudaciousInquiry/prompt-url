@@ -8,6 +8,17 @@ description: >-
 license: Apache-2.0
 compatibility: Requires prompt-url-mcp for resolution.
 updated:
+  - date: '2026-07-21T00:00:00.000Z'
+    user: boonek
+    agent:
+      name: github-copilot
+      version: '1.0'
+    llm:
+      name: claude-sonnet-4.6
+      version: '4.6'
+    prompt_uri: >-
+      prompt:/github-copilot/95602ecf-b509-42b5-b5c4-cefb007525df/2026-07-21T00:00:00.000Z
+    summary: Update URI syntax to draft-01 local/remote forms; update spec ref to -01
   - date: '2026-07-19T20:03:05.750Z'
     user: boonek
     agent:
@@ -17,7 +28,7 @@ updated:
       name: claude-sonnet-4.6
       version: '4.6'
     prompt_uri: >-
-      prompt://github-copilot/95602ecf-b509-42b5-b5c4-cefb007525df/2026-07-19T20:03:05.751Z
+      prompt:/github-copilot/95602ecf-b509-42b5-b5c4-cefb007525df/2026-07-19T20:03:05.751Z
     summary: Correct SKILL.md license from MIT to Apache-2.0
   - date: '2026-07-19T14:05:42.886Z'
     user: boonek
@@ -28,19 +39,8 @@ updated:
       name: claude-sonnet-4.6
       version: '4.6'
     prompt_uri: >-
-      prompt://github-copilot/95602ecf-b509-42b5-b5c4-cefb007525df/2026-07-19T14:05:42.886Z
+      prompt:/github-copilot/95602ecf-b509-42b5-b5c4-cefb007525df/2026-07-19T14:05:42.886Z
     summary: Update resolver reference to prompt-url-mcp
-  - date: '2026-07-19T14:05:38.745Z'
-    user: boonek
-    agent:
-      name: github-copilot
-      version: '1.0'
-    llm:
-      name: claude-sonnet-4.6
-      version: '4.6'
-    prompt_uri: >-
-      prompt://github-copilot/95602ecf-b509-42b5-b5c4-cefb007525df/2026-07-19T14:05:38.746Z
-    summary: Generalize MCP tool provenance description
   - date: '2026-07-19T14:03:53.654Z'
     user: boonek
     agent:
@@ -50,7 +50,7 @@ updated:
       name: claude-sonnet-4.6
       version: '4.6'
     prompt_uri: >-
-      prompt://github-copilot/95602ecf-b509-42b5-b5c4-cefb007525df/2026-07-19T14:03:53.660Z
+      prompt:/github-copilot/95602ecf-b509-42b5-b5c4-cefb007525df/2026-07-19T14:03:53.660Z
     summary: Add skill YAML front matter and provenance tracking to SKILL.md
 created:
   date: '2026-07-19T13:33:40.000Z'
@@ -69,15 +69,19 @@ and cross-agent references.
 A `prompt:` URL is a stable locator for a specific user prompt within an AI agent
 session. It uniquely identifies the turn that caused a given artifact to be created.
 
+Two forms exist:
+
 ```
-prompt://<agent-name>/<session-id>/<prompt-ref>
+; Local-only — resolvable on the machine that generated it
+prompt:/claude-code/34d129b9-9dad-439d-92fa-8b9d2d3adb77/~2e150465-a33e-4354-929c-fa2347c8bd00
+prompt:/github-copilot/95602ecf-b509-42b5-b5c4-cefb007525df/2026-07-19T08:34:49.255Z
+
+; Remote — resolvable via MCP server at named host (default port 7560)
+prompt://myhost.example.com/github-copilot/95602ecf-.../~8e16a698-...
 ```
 
-Examples:
-```
-prompt://claude-code/34d129b9-9dad-439d-92fa-8b9d2d3adb77/~2e150465-a33e-4354-929c-fa2347c8bd00
-prompt://github-copilot/95602ecf-b509-42b5-b5c4-cefb007525df/2026-07-19T08:34:49.255Z
-```
+Use the **local form** (`prompt:/`) by default. Use the **remote form** (`prompt://host/`)
+only when you have a network-accessible MCP server configured.
 
 The `prompt-ref` component is either:
 - A `~`-prefixed internal prompt ID (canonical, preferred — stable across all tool calls
@@ -133,7 +137,7 @@ MCP resolver. Aliases are stored case-normalized (lowercase)
 and support multi-alias-per-session binding.
 
 Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
-Prompt-URL: prompt://github-copilot/95602ecf-b509-42b5-b5c4-cefb007525df/2026-07-19T08:34:49.255Z
+Prompt-URL: prompt:/github-copilot/95602ecf-b509-42b5-b5c4-cefb007525df/2026-07-19T08:34:49.255Z
 ```
 
 ### Rules
@@ -152,7 +156,7 @@ Prompt-URL: prompt://github-copilot/95602ecf-b509-42b5-b5c4-cefb007525df/2026-07
 ## File Metadata (SKILL.md and Structured Documents)
 
 When updating a SKILL.md `updated:` block or any YAML metadata field that records
-a change, include the `prompt_uri` field:
+a change, include the `prompt_uri` field using the local form:
 
 ```yaml
 updated:
@@ -165,7 +169,7 @@ updated:
       name: claude-sonnet-4-6
       version: '4.6'
     prompt_uri: >-
-      prompt://github-copilot/95602ecf-b509-42b5-b5c4-cefb007525df/2026-07-19T09:00:00.000Z
+      prompt:/github-copilot/95602ecf-b509-42b5-b5c4-cefb007525df/2026-07-19T09:00:00.000Z
     summary: >-
       Brief description of what changed and why.
 ```
@@ -192,14 +196,16 @@ front matter, a `<!-- prompt-url: ... -->` HTML comment, or a
 
 ## Resolving a Prompt URL
 
-Use the `prompt-url-mcp` server's `mcp_resolve_prompt` tool to resolve a `prompt:`
+Use the `prompt-url-mcp` server's `resolve_prompt` tool to resolve a `prompt:`
 URL back to the original user message:
 
 ```
-mcp_resolve_prompt(uri="prompt://claude-code/34d129b9-.../~2e150465-...")
+resolve_prompt(uri="prompt:/claude-code/34d129b9-.../~2e150465-...")
 ```
 
-Returns: the original user message text, agent name, session ID, and timestamp.
+Returns: the original user message text, agent name, session ID, timestamp, and
+canonical URI. The returned `canonical_uri` will be in the same form (local or
+remote) as the URI that was submitted.
 
 For GitHub Copilot sessions, the resolver queries the session-state events store
 at `~/.copilot/session-state/{session-id}/events.jsonl` using the `interactionId`
@@ -233,7 +239,7 @@ agent that has access to the source agent's session logs.
 The `prompt:` URL scheme is formally specified in:
 
 ```
-draft-boone-prompt-uri-scheme-00
+draft-boone-prompt-uri-scheme-01
 ```
 
 Available at:

@@ -56,30 +56,30 @@ test('listSessions with limit returns at most limit results', () => {
 
 // ── resolvePromptUri: error codes ────────────────────────────────────────────
 
-test('invalid URI (non-prompt://) throws INVALID_URI', () => {
+test('invalid URI (non-prompt:) throws INVALID_URI', () => {
   assert.throws(
     () => resolvePromptUri('https://not-a-prompt-url'),
     (err) => { assert.equal(err.code, 'INVALID_URI'); return true; }
   );
 });
 
-test('unknown agent throws UNKNOWN_AGENT', () => {
+test('unknown agent throws UNKNOWN_AGENT (local form)', () => {
   assert.throws(
-    () => resolvePromptUri('prompt://unknown-agent/some-session/some-ref'),
+    () => resolvePromptUri('prompt:/unknown-agent/some-session/some-ref'),
     (err) => { assert.equal(err.code, 'UNKNOWN_AGENT'); return true; }
   );
 });
 
-test('nonexistent claude-code session throws SESSION_NOT_FOUND', () => {
+test('nonexistent claude-code session throws SESSION_NOT_FOUND (local form)', () => {
   assert.throws(
-    () => resolvePromptUri('prompt://claude-code/ci-no-such-session-abc123/2024-01-01T00:00:00.000Z'),
+    () => resolvePromptUri('prompt:/claude-code/ci-no-such-session-abc123/2024-01-01T00:00:00.000Z'),
     (err) => { assert.equal(err.code, 'SESSION_NOT_FOUND'); return true; }
   );
 });
 
-test('nonexistent github-copilot session throws SESSION_NOT_FOUND', () => {
+test('nonexistent github-copilot session throws SESSION_NOT_FOUND (local form)', () => {
   assert.throws(
-    () => resolvePromptUri('prompt://github-copilot/ci-no-such-session-abc123/2024-01-01T00:00:00.000Z'),
+    () => resolvePromptUri('prompt:/github-copilot/ci-no-such-session-abc123/2024-01-01T00:00:00.000Z'),
     (err) => { assert.equal(err.code, 'SESSION_NOT_FOUND'); return true; }
   );
 });
