@@ -10,9 +10,20 @@ created:
     name: claude-sonnet-4.6
     version: '4.6'
   prompt_uri: >-
-    prompt://github-copilot/95602ecf-b509-42b5-b5c4-cefb007525df/2026-07-19T19:44:18.686Z
+    prompt:/github-copilot/95602ecf-b509-42b5-b5c4-cefb007525df/2026-07-19T19:44:18.686Z
   summary: Write npm package README for @audaciousinquiry/prompt-url-mcp
 updated:
+  - date: '2026-07-21T00:00:00.000Z'
+    user: boonek
+    agent:
+      name: github-copilot
+      version: '1.0'
+    llm:
+      name: claude-sonnet-4.6
+      version: '4.6'
+    prompt_uri: >-
+      prompt:/github-copilot/95602ecf-b509-42b5-b5c4-cefb007525df/2026-07-21T00:00:00.000Z
+    summary: Update URI syntax to draft-01 local/remote forms
   - date: '2026-07-19T20:00:05.495Z'
     user: boonek
     agent:
@@ -22,18 +33,22 @@ updated:
       name: claude-sonnet-4.6
       version: '4.6'
     prompt_uri: >-
-      prompt://github-copilot/95602ecf-b509-42b5-b5c4-cefb007525df/2026-07-19T20:00:05.496Z
+      prompt:/github-copilot/95602ecf-b509-42b5-b5c4-cefb007525df/2026-07-19T20:00:05.496Z
     summary: 'Clarify list_sessions description: current user sessions'
 ---
 # @audaciousinquiry/prompt-url-mcp
 
-MCP server for resolving and generating `prompt://` URLs — stable identifiers for AI agent session provenance.
+MCP server for resolving and generating `prompt:` URLs — stable identifiers for AI agent session provenance.
 
-A `prompt://` URL encodes the agent name, session ID, and prompt reference needed to locate the originating user message in an agent's session log:
+A `prompt:` URL encodes the agent name, session ID, and prompt reference needed to locate the originating user message in an agent's session log:
 
 ```
-prompt://claude-code/34d129b9-9dad-439d-92fa-8b9d2d3adb77/~2e150465-a33e-4354-929c-fa2347c8bd00
-prompt://github-copilot/95602ecf-b509-42b5-b5c4-cefb007525df/2026-07-19T08:34:49.255Z
+; Local form — resolvable on this machine only
+prompt:/claude-code/34d129b9-9dad-439d-92fa-8b9d2d3adb77/~2e150465-a33e-4354-929c-fa2347c8bd00
+prompt:/github-copilot/95602ecf-b509-42b5-b5c4-cefb007525df/2026-07-19T08:34:49.255Z
+
+; Remote form — resolvable via MCP server at the named host (default port 7560)
+prompt://myhost.example.com/claude-code/34d129b9-.../~2e150465-...
 ```
 
 These URLs can be embedded in Git commit trailers (`Prompt-URL:`), file metadata (YAML front matter), or any artifact that should carry a traceable link back to the prompt that produced it.
@@ -92,17 +107,17 @@ Start the daemon first with `prompt-url-mcp`.
 
 ### `resolve_prompt`
 
-Resolves a `prompt://` URI to the original user message that caused an AI-generated artifact.
+Resolves a `prompt:` URI to the original user message that caused an AI-generated artifact.
 
 ```json
-{ "uri": "prompt://github-copilot/<session-id>/~<prompt-id>" }
+{ "uri": "prompt:/github-copilot/<session-id>/~<prompt-id>" }
 ```
 
 Returns the user message text, agent, session ID, timestamp, and canonical URI.
 
 ### `generate_prompt_url`
 
-Generates a `prompt://` URL for a specific agent session and turn.
+Generates a `prompt:` URL for a specific agent session and turn.
 
 ```json
 {
@@ -113,6 +128,7 @@ Generates a `prompt://` URL for a specific agent session and turn.
 ```
 
 Omit `prompt_ref` to use the current UTC timestamp as a fallback reference.
+Supply `host` to generate a remote-form URI (`prompt://host/...`).
 
 ### `find_prompt`
 

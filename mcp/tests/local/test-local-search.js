@@ -56,7 +56,7 @@ test('searchPrompts returns an array', () => {
 test('each result has required fields', () => {
   if (recent.length === 0) skip('no prompts found in last 7 days');
   for (const r of recent) {
-    assert.ok(typeof r.prompt_url === 'string' && r.prompt_url.startsWith('prompt://'),
+    assert.ok(typeof r.prompt_url === 'string' && r.prompt_url.startsWith('prompt:'),
       `prompt_url invalid: ${r.prompt_url}`);
     assert.ok(typeof r.user_message === 'string', 'user_message must be a string');
     assert.ok(r.agent === 'claude-code' || r.agent === 'github-copilot',

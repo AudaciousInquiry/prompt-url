@@ -3,29 +3,198 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
+const { DEFAULTS } = require('./config.js');
 
 // ── URI parsing ───────────────────────────────────────────────────────────────
 
-// Parse a prompt:// URI into { agent, sessionId, promptRef, isPromptId }.
-// Throws { code: 'INVALID_URI' } on malformed input.
+// Decode a percent-encoded path component, rejecting malformed escapes and
+// any value that would act as a path separator or traversal segment once
+// decoded (e.g. a %2F-encoded slash or an encoded "..") — both the agent and
+// session-id components flow straight into fs path.join() calls downstream.
+function decodePathComponent(raw, uri) {
+  let decoded;
+  try {
+    decoded = decodeURIComponent(raw);
+  } catch {
+    throw Object.assign(new Error(`Malformed percent-encoding in prompt URI: ${uri}`), { code: 'INVALID_URI' });
+  }
+  if (decoded.includes('/') || decoded.includes('\\') || decoded === '.' || decoded === '..') {
+    throw Object.assign(new Error(`Invalid path component in prompt URI: ${uri}`), { code: 'INVALID_URI' });
+  }
+  return decoded;
+}
+
+/**
+ * Parse a prompt URI into its components.
+ *
+ * Supports two forms:
+ *   Local-only:  prompt:/<agent>/<session-ref>/<prompt-ref>
+ *   Remote:      prompt://[username@]host[:port]/<agent>/<session-ref>/<prompt-ref>
+ *
+ * Returns:
+ *   {
+ *     isRemote,         // boolean
+ *     host,             // string|null   — DNS name or IP from authority
+ *     port,             // number|null   — explicit port, or null (default 7560)
+ *     username,         // string|null   — userinfo from authority
+ *     agent,            // string
+ *     sessionId,        // string
+ *     promptRef,        // string
+ *     isPromptId,       // boolean       — true when promptRef starts with '~'
+ *   }
+ *
+ * Throws { code: 'INVALID_URI' } on malformed input.
+ */
 function parsePromptUri(uri) {
-  if (typeof uri !== 'string' || !uri.startsWith('prompt://')) {
-    throw Object.assign(new Error(`Not a prompt:// URI: ${uri}`), { code: 'INVALID_URI' });
+  if (typeof uri !== 'string' || !uri.startsWith('prompt:')) {
+    throw Object.assign(new Error(`Not a prompt: URI: ${uri}`), { code: 'INVALID_URI' });
   }
-  // body = <agent>/<session-id>/<prompt-ref>
-  const body = uri.slice('prompt://'.length);
-  const firstSlash  = body.indexOf('/');
-  if (firstSlash === -1) throw Object.assign(new Error(`Malformed prompt:// URI (no session-id): ${uri}`), { code: 'INVALID_URI' });
-  const agent = body.slice(0, firstSlash);
-  const rest  = body.slice(firstSlash + 1);
-  const secondSlash = rest.indexOf('/');
-  if (secondSlash === -1) throw Object.assign(new Error(`Malformed prompt:// URI (no prompt-ref): ${uri}`), { code: 'INVALID_URI' });
-  const sessionId = rest.slice(0, secondSlash);
-  const promptRef = rest.slice(secondSlash + 1);
+
+  let isRemote = false;
+  let host = null;
+  let port = null;
+  let username = null;
+  let pathPart;  // the part after the authority (or after "prompt:/")
+
+  if (uri.startsWith('prompt://')) {
+    // Remote form: prompt://[user@]host[:port]/agent/session/ref
+    isRemote = true;
+    const afterScheme = uri.slice('prompt://'.length); // "[user@]host[:port]/agent/..."
+    const slashIdx = afterScheme.indexOf('/');
+    if (slashIdx === -1) {
+      throw Object.assign(new Error(`Malformed remote prompt URI (no path): ${uri}`), { code: 'INVALID_URI' });
+    }
+    const authorityStr = afterScheme.slice(0, slashIdx);
+    pathPart = afterScheme.slice(slashIdx + 1); // "agent/session/ref"
+
+    if (!authorityStr) {
+      throw Object.assign(new Error(`Malformed remote prompt URI (empty authority): ${uri}`), { code: 'INVALID_URI' });
+    }
+
+    // Split userinfo from host[:port]
+    const atIdx = authorityStr.indexOf('@');
+    const hostPort = atIdx === -1 ? authorityStr : authorityStr.slice(atIdx + 1);
+    if (atIdx !== -1) {
+      username = decodePathComponent(authorityStr.slice(0, atIdx), uri);
+      if (!username) {
+        throw Object.assign(new Error(`Empty username in prompt URI: ${uri}`), { code: 'INVALID_URI' });
+      }
+    }
+
+    // Split host from port. IP literals (bracketed IPv6, dotted-quad IPv4) are
+    // not accepted as hosts — the host must identify a machine by DNS hostname,
+    // consistent with validateAuthority() matching against os.hostname() below.
+    // A bracketed or unbracketed IPv6 literal is rejected outright rather than
+    // accepted and later always failing authority validation.
+    if (/^\[([^\]]+)\](?::\d+)?$/.test(hostPort) || (hostPort.match(/:/g) || []).length > 1) {
+      throw Object.assign(
+        new Error(`Malformed prompt URI (IP literals are not valid hosts, use a DNS hostname): ${uri}`),
+        { code: 'INVALID_URI' }
+      );
+    }
+
+    const colonIdx = hostPort.lastIndexOf(':');
+    if (colonIdx !== -1) {
+      const maybePort = hostPort.slice(colonIdx + 1);
+      if (/^\d+$/.test(maybePort)) {
+        host = hostPort.slice(0, colonIdx);
+        port = parseInt(maybePort, 10);
+      } else {
+        host = hostPort;
+      }
+    } else {
+      host = hostPort;
+    }
+
+    if (!host) {
+      throw Object.assign(new Error(`Empty host in prompt URI: ${uri}`), { code: 'INVALID_URI' });
+    }
+
+    if (/^\d{1,3}(\.\d{1,3}){3}$/.test(host)) {
+      throw Object.assign(
+        new Error(`Malformed prompt URI (IP literals are not valid hosts, use a DNS hostname): ${uri}`),
+        { code: 'INVALID_URI' }
+      );
+    }
+  } else if (uri.startsWith('prompt:/')) {
+    // Local form: prompt:/agent/session/ref
+    isRemote = false;
+    pathPart = uri.slice('prompt:/'.length); // "agent/session/ref"
+  } else {
+    throw Object.assign(new Error(`Malformed prompt URI (unrecognised hier-part): ${uri}`), { code: 'INVALID_URI' });
+  }
+
+  // pathPart = "agent/session/ref"
+  const parts = pathPart.split('/');
+  if (parts.length < 3) {
+    throw Object.assign(new Error(`Malformed prompt URI (expected agent/session/ref in path): ${uri}`), { code: 'INVALID_URI' });
+  }
+  const agent     = decodePathComponent(parts[0], uri);
+  const sessionId = decodePathComponent(parts[1], uri);
+  const refParts  = parts.slice(2); // allow slashes inside prompt-ref if ever needed
+  if (refParts.some(p => p === '')) {
+    throw Object.assign(new Error(`Malformed prompt URI (empty path component): ${uri}`), { code: 'INVALID_URI' });
+  }
+  const promptRef = refParts.join('/');
+
   if (!agent || !sessionId || !promptRef) {
-    throw Object.assign(new Error(`Malformed prompt:// URI (empty component): ${uri}`), { code: 'INVALID_URI' });
+    throw Object.assign(new Error(`Malformed prompt URI (empty path component): ${uri}`), { code: 'INVALID_URI' });
   }
-  return { agent, sessionId, promptRef, isPromptId: promptRef.startsWith('~') };
+
+  return { isRemote, host, port, username, agent, sessionId, promptRef, isPromptId: promptRef.startsWith('~') };
+}
+
+// ── Authority validation ──────────────────────────────────────────────────────
+
+/**
+ * For a remote URI, validate that the host and username (if present) match
+ * this machine's hostname and current OS user.  Throws if they do not.
+ *
+ * The spec (Section 4.1) says the host identifies the machine where the agent
+ * client application stores its session logs — i.e. this machine.  If it
+ * identifies a different machine the resolver cannot fulfil the request.
+ */
+function validateAuthority({ isRemote, host, username }) {
+  if (!isRemote) return; // local form — no authority to validate
+
+  const localHostname = os.hostname();
+  if (host.toLowerCase() !== localHostname.toLowerCase()) {
+    throw Object.assign(
+      new Error(
+        `URI host "${host}" does not match this machine's hostname "${localHostname}". ` +
+        `Remote prompt URIs can only be resolved on the machine they were generated on.`
+      ),
+      { code: 'WRONG_HOST' }
+    );
+  }
+
+  if (username !== null) {
+    const localUser = os.userInfo().username;
+    if (username.toLowerCase() !== localUser.toLowerCase()) {
+      throw Object.assign(
+        new Error(
+          `URI username "${username}" does not match the current OS user "${localUser}". ` +
+          `Prompt URIs with a username can only be resolved by that user.`
+        ),
+        { code: 'WRONG_USER' }
+      );
+    }
+  }
+}
+
+// ── Canonical URI builder ─────────────────────────────────────────────────────
+
+/**
+ * Build a canonical prompt URI in the same resolution form (local or remote)
+ * as the original URI that was resolved.
+ */
+function makeCanonicalUri({ isRemote, host, port, username }, agent, sessionId, ref) {
+  if (!isRemote) {
+    return `prompt:/${agent}/${sessionId}/${ref}`;
+  }
+  const userPart = username ? `${encodeURIComponent(username)}@` : '';
+  const portPart = (port !== null && port !== DEFAULTS.port) ? `:${port}` : '';
+  return `prompt://${userPart}${host}${portPart}/${agent}/${sessionId}/${ref}`;
 }
 
 // ── JSONL helpers ─────────────────────────────────────────────────────────────
@@ -84,7 +253,7 @@ function walkToHuman(startEntry, entryMap) {
 
 // ── Claude Code backend ───────────────────────────────────────────────────────
 
-function resolveClaudeCode(sessionId, promptRef, isPromptId) {
+function resolveClaudeCode(authority, sessionId, promptRef, isPromptId) {
   const projectsDir = path.join(os.homedir(), '.claude', 'projects');
   let jsonlPath = null;
 
@@ -133,7 +302,6 @@ function resolveClaudeCode(sessionId, promptRef, isPromptId) {
   } else if (humanCandidates.length > 1) {
     throw Object.assign(new Error('Multiple human turns within resolution window'), { code: 'AMBIGUOUS' });
   } else if (candidates.length > 0) {
-    // No human turn directly in window — walk parentUuid from the closest non-human entry.
     const target = isPromptId ? null : new Date(promptRef).getTime();
     const base = isPromptId
       ? candidates[0]
@@ -149,21 +317,20 @@ function resolveClaudeCode(sessionId, promptRef, isPromptId) {
     throw Object.assign(new Error('No entries within ±1000 ms resolution window'), { code: 'UNRESOLVABLE' });
   }
 
+  const canonicalRef = resolved.promptId ? `~${resolved.promptId}` : resolved.timestamp;
   return {
     user_message: resolved.message.content,
     agent: 'claude-code',
     session_id: sessionId,
     timestamp: resolved.timestamp,
-    canonical_uri: resolved.promptId
-      ? `prompt://claude-code/${sessionId}/~${resolved.promptId}`
-      : `prompt://claude-code/${sessionId}/${resolved.timestamp}`,
+    canonical_uri: makeCanonicalUri(authority, 'claude-code', sessionId, canonicalRef),
     source: 'claude-code',
   };
 }
 
 // ── Copilot backend ───────────────────────────────────────────────────────────
 
-function resolveCopilot(sessionId, promptRef, isPromptId) {
+function resolveCopilot(authority, sessionId, promptRef, isPromptId) {
   const home = os.homedir();
   const eventsPath = path.join(home, '.copilot', 'session-state', sessionId, 'events.jsonl');
   const dbPath     = path.join(home, '.copilot', 'session-store.db');
@@ -205,7 +372,7 @@ function resolveCopilot(sessionId, promptRef, isPromptId) {
       agent: 'github-copilot',
       session_id: sessionId,
       timestamp: ev.timestamp,
-      canonical_uri: `prompt://github-copilot/${sessionId}/~${ev.id}`,
+      canonical_uri: makeCanonicalUri(authority, 'github-copilot', sessionId, `~${ev.id}`),
       source: 'copilot',
     };
   }
@@ -243,7 +410,7 @@ function resolveCopilot(sessionId, promptRef, isPromptId) {
       agent: 'github-copilot',
       session_id: sessionId,
       timestamp: row.timestamp,
-      canonical_uri: `prompt://github-copilot/${sessionId}/${row.timestamp}`,
+      canonical_uri: makeCanonicalUri(authority, 'github-copilot', sessionId, row.timestamp),
       source: 'copilot',
     };
   } finally {
@@ -254,12 +421,27 @@ function resolveCopilot(sessionId, promptRef, isPromptId) {
 // ── Entry point ───────────────────────────────────────────────────────────────
 
 function resolvePromptUri(uri) {
-  const { agent, sessionId, promptRef, isPromptId } = parsePromptUri(uri);
+  const parsed = parsePromptUri(uri);
+  validateAuthority(parsed);
+  const { agent, sessionId, promptRef, isPromptId } = parsed;
+
+  // authority shape passed to backends so canonical_uri mirrors the input form
+  const authority = {
+    isRemote: parsed.isRemote,
+    host:     parsed.host,
+    port:     parsed.port,
+    username: parsed.username,
+  };
+
   switch (agent) {
-    case 'claude-code':                return resolveClaudeCode(sessionId, promptRef, isPromptId);
-    case 'github-copilot': case 'copilot': return resolveCopilot(sessionId, promptRef, isPromptId);
-    default: throw Object.assign(new Error(`Unknown agent: ${agent}`), { code: 'UNKNOWN_AGENT' });
+    case 'claude-code':
+      return resolveClaudeCode(authority, sessionId, promptRef, isPromptId);
+    case 'github-copilot':
+    case 'copilot':
+      return resolveCopilot(authority, sessionId, promptRef, isPromptId);
+    default:
+      throw Object.assign(new Error(`Unknown agent: ${agent}`), { code: 'UNKNOWN_AGENT' });
   }
 }
 
-module.exports = { parsePromptUri, resolvePromptUri };
+module.exports = { parsePromptUri, resolvePromptUri, validateAuthority, makeCanonicalUri };

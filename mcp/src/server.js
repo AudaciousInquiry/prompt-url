@@ -6,8 +6,8 @@ const crypto = require('node:crypto');
 const { z } = require('zod');
 const { McpServer } = require('@modelcontextprotocol/sdk/server/mcp.js');
 const { StreamableHTTPServerTransport } = require('@modelcontextprotocol/sdk/server/streamableHttp.js');
-const { loadConfig } = require('./config.js');
-const { resolvePromptUri } = require('./prompt-resolve.js');
+const { loadConfig, DEFAULTS } = require('./config.js');
+const { resolvePromptUri, validateAuthority, makeCanonicalUri } = require('./prompt-resolve.js');
 const { listSessions } = require('./session-list.js');
 const { searchPrompts, commitToTimeRange } = require('./search.js');
 
@@ -18,11 +18,15 @@ const HOST = '127.0.0.1';
 function registerTools(mcpServer) {
   mcpServer.tool(
     'resolve_prompt',
-    'Resolve a prompt:// URI to the original user message that caused an AI-generated artifact.',
+    'Resolve a prompt: URI to the original user message that caused an AI-generated artifact. ' +
+    'Accepts local form (prompt:/<agent>/...) or remote form (prompt://[user@]host[:port]/<agent>/...). ' +
+    'Remote URIs are validated: host must match this machine\'s hostname and, if a username is ' +
+    'present, it must match the current OS user.',
     {
       uri: z.string().min(1).describe(
-        'prompt:// URI to resolve, e.g. prompt://claude-code/<session-id>/~<promptId> ' +
-        'or prompt://github-copilot/<session-id>/<timestamp>'
+        'prompt: URI to resolve. Local form: prompt:/claude-code/<session-id>/~<promptId>. ' +
+        'Remote form: prompt://hostname/claude-code/<session-id>/~<promptId> ' +
+        'or prompt://user@hostname/github-copilot/<session-id>/<timestamp>'
       ),
     },
     async ({ uri }) => {
@@ -37,8 +41,9 @@ function registerTools(mcpServer) {
 
   mcpServer.tool(
     'generate_prompt_url',
-    'Generate a prompt:// URL for a specific agent session and turn. ' +
-    'Use when creating artifacts, commits, or metadata that should carry prompt provenance.',
+    'Generate a prompt: URI for a specific agent session and turn. ' +
+    'Use when creating artifacts, commits, or metadata that should carry prompt provenance. ' +
+    'Generates a local URI (prompt:/) by default; supply a host to generate a remote URI (prompt://).',
     {
       agent: z.enum(['claude-code', 'github-copilot']).describe('Agent name'),
       session_id: z.string().min(1).describe('Session UUID'),
@@ -46,11 +51,42 @@ function registerTools(mcpServer) {
         'Prompt reference: ~<promptId> (canonical form, preferred) or RFC 3339 timestamp (fallback). ' +
         'Omit to use the current UTC timestamp.'
       ),
+      host: z.string().optional().describe(
+        'Hostname for a remote URI (prompt://host/...). Omit for a local URI (prompt:/...). ' +
+        'Must be this machine\'s hostname.'
+      ),
+      username: z.string().optional().describe(
+        'Username to embed in a remote URI (prompt://user@host/...). Only valid with host. ' +
+        'Must be the current OS username.'
+      ),
+      port: z.number().int().optional().describe(
+        `TCP port of the prompt MCP server (default ${DEFAULTS.port}). Only valid with host. ` +
+        `Omit when using the default port.`
+      ),
     },
-    async ({ agent, session_id, prompt_ref }) => {
+    async ({ agent, session_id, prompt_ref, host, username, port }) => {
+      if (!host && (username !== undefined || port !== undefined)) {
+        return {
+          content: [{ type: 'text', text: 'username and port are only valid when host is provided' }],
+          isError: true,
+        };
+      }
+
       const ref = prompt_ref || new Date().toISOString();
-      const url = `prompt://${agent}/${session_id}/${ref}`;
-      return { content: [{ type: 'text', text: url }] };
+      const authority = {
+        isRemote: !!host,
+        host: host || null,
+        port: (port !== undefined && port !== null) ? port : null,
+        username: username || null,
+      };
+
+      try {
+        if (authority.isRemote) validateAuthority(authority);
+        const url = makeCanonicalUri(authority, agent, session_id, ref);
+        return { content: [{ type: 'text', text: url }] };
+      } catch (err) {
+        return { content: [{ type: 'text', text: err.message }], isError: true };
+      }
     }
   );
 
@@ -278,3 +314,10 @@ async function startServer() {
 }
 
 module.exports = { startServer, registerTools };
+
+if (require.main === module) {
+  startServer().catch(err => {
+    console.error(`prompt-url-mcp server error: ${err.message}`);
+    process.exit(1);
+  });
+}

@@ -1,8 +1,8 @@
 'use strict';
 // Local test: resolve_prompt round-trip with real session data.
 // Auto-discovers the most recent session for each available agent, reads a
-// real human-authored message from the log, constructs a prompt:// URI, then
-// resolves it back and verifies the returned text matches.
+// real human-authored message from the log, constructs a local-form prompt:
+// URI, then resolves it back and verifies the returned text matches.
 //
 // Skips gracefully if no sessions are present on this machine.
 
@@ -62,8 +62,8 @@ function firstHumanPrompt(session) {
       if (HARNESS_PATTERNS.some(p => entry.message.content.includes(p))) continue;
       return {
         uri: entry.promptId
-          ? `prompt://claude-code/${session.session_id}/~${entry.promptId}`
-          : `prompt://claude-code/${session.session_id}/${entry.timestamp}`,
+          ? `prompt:/claude-code/${session.session_id}/~${entry.promptId}`
+          : `prompt:/claude-code/${session.session_id}/${entry.timestamp}`,
         expected_message: entry.message.content,
       };
     }
@@ -72,8 +72,8 @@ function firstHumanPrompt(session) {
       if (entry.type !== 'user.message') continue;
       return {
         uri: entry.id
-          ? `prompt://github-copilot/${session.session_id}/~${entry.id}`
-          : `prompt://github-copilot/${session.session_id}/${entry.timestamp}`,
+          ? `prompt:/github-copilot/${session.session_id}/~${entry.id}`
+          : `prompt:/github-copilot/${session.session_id}/${entry.timestamp}`,
         expected_message: entry.data?.content ?? '',
       };
     }
@@ -122,7 +122,7 @@ for (const agentName of ['claude-code', 'github-copilot']) {
     assert.ok('session_id' in result,  'result missing .session_id');
     assert.ok('timestamp' in result,   'result missing .timestamp');
     assert.ok('canonical_uri' in result, 'result missing .canonical_uri');
-    assert.ok(result.canonical_uri.startsWith('prompt://'), 'canonical_uri must be a prompt:// URL');
+    assert.ok(result.canonical_uri.startsWith('prompt:'), 'canonical_uri must be a prompt: URL');
     assert.equal(result.session_id, session.session_id, 'session_id mismatch');
   });
 
